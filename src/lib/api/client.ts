@@ -21,7 +21,7 @@ export async function apiFetch<T>(
   path: string,
   options: ApiFetchOptions = {},
 ): Promise<T> {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '/api'
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? '/api/proxy'
   const url = `${baseUrl}${path}`
 
   const { body, onRequest, onResponse, ...init } = options
