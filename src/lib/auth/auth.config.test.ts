@@ -79,6 +79,25 @@ describe('jwt callback', () => {
     expect(refreshAccessToken).not.toHaveBeenCalled()
   })
 
+  it('uses fallback defaults when account/user fields are missing', async () => {
+    const token = { sub: 'user-1' } as JWT
+    const account = {
+      provider: 'cognito-pkce',
+      type: 'oidc' as const,
+      providerAccountId: 'user-1',
+      // access_token, refresh_token, expires_at intentionally omitted
+    }
+    const user = { id: undefined as unknown as string, role: undefined }
+
+    const result = await jwtCallback({ token, account, user })
+
+    expect(result.accessToken).toBe('')
+    expect(result.refreshToken).toBe('')
+    expect(result.expiresAt).toBe(0)
+    expect(result.userId).toBe('')
+    expect(result.role).toBe('patient')
+  })
+
   it('refreshes token when expired', async () => {
     const pastExpiry = Math.floor(Date.now() / 1000) - 100
     const token = {

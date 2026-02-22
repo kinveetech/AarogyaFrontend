@@ -18,6 +18,21 @@ describe('DateRangePicker', () => {
     ).toBeInTheDocument()
   })
 
+  it('renders placeholder when value is an empty array', () => {
+    render(<DateRangePicker value={[]} placeholder="Pick dates" />)
+    expect(
+      screen.getByRole('button', { name: 'Pick dates' }),
+    ).toBeInTheDocument()
+  })
+
+  it('renders single date when value has one element', () => {
+    const value = [parseDate('2025-03-10')]
+    render(<DateRangePicker value={value} />)
+    const trigger = screen.getByRole('button')
+    expect(trigger.textContent).toContain('10')
+    expect(trigger.textContent).toContain('Mar')
+  })
+
   it('renders formatted range when value is set', () => {
     const value = [parseDate('2025-01-15'), parseDate('2025-01-31')]
     render(<DateRangePicker value={value} />)
