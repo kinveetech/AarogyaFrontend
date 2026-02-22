@@ -41,12 +41,26 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          AUTH_SECRET: ci-test-secret-do-not-use-in-production
+          COGNITO_DOMAIN: https://auth.ci-placeholder.example.com
+          COGNITO_ISSUER: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder
+          COGNITO_CLIENT_ID: ci-placeholder-client-id
+          COGNITO_CLIENT_SECRET: ci-placeholder-client-secret
+          API_URL: https://api.ci-placeholder.example.com
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
         run: npx playwright test --project=chromium
+        env:
+          AUTH_SECRET: ci-test-secret-do-not-use-in-production
+          COGNITO_DOMAIN: https://auth.ci-placeholder.example.com
+          COGNITO_ISSUER: https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder
+          COGNITO_CLIENT_ID: ci-placeholder-client-id
+          COGNITO_CLIENT_SECRET: ci-placeholder-client-secret
+          API_URL: https://api.ci-placeholder.example.com
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}

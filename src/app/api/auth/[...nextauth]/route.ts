@@ -1,10 +1,5 @@
-import { NextResponse } from 'next/server'
+import { handlers } from '@/lib/auth'
 
-// Placeholder — NextAuth.js will be configured in a later issue
-export function GET() {
-  return NextResponse.json({ message: 'Auth not configured' }, { status: 501 })
-}
+export const { GET, POST } = handlers
 
-export function POST() {
-  return NextResponse.json({ message: 'Auth not configured' }, { status: 501 })
-}
+export const runtime = 'edge'

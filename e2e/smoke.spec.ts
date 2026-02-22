@@ -10,16 +10,10 @@ test.describe('Smoke tests', () => {
       }
     })
 
-    await navigateAndWait(page, '/')
-    await expect(page).toHaveURL(/\/reports/)
+    await navigateAndWait(page, '/login')
+    await expect(page).toHaveURL(/\/login/)
 
     expect(errors).toEqual([])
-  })
-
-  test('/ redirects to /reports', async ({ page }) => {
-    await navigateAndWait(page, '/')
-    await expect(page).toHaveURL(/\/reports/)
-    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
   })
 
   test('/login loads and contains "Login"', async ({ page }) => {
@@ -36,39 +30,29 @@ test.describe('Smoke tests', () => {
     ).toBeVisible()
   })
 
-  test('/reports loads and contains "Reports"', async ({ page }) => {
+  test('unauthenticated /reports redirects to /login', async ({ page }) => {
     await navigateAndWait(page, '/reports')
-    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
+    await expect(page.getByText('Login')).toBeVisible()
   })
 
-  test('/access loads and contains "Access Grants"', async ({ page }) => {
+  test('unauthenticated /access redirects to /login', async ({ page }) => {
     await navigateAndWait(page, '/access')
-    await expect(page.getByRole('main').getByText('Access Grants')).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
   })
 
-  test('/emergency loads and contains "Emergency Contacts"', async ({
-    page,
-  }) => {
+  test('unauthenticated /emergency redirects to /login', async ({ page }) => {
     await navigateAndWait(page, '/emergency')
-    await expect(page.getByRole('main').getByText('Emergency Contacts')).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
   })
 
-  test('/settings loads and contains "Settings"', async ({ page }) => {
+  test('unauthenticated /settings redirects to /login', async ({ page }) => {
     await navigateAndWait(page, '/settings')
-    await expect(page.getByRole('main').getByText('Settings')).toBeVisible()
+    await expect(page).toHaveURL(/\/login/)
   })
 
-  test('sidebar navigation works between portal routes', async ({ page }) => {
+  test('redirect to /login includes callbackUrl', async ({ page }) => {
     await navigateAndWait(page, '/reports')
-    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
-
-    const sidebar = page.getByRole('navigation', { name: /main navigation/i })
-    await sidebar.getByRole('link', { name: /access/i }).click()
-    await page.waitForURL(/\/access/)
-    await expect(page.getByRole('main').getByText('Access Grants')).toBeVisible()
-
-    await sidebar.getByRole('link', { name: /settings/i }).click()
-    await page.waitForURL(/\/settings/)
-    await expect(page.getByRole('main').getByText('Settings')).toBeVisible()
+    await expect(page).toHaveURL(/\/login\?callbackUrl=%2Freports/)
   })
 })
