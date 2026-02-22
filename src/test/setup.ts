@@ -3,7 +3,7 @@ import { cleanup } from '@testing-library/react'
 import { afterEach } from 'vitest'
 
 // jsdom does not implement window.matchMedia
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(globalThis, 'matchMedia', {
   writable: true,
   value: (query: string) => ({
     matches: false,
