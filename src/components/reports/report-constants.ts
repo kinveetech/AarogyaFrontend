@@ -1,4 +1,4 @@
-import type { ReportType, ReportStatus } from '@/types/reports'
+import type { ReportType, ReportStatus, ParameterStatus } from '@/types/reports'
 import type { StatusBadgeProps } from '@/components/ui/status-badge'
 
 export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
@@ -41,6 +41,18 @@ export const STATUS_FILTER_OPTIONS: FilterOption<ReportStatus>[] = [
   { value: 'processing', label: 'Processing' },
   { value: 'verified', label: 'Verified' },
 ]
+
+export const PARAMETER_STATUS_LABELS: Record<ParameterStatus, string> = {
+  normal: 'Normal',
+  high: 'High',
+  low: 'Low',
+}
+
+export const PARAMETER_STATUS_VARIANT_MAP: Record<ParameterStatus, StatusBadgeProps['variant']> = {
+  normal: 'success',
+  high: 'error',
+  low: 'error',
+}
 
 export const PAGE_SIZES = [9, 18, 36] as const
 
