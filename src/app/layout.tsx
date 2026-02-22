@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { DM_Serif_Display, Outfit, DM_Mono } from 'next/font/google'
 import { Providers } from './providers'
+import { AmbientOrbs } from './ambient-orbs'
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: '400',
@@ -35,7 +36,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       suppressHydrationWarning
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AmbientOrbs />
+          {children}
+        </Providers>
       </body>
     </html>
   )
