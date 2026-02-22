@@ -3,6 +3,35 @@ import { render, screen, userEvent, waitFor } from '@/test/render'
 import ReportDetailPage from './page'
 import type { ReportDetail } from '@/types/reports'
 
+// Mock react-pdf
+vi.mock('react-pdf', () => {
+  const React = require('react')
+  return {
+    Document: ({
+      onLoadSuccess,
+      children,
+    }: {
+      onLoadSuccess?: (info: { numPages: number }) => void
+      children?: React.ReactNode
+      loading?: React.ReactNode
+      file: string | null
+    }) => {
+      React.useEffect(() => {
+        onLoadSuccess?.({ numPages: 2 })
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+      }, [])
+      return <div data-testid="pdf-document">{children}</div>
+    },
+    Page: ({ pageNumber }: { pageNumber: number }) => (
+      <div data-testid={`pdf-page-${pageNumber}`}>Page {pageNumber}</div>
+    ),
+    pdfjs: { GlobalWorkerOptions: { workerSrc: '' } },
+  }
+})
+
+// Mock the PDF.js worker setup
+vi.mock('@/lib/pdf/setup', () => ({}))
+
 // Mock next/navigation
 const pushMock = vi.fn()
 vi.mock('next/navigation', () => ({
@@ -204,5 +233,61 @@ describe('ReportDetailPage', () => {
 
     vi.unstubAllGlobals()
     vi.stubGlobal('fetch', mockFetch)
+  })
+
+  it('renders PDF viewer when report loads', async () => {
+    // First call: report detail; second call: download URL for PDF viewer
+    const downloadData = {
+      downloadUrl: 'https://cdn.example.com/report.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse(mockReport))
+      .mockResolvedValue(jsonResponse(downloadData))
+
+    render(<ReportDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('pdf-document')).toBeInTheDocument()
+    })
+  })
+
+  it('shows View PDF button on mobile', async () => {
+    const downloadData = {
+      downloadUrl: 'https://cdn.example.com/report.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse(mockReport))
+      .mockResolvedValue(jsonResponse(downloadData))
+
+    render(<ReportDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
+    })
+
+    expect(screen.getByRole('button', { name: 'View PDF' })).toBeInTheDocument()
+  })
+
+  it('toggles PDF expanded state when View PDF clicked', async () => {
+    const downloadData = {
+      downloadUrl: 'https://cdn.example.com/report.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse(mockReport))
+      .mockResolvedValue(jsonResponse(downloadData))
+
+    render(<ReportDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'View PDF' }))
+
+    // After expanding, button text changes
+    expect(screen.getByRole('button', { name: 'Hide PDF' })).toBeInTheDocument()
   })
 })

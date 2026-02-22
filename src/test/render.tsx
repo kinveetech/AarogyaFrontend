@@ -1,4 +1,9 @@
-import { render, type RenderOptions } from '@testing-library/react'
+import {
+  render,
+  renderHook,
+  type RenderOptions,
+  type RenderHookOptions,
+} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ChakraProvider } from '@chakra-ui/react'
@@ -43,5 +48,12 @@ function customRender(
   return render(ui, { wrapper: AllProviders, ...options })
 }
 
-export { customRender as render, userEvent }
+function customRenderHook<Result, Props>(
+  hook: (props: Props) => Result,
+  options?: Omit<RenderHookOptions<Props>, 'wrapper'>,
+) {
+  return renderHook(hook, { wrapper: AllProviders, ...options })
+}
+
+export { customRender as render, customRenderHook as renderHook, userEvent }
 export * from '@testing-library/react'
