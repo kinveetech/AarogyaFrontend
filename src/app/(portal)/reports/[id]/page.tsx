@@ -2,7 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Box, Button, Grid, Flex, Text } from '@chakra-ui/react'
+import dynamic from 'next/dynamic'
+import { Box, Button, Grid, Text } from '@chakra-ui/react'
 import { useReport } from '@/hooks/reports/use-report'
 import { useDeleteReport } from '@/hooks/reports/use-delete-report'
 import { useDownloadUrl } from '@/hooks/reports/use-download-url'
@@ -10,18 +11,15 @@ import { ReportDetailHeader } from '@/components/reports/report-detail-header'
 import { ReportDetailParameters } from '@/components/reports/report-detail-parameters'
 import { ReportDetailActions } from '@/components/reports/report-detail-actions'
 import { ReportDetailSkeleton } from '@/components/reports/report-detail-skeleton'
+
+// Dynamic import to avoid loading pdfjs-dist on the server (no DOMMatrix in Node.js)
+const PDFViewer = dynamic(
+  () => import('@/components/reports/pdf-viewer').then((mod) => mod.PDFViewer),
+  { ssr: false },
+)
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ApiError } from '@/lib/api/client'
-
-function DocumentIcon() {
-  return (
-    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-      <rect x="10" y="4" width="28" height="40" rx="3" stroke="currentColor" strokeWidth="2" />
-      <path d="M18 16h12M18 22h12M18 28h8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-    </svg>
-  )
-}
 
 function NotFoundIcon() {
   return (
@@ -51,6 +49,11 @@ export default function ReportDetailPage() {
   const downloadUrl = useDownloadUrl()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [pdfExpanded, setPdfExpanded] = useState(false)
+
+  const handleTogglePdfExpand = useCallback(() => {
+    setPdfExpanded((prev) => !prev)
+  }, [])
 
   const handleBack = useCallback(() => router.push('/reports'), [router])
 
@@ -122,26 +125,33 @@ export default function ReportDetailPage() {
     <Box maxW="1200px" mx="auto" px={{ base: '4', md: '6' }} py="6">
       <ReportDetailHeader report={report} onBack={handleBack} />
 
-      <Grid gridTemplateColumns={{ base: '1fr', lg: '300px 1fr' }} gap="6">
-        {/* PDF preview placeholder */}
-        <Box
-          display={{ base: 'none', lg: 'flex' }}
-          bg="bg.overlay"
-          borderRadius="xl"
-          border="1px solid"
-          borderColor="border.subtle"
-          aspectRatio="3/4"
-          alignItems="center"
-          justifyContent="center"
-          flexDirection="column"
-          gap="3"
+      {/* Mobile-only View PDF toggle */}
+      <Box display={{ base: 'block', lg: 'none' }} mb={pdfExpanded ? '0' : '4'}>
+        <Button
+          borderRadius="full"
+          variant="outline"
+          size="sm"
+          onClick={handleTogglePdfExpand}
         >
-          <Flex color="text.muted" opacity={0.5}>
-            <DocumentIcon />
-          </Flex>
-          <Text fontSize="sm" color="text.muted" fontFamily="mono">
-            {report.fileKey}
-          </Text>
+          {pdfExpanded ? 'Hide PDF' : 'View PDF'}
+        </Button>
+      </Box>
+
+      <Grid
+        gridTemplateColumns={{ base: '1fr', lg: pdfExpanded ? '1fr' : '300px 1fr' }}
+        gap="6"
+      >
+        {/* PDF viewer */}
+        <Box
+          display={{ base: pdfExpanded ? 'block' : 'none', lg: 'block' }}
+          gridColumn={pdfExpanded ? '1 / -1' : undefined}
+        >
+          <PDFViewer
+            reportId={id}
+            fileType={report.fileType}
+            expanded={pdfExpanded}
+            onToggleExpand={handleTogglePdfExpand}
+          />
         </Box>
 
         {/* Parameter table */}
