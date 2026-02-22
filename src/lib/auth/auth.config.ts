@@ -18,10 +18,10 @@ export const authConfig: NextAuthConfig = {
       if (account && user) {
         return {
           ...token,
-          accessToken: account.access_token!,
-          refreshToken: account.refresh_token!,
-          expiresAt: account.expires_at!,
-          userId: user.id!,
+          accessToken: account.access_token ?? '',
+          refreshToken: account.refresh_token ?? '',
+          expiresAt: account.expires_at ?? 0,
+          userId: user.id ?? '',
           role: user.role ?? 'patient',
         }
       }

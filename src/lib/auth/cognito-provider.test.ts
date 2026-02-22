@@ -63,6 +63,11 @@ describe('CognitoPKCE provider', () => {
     })
   })
 
+  it('throws when required env vars are missing', () => {
+    vi.stubEnv('COGNITO_DOMAIN', '')
+    expect(() => CognitoPKCE()).toThrow('Missing required environment variable: COGNITO_DOMAIN')
+  })
+
   it('defaults role to patient when custom:role is absent', () => {
     const provider = CognitoPKCE()
     const result = provider.profile!({

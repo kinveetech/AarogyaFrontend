@@ -1,8 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { authConfig } from './auth.config'
 import type { JWT } from 'next-auth/jwt'
 import type { Session, Account, User } from 'next-auth'
 import './types'
+
+vi.mock('./cognito-provider', () => ({
+  default: () => ({
+    id: 'cognito-pkce',
+    name: 'Cognito PKCE',
+    type: 'oidc',
+  }),
+}))
 
 vi.mock('./refresh-token', () => ({
   refreshAccessToken: vi.fn().mockResolvedValue({
@@ -14,6 +21,8 @@ vi.mock('./refresh-token', () => ({
     sub: 'user-1',
   }),
 }))
+
+const { authConfig } = await import('./auth.config')
 
 const { refreshAccessToken } = await import('./refresh-token')
 

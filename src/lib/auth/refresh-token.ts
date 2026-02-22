@@ -7,7 +7,10 @@ interface RefreshResponse {
 }
 
 export async function refreshAccessToken(token: JWT): Promise<JWT> {
-  const apiUrl = process.env.API_URL!
+  const apiUrl = process.env.API_URL
+  if (!apiUrl) {
+    throw new Error('Missing required environment variable: API_URL')
+  }
 
   const response = await fetch(`${apiUrl}/auth/token/refresh`, {
     method: 'POST',

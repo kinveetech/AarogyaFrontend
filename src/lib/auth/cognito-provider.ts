@@ -8,17 +8,25 @@ interface CognitoProfile {
   'custom:role'?: string
 }
 
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) {
+    throw new Error(`Missing required environment variable: ${name}`)
+  }
+  return value
+}
+
 export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
-  const cognitoDomain = process.env.COGNITO_DOMAIN!
-  const apiUrl = process.env.API_URL!
+  const cognitoDomain = requireEnv('COGNITO_DOMAIN')
+  const apiUrl = requireEnv('API_URL')
 
   return {
     id: 'cognito-pkce',
     name: 'Cognito PKCE',
     type: 'oidc',
     issuer: process.env.COGNITO_ISSUER,
-    clientId: process.env.COGNITO_CLIENT_ID!,
-    clientSecret: process.env.COGNITO_CLIENT_SECRET!,
+    clientId: requireEnv('COGNITO_CLIENT_ID'),
+    clientSecret: requireEnv('COGNITO_CLIENT_SECRET'),
     authorization: {
       url: `${cognitoDomain}/oauth2/authorize`,
       params: { scope: 'openid email profile' },
