@@ -31,6 +31,9 @@ jobs:
       - name: Type check
         run: npx tsc --noEmit
 
+      - name: Test with coverage
+        run: npm run test:coverage
+
       - name: Audit dependencies
         run: npm audit --audit-level=critical --omit=dev
 
