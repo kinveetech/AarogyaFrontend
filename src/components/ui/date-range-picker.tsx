@@ -26,7 +26,7 @@ import {
 } from '@ark-ui/react/date-picker'
 import type { DateValue } from '@ark-ui/react/date-picker'
 
-export type { DateValue }
+export type { DateValue, DatePickerValueChangeDetails }
 
 export interface DateRangePickerProps {
   value?: DateValue[]
