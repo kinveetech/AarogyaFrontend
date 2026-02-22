@@ -5,7 +5,7 @@ const config = [
   ...nextCoreWebVitals,
   prettierConfig,
   {
-    ignores: ['.next/**', 'node_modules/**'],
+    ignores: ['.next/**', 'node_modules/**', 'coverage/**'],
   },
 ]
 
