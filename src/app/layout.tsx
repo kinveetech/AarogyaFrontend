@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   description: 'Your health records, simplified.',
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
       lang="en"
