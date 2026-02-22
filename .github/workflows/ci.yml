@@ -41,12 +41,16 @@ jobs:
 
       - name: Build
         run: npm run build
+        env:
+          AUTH_SECRET: ci-test-secret-do-not-use-in-production
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
         run: npx playwright test --project=chromium
+        env:
+          AUTH_SECRET: ci-test-secret-do-not-use-in-production
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
