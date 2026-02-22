@@ -19,7 +19,7 @@ test.describe('Smoke tests', () => {
   test('/ redirects to /reports', async ({ page }) => {
     await navigateAndWait(page, '/')
     await expect(page).toHaveURL(/\/reports/)
-    await expect(page.getByText('Reports')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
   })
 
   test('/login loads and contains "Login"', async ({ page }) => {
@@ -38,23 +38,37 @@ test.describe('Smoke tests', () => {
 
   test('/reports loads and contains "Reports"', async ({ page }) => {
     await navigateAndWait(page, '/reports')
-    await expect(page.getByText('Reports')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
   })
 
   test('/access loads and contains "Access Grants"', async ({ page }) => {
     await navigateAndWait(page, '/access')
-    await expect(page.getByText('Access Grants')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Access Grants')).toBeVisible()
   })
 
   test('/emergency loads and contains "Emergency Contacts"', async ({
     page,
   }) => {
     await navigateAndWait(page, '/emergency')
-    await expect(page.getByText('Emergency Contacts')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Emergency Contacts')).toBeVisible()
   })
 
   test('/settings loads and contains "Settings"', async ({ page }) => {
     await navigateAndWait(page, '/settings')
-    await expect(page.getByText('Settings')).toBeVisible()
+    await expect(page.getByRole('main').getByText('Settings')).toBeVisible()
+  })
+
+  test('sidebar navigation works between portal routes', async ({ page }) => {
+    await navigateAndWait(page, '/reports')
+    await expect(page.getByRole('main').getByText('Reports')).toBeVisible()
+
+    const sidebar = page.getByRole('navigation', { name: /main navigation/i })
+    await sidebar.getByRole('link', { name: /access/i }).click()
+    await page.waitForURL(/\/access/)
+    await expect(page.getByRole('main').getByText('Access Grants')).toBeVisible()
+
+    await sidebar.getByRole('link', { name: /settings/i }).click()
+    await page.waitForURL(/\/settings/)
+    await expect(page.getByRole('main').getByText('Settings')).toBeVisible()
   })
 })
