@@ -14,7 +14,7 @@ A single Next.js application — the patient & doctor portal. There is no admin 
 
 The app uses the **Serene Bloom** design language. Open `docs/design-system.html` in a browser for the full interactive reference.
 
-- **Theme files**: `src/theme/tokens.ts` (raw tokens) and `src/theme/index.ts` (Chakra UI `extendTheme`)
+- **Theme files**: `src/theme/tokens.ts` (raw tokens) and `src/theme/index.ts` (Chakra UI v3 `createSystem`)
 - **Always use semantic tokens** from `tokens.ts` (`bg.canvas`, `text.primary`, `action.primary`, etc.) — never raw hex values
 - **Fonts**: DM Serif Display (headings/brand) + Outfit (body/UI) + DM Mono (data/code)
 - **Background**: a fixed `165deg` gradient (cream→sage wash in light, dark-teal in dark) applied globally in `styles.global` — individual pages need no background
@@ -38,9 +38,10 @@ npm run lint
 
 ## Tech Stack
 
-- **Next.js 14** with App Router + React Server Components
-- **TypeScript** strict mode
-- **Chakra UI v2** — theme config in `src/theme/`
+- **Next.js 16** with App Router + React Server Components
+- **React 19** + **TypeScript 5** strict mode
+- **Chakra UI v3** — theme config in `src/theme/` (uses `createSystem` + `defineTokens` + `defineSemanticTokens`)
+- **next-themes** — color mode (dark/light) persistence
 - **NextAuth.js v5** with custom Cognito PKCE provider
 - **TanStack Query v5** — all server state; no global state library (Redux/Zustand/etc.)
 - **React Hook Form + Zod** — all forms; schemas in `src/lib/schemas/`

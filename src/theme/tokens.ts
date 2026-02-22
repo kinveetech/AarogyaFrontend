@@ -1,222 +1,217 @@
 /**
- * Serene Bloom Design Tokens
+ * Serene Bloom Design Tokens (Chakra UI v3)
  * Derived from the Serene Bloom loading screen concept.
  *
- * Fonts (load in layout.tsx via next/font or <link>):
+ * Fonts (load in layout.tsx via next/font/google):
  *   - DM Serif Display  — headings, brand name
  *   - Outfit            — body, UI labels, captions
+ *   - DM Mono           — data, code
  */
 
-export const colors = {
-  brand: {
-    50:  '#E6F5F4',
-    100: '#C0E6E4',
-    200: '#8ACECB',
-    300: '#4FB4B0',
-    400: '#1A9E97', // teal-light
-    500: '#0E6B66', // teal-mid  ← primary action color
-    600: '#0A4D4A', // teal-deep ← primary text on light
-    700: '#083B38',
-    800: '#052826',
-    900: '#021614',
+import { defineTokens, defineSemanticTokens } from '@chakra-ui/react'
+
+export const tokens = defineTokens({
+  colors: {
+    brand: {
+      50:  { value: '#E6F5F4' },
+      100: { value: '#C0E6E4' },
+      200: { value: '#8ACECB' },
+      300: { value: '#4FB4B0' },
+      400: { value: '#1A9E97' }, // teal-light
+      500: { value: '#0E6B66' }, // teal-mid  — primary action color
+      600: { value: '#0A4D4A' }, // teal-deep — primary text on light
+      700: { value: '#083B38' },
+      800: { value: '#052826' },
+      900: { value: '#021614' },
+      950: { value: '#010D0C' },
+    },
+
+    sage: {
+      50:  { value: '#F2F8F3' },
+      100: { value: '#DCEDDe' },
+      200: { value: '#BDD9C0' },
+      300: { value: '#9DC5A1' },
+      400: { value: '#7FB285' }, // sage — accent / success
+      500: { value: '#619065' },
+      600: { value: '#4A6E4D' },
+      700: { value: '#334D35' },
+      800: { value: '#1D2E1E' },
+      900: { value: '#0A100A' },
+      950: { value: '#050805' },
+    },
+
+    coral: {
+      50:  { value: '#FFF0F0' },
+      100: { value: '#FFD6D6' },
+      200: { value: '#FFA8A8' },
+      300: { value: '#FF8A8A' }, // coral-soft
+      400: { value: '#FF6B6B' }, // coral — error / destructive
+      500: { value: '#E54B4B' },
+      600: { value: '#CC2B2B' },
+      700: { value: '#991414' },
+      800: { value: '#660A0A' },
+      900: { value: '#330505' },
+      950: { value: '#1A0202' },
+    },
+
+    amber: {
+      50:  { value: '#FFF8E6' },
+      100: { value: '#FFEDC2' },
+      200: { value: '#FFD693' }, // amber-glow
+      300: { value: '#FFB347' }, // amber — warning
+      400: { value: '#E8960A' },
+      500: { value: '#C27A08' },
+      600: { value: '#9B6006' },
+      700: { value: '#754704' },
+      800: { value: '#4E3002' },
+      900: { value: '#271801' },
+      950: { value: '#140C00' },
+    },
+
+    // Base neutrals tinted with teal for cohesion
+    neutral: {
+      50:  { value: '#F5FAF9' },
+      100: { value: '#E6F0EF' },
+      200: { value: '#C8DCDB' },
+      300: { value: '#A4C4C2' },
+      400: { value: '#7FA8A6' },
+      500: { value: '#5A8C8A' },
+      600: { value: '#3F6B69' },
+      700: { value: '#2A4A48' },
+      800: { value: '#182C2B' },
+      900: { value: '#0A1716' },
+      950: { value: '#050B0B' },
+    },
   },
 
-  sage: {
-    50:  '#F2F8F3',
-    100: '#DCEDDe',
-    200: '#BDD9C0',
-    300: '#9DC5A1',
-    400: '#7FB285', // sage        ← accent / success
-    500: '#619065',
-    600: '#4A6E4D',
-    700: '#334D35',
-    800: '#1D2E1E',
-    900: '#0A100A',
+  fonts: {
+    heading: { value: "'DM Serif Display', Georgia, 'Times New Roman', serif" },
+    body:    { value: "'Outfit', system-ui, -apple-system, sans-serif" },
+    mono:    { value: "'DM Mono', 'Menlo', 'Monaco', monospace" },
   },
 
-  coral: {
-    50:  '#FFF0F0',
-    100: '#FFD6D6',
-    200: '#FFA8A8',
-    300: '#FF8A8A', // coral-soft
-    400: '#FF6B6B', // coral       ← error / destructive
-    500: '#E54B4B',
-    600: '#CC2B2B',
-    700: '#991414',
-    800: '#660A0A',
-    900: '#330505',
+  fontSizes: {
+    '2xs': { value: '0.625rem' },  // 10px
+    xs:    { value: '0.75rem' },   // 12px
+    sm:    { value: '0.875rem' },  // 14px
+    md:    { value: '1rem' },      // 16px
+    lg:    { value: '1.125rem' },  // 18px
+    xl:    { value: '1.25rem' },   // 20px
+    '2xl': { value: '1.5rem' },    // 24px
+    '3xl': { value: '1.875rem' },  // 30px
+    '4xl': { value: '2.25rem' },   // 36px
+    '5xl': { value: '3rem' },      // 48px
+    '6xl': { value: '3.75rem' },   // 60px
+    '7xl': { value: '4.5rem' },    // 72px
   },
 
-  amber: {
-    50:  '#FFF8E6',
-    100: '#FFEDC2',
-    200: '#FFD693', // amber-glow
-    300: '#FFB347', // amber       ← warning
-    400: '#E8960A',
-    500: '#C27A08',
-    600: '#9B6006',
-    700: '#754704',
-    800: '#4E3002',
-    900: '#271801',
+  fontWeights: {
+    light:    { value: '300' },
+    normal:   { value: '400' },
+    medium:   { value: '500' },
+    semibold: { value: '600' },
+    bold:     { value: '700' },
   },
 
-  // Base neutrals tinted with teal for cohesion
-  neutral: {
-    50:  '#F5FAF9',
-    100: '#E6F0EF',
-    200: '#C8DCDB',
-    300: '#A4C4C2',
-    400: '#7FA8A6',
-    500: '#5A8C8A',
-    600: '#3F6B69',
-    700: '#2A4A48',
-    800: '#182C2B',
-    900: '#0A1716',
+  radii: {
+    sm:   { value: '6px' },
+    md:   { value: '12px' },
+    lg:   { value: '20px' },
+    xl:   { value: '28px' },
+    '2xl': { value: '36px' },
+    full: { value: '9999px' },
   },
-}
 
-/**
- * Semantic tokens — map to light/dark via Chakra's _dark syntax.
- * Use these throughout the app, never raw color values.
- */
-export const semanticTokens = {
+  shadows: {
+    sm:    { value: '0 1px 3px rgba(10, 77, 74, 0.08), 0 1px 2px rgba(10, 77, 74, 0.06)' },
+    md:    { value: '0 4px 16px rgba(10, 77, 74, 0.08), 0 2px 6px rgba(10, 77, 74, 0.06)' },
+    lg:    { value: '0 8px 32px rgba(10, 77, 74, 0.10), 0 4px 12px rgba(10, 77, 74, 0.07)' },
+    xl:    { value: '0 20px 60px rgba(10, 77, 74, 0.12), 0 8px 24px rgba(10, 77, 74, 0.08)' },
+    glass: { value: '0 8px 32px rgba(10, 77, 74, 0.08), 0 2px 8px rgba(10, 77, 74, 0.04), inset 0 1px 0 rgba(255,255,255,0.6)' },
+  },
+})
+
+export const semanticTokens = defineSemanticTokens({
   colors: {
     // ── Backgrounds ──────────────────────────────────────────
     'bg.canvas': {
-      default: '#FFF8F0',     // warm cream
-      _dark:   '#0B1A1A',     // dark-bg
+      value: { base: '#FFF8F0', _dark: '#0B1A1A' },
     },
     'bg.surface': {
-      default: '#F0FAF0',     // light sage wash
-      _dark:   '#112626',     // dark-surface
+      value: { base: '#F0FAF0', _dark: '#112626' },
     },
     'bg.card': {
-      default: 'rgba(255, 255, 255, 0.75)',
-      _dark:   '#1A3535',     // dark-card
+      value: { base: 'rgba(255, 255, 255, 0.75)', _dark: '#1A3535' },
     },
     'bg.glass': {
-      default: 'rgba(255, 255, 255, 0.45)',
-      _dark:   'rgba(26, 53, 53, 0.55)',
+      value: { base: 'rgba(255, 255, 255, 0.45)', _dark: 'rgba(26, 53, 53, 0.55)' },
     },
     'bg.overlay': {
-      default: 'rgba(10, 77, 74, 0.06)',
-      _dark:   'rgba(168, 213, 174, 0.06)',
+      value: { base: 'rgba(10, 77, 74, 0.06)', _dark: 'rgba(168, 213, 174, 0.06)' },
     },
 
     // ── Text ─────────────────────────────────────────────────
     'text.primary': {
-      default: 'brand.600',   // #0A4D4A
-      _dark:   '#E8F5F0',
+      value: { base: '{colors.brand.600}', _dark: '#E8F5F0' },
     },
     'text.secondary': {
-      default: 'brand.500',   // #0E6B66
-      _dark:   'sage.300',
+      value: { base: '{colors.brand.500}', _dark: '{colors.sage.300}' },
     },
     'text.muted': {
-      default: 'sage.500',
-      _dark:   'sage.400',
+      value: { base: '{colors.sage.500}', _dark: '{colors.sage.400}' },
     },
     'text.inverse': {
-      default: '#FFFFFF',
-      _dark:   'brand.600',
+      value: { base: '#FFFFFF', _dark: '{colors.brand.600}' },
     },
 
     // ── Borders ───────────────────────────────────────────────
     'border.subtle': {
-      default: 'rgba(10, 77, 74, 0.10)',
-      _dark:   'rgba(168, 213, 174, 0.10)',
+      value: { base: 'rgba(10, 77, 74, 0.10)', _dark: 'rgba(168, 213, 174, 0.10)' },
     },
     'border.default': {
-      default: 'rgba(10, 77, 74, 0.18)',
-      _dark:   'rgba(168, 213, 174, 0.18)',
+      value: { base: 'rgba(10, 77, 74, 0.18)', _dark: 'rgba(168, 213, 174, 0.18)' },
     },
     'border.strong': {
-      default: 'brand.500',
-      _dark:   'brand.400',
+      value: { base: '{colors.brand.500}', _dark: '{colors.brand.400}' },
     },
 
     // ── Brand / Action ────────────────────────────────────────
     'action.primary': {
-      default: 'brand.500',   // #0E6B66
-      _dark:   'brand.400',   // #1A9E97
+      value: { base: '{colors.brand.500}', _dark: '{colors.brand.400}' },
     },
     'action.primary.hover': {
-      default: 'brand.600',
-      _dark:   'brand.300',
+      value: { base: '{colors.brand.600}', _dark: '{colors.brand.300}' },
     },
     'action.primary.text': {
-      default: '#FFFFFF',
-      _dark:   '#FFFFFF',
+      value: { base: '#FFFFFF', _dark: '#FFFFFF' },
     },
 
     // ── Ambient orbs (background decoration) ─────────────────
     'orb.primary': {
-      default: '#A8D5AE',     // sage-light
-      _dark:   'rgba(10, 77, 74, 0.7)',
+      value: { base: '#A8D5AE', _dark: 'rgba(10, 77, 74, 0.7)' },
     },
     'orb.secondary': {
-      default: '#FFD693',     // amber-glow
-      _dark:   'rgba(26, 158, 151, 0.4)',
+      value: { base: '#FFD693', _dark: 'rgba(26, 158, 151, 0.4)' },
     },
     'orb.tertiary': {
-      default: '#FF8A8A',     // coral-soft
-      _dark:   'rgba(255, 107, 107, 0.15)',
+      value: { base: '#FF8A8A', _dark: 'rgba(255, 107, 107, 0.15)' },
     },
 
     // ── Status ────────────────────────────────────────────────
-    'status.success':  { default: 'sage.500',   _dark: 'sage.300'   },
-    'status.warning':  { default: 'amber.400',  _dark: 'amber.300'  },
-    'status.error':    { default: 'coral.400',  _dark: 'coral.300'  },
-    'status.info':     { default: 'brand.500',  _dark: 'brand.400'  },
+    'status.success': {
+      value: { base: '{colors.sage.500}', _dark: '{colors.sage.300}' },
+    },
+    'status.warning': {
+      value: { base: '{colors.amber.400}', _dark: '{colors.amber.300}' },
+    },
+    'status.error': {
+      value: { base: '{colors.coral.400}', _dark: '{colors.coral.300}' },
+    },
+    'status.info': {
+      value: { base: '{colors.brand.500}', _dark: '{colors.brand.400}' },
+    },
   },
-}
-
-export const fonts = {
-  heading: `'DM Serif Display', Georgia, 'Times New Roman', serif`,
-  body:    `'Outfit', system-ui, -apple-system, sans-serif`,
-  mono:    `'DM Mono', 'Menlo', 'Monaco', monospace`,
-}
-
-export const fontSizes = {
-  '2xs': '0.625rem',   // 10px
-  xs:    '0.75rem',    // 12px
-  sm:    '0.875rem',   // 14px
-  md:    '1rem',       // 16px
-  lg:    '1.125rem',   // 18px
-  xl:    '1.25rem',    // 20px
-  '2xl': '1.5rem',     // 24px
-  '3xl': '1.875rem',   // 30px
-  '4xl': '2.25rem',    // 36px
-  '5xl': '3rem',       // 48px
-  '6xl': '3.75rem',    // 60px
-  '7xl': '4.5rem',     // 72px
-}
-
-export const fontWeights = {
-  light:    300,
-  normal:   400,
-  medium:   500,
-  semibold: 600,
-  bold:     700,
-}
-
-export const radii = {
-  sm:   '6px',
-  md:   '12px',
-  lg:   '20px',
-  xl:   '28px',
-  '2xl':'36px',
-  full: '9999px',
-}
-
-export const shadows = {
-  // Light mode — teal-tinted shadows
-  sm:  '0 1px 3px rgba(10, 77, 74, 0.08), 0 1px 2px rgba(10, 77, 74, 0.06)',
-  md:  '0 4px 16px rgba(10, 77, 74, 0.08), 0 2px 6px rgba(10, 77, 74, 0.06)',
-  lg:  '0 8px 32px rgba(10, 77, 74, 0.10), 0 4px 12px rgba(10, 77, 74, 0.07)',
-  xl:  '0 20px 60px rgba(10, 77, 74, 0.12), 0 8px 24px rgba(10, 77, 74, 0.08)',
-  glass: '0 8px 32px rgba(10, 77, 74, 0.08), 0 2px 8px rgba(10, 77, 74, 0.04), inset 0 1px 0 rgba(255,255,255,0.6)',
-}
+})
 
 /** Progress bar gradient — teal → sage → amber (from loading screen) */
 export const progressGradient =
