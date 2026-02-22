@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { Box, Button, Grid, Text } from '@chakra-ui/react'
 import { useReport } from '@/hooks/reports/use-report'
 import { useDeleteReport } from '@/hooks/reports/use-delete-report'
@@ -10,7 +11,12 @@ import { ReportDetailHeader } from '@/components/reports/report-detail-header'
 import { ReportDetailParameters } from '@/components/reports/report-detail-parameters'
 import { ReportDetailActions } from '@/components/reports/report-detail-actions'
 import { ReportDetailSkeleton } from '@/components/reports/report-detail-skeleton'
-import { PDFViewer } from '@/components/reports/pdf-viewer'
+
+// Dynamic import to avoid loading pdfjs-dist on the server (no DOMMatrix in Node.js)
+const PDFViewer = dynamic(
+  () => import('@/components/reports/pdf-viewer').then((mod) => mod.PDFViewer),
+  { ssr: false },
+)
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ApiError } from '@/lib/api/client'
