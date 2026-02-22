@@ -1,6 +1,7 @@
 # Aarogya Frontend
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=kinveetech_AarogyaFrontend&metric=alert_status&token=3a64600123347547caaf340de919c549f8a20131)](https://sonarcloud.io/summary/new_code?id=kinveetech_AarogyaFrontend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=kinveetech_AarogyaFrontend&metric=coverage&token=3a64600123347547caaf340de919c549f8a20131)](https://sonarcloud.io/summary/new_code?id=kinveetech_AarogyaFrontend)
 
 A patient and doctor portal for managing health records, built with Next.js and the **Serene Bloom** design system. Part of the Aarogya platform by [Kinvee Technologies](https://github.com/kinveetech).
 
@@ -46,6 +47,16 @@ npm run dev        # http://localhost:3000
 npm run build
 npm run lint
 ```
+
+### Testing
+
+```bash
+npm test               # Unit tests
+npm run test:coverage  # Unit tests with coverage report
+npm run test:e2e       # Playwright E2E tests (all browsers)
+```
+
+Coverage thresholds are enforced in CI — builds fail if coverage drops below 80% lines, 80% functions, or 70% branches. SonarCloud tracks coverage trends and gates PRs on new code quality.
 
 ## Project Structure
 
