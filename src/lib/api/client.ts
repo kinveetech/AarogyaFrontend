@@ -78,6 +78,10 @@ export async function apiFetch<T>(
     throw new ApiError(response.status, message, code)
   }
 
+  if (response.status === 204 || response.headers.get('content-length') === '0') {
+    return undefined as T
+  }
+
   const data: T = await response.json()
 
   const etag = response.headers.get('ETag')

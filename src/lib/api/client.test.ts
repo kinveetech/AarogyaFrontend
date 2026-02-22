@@ -188,6 +188,28 @@ describe('apiFetch', () => {
     )
   })
 
+  it('returns undefined for 204 No Content', async () => {
+    mockFetch.mockResolvedValue(
+      new Response(null, { status: 204, statusText: 'No Content' }),
+    )
+
+    const result = await apiFetch('/v1/reports/123', { method: 'DELETE' })
+    expect(result).toBeUndefined()
+  })
+
+  it('returns undefined when content-length is 0', async () => {
+    mockFetch.mockResolvedValue(
+      new Response('', {
+        status: 200,
+        statusText: 'OK',
+        headers: { 'content-length': '0' },
+      }),
+    )
+
+    const result = await apiFetch('/v1/reports/123')
+    expect(result).toBeUndefined()
+  })
+
   it('calls onResponse interceptor', async () => {
     const res = jsonResponse({ ok: true })
     mockFetch.mockResolvedValue(res)
