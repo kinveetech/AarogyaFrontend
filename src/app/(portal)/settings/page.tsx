@@ -6,7 +6,7 @@ import { useProfile, useUpdateProfile } from '@/hooks/profile'
 import {
   ProfileSection,
   ConsentsSection,
-  NotificationsPlaceholder,
+  NotificationsSection,
   AccountSection,
 } from '@/components/settings'
 import type { ProfileUpdate } from '@/lib/schemas/profileUpdate'
@@ -39,7 +39,7 @@ export default function SettingsPage() {
           onSave={handleSave}
         />
         <ConsentsSection />
-        <NotificationsPlaceholder />
+        <NotificationsSection />
         <AccountSection />
       </VStack>
     </Box>

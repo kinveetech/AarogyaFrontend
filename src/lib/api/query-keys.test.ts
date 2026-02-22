@@ -78,4 +78,14 @@ describe('queryKeys', () => {
       expect(queryKeys.emergencyContacts.detail('z')).toEqual(['emergencyContacts', 'detail', 'z'])
     })
   })
+
+  describe('notifications', () => {
+    it('has correct base key', () => {
+      expect(queryKeys.notifications.all).toEqual(['notifications'])
+    })
+
+    it('produces prefs key', () => {
+      expect(queryKeys.notifications.prefs()).toEqual(['notifications', 'prefs'])
+    })
+  })
 })

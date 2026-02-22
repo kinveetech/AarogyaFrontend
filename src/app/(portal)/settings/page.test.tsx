@@ -1,11 +1,16 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, userEvent, waitFor } from '@/test/render'
 import SettingsPage from './page'
 import type { Profile } from '@/types/profile'
 import type { ConsentListResponse } from '@/types/consent'
+import type { NotificationPreferences } from '@/types/notification'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
+
+vi.mock('@/lib/fcm', () => ({
+  requestPushPermission: vi.fn().mockResolvedValue({ status: 'denied' }),
+}))
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -39,17 +44,70 @@ const mockConsents: ConsentListResponse = {
   ],
 }
 
-function setupFetchMock(overrides?: { profile?: Profile; consents?: ConsentListResponse }) {
+const mockNotificationPrefs: NotificationPreferences = {
+  push: {
+    enabled: false,
+    categories: {
+      'report-processed': false,
+      'access-activity': false,
+      'emergency-alerts': false,
+      'system-updates': false,
+    },
+  },
+  email: {
+    enabled: true,
+    categories: {
+      'report-processed': true,
+      'access-activity': true,
+      'emergency-alerts': true,
+      'system-updates': false,
+    },
+  },
+  sms: {
+    enabled: false,
+    categories: {
+      'report-processed': false,
+      'access-activity': false,
+      'emergency-alerts': false,
+      'system-updates': false,
+    },
+  },
+  updatedAt: '2025-06-01T00:00:00Z',
+}
+
+function setupFetchMock(overrides?: {
+  profile?: Profile
+  consents?: ConsentListResponse
+  notifications?: NotificationPreferences
+}) {
   const profile = overrides?.profile ?? mockProfile
   const consents = overrides?.consents ?? mockConsents
+  const notifications = overrides?.notifications ?? mockNotificationPrefs
   mockFetch.mockImplementation((url: string) => {
     if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(consents))
+    if (url.includes('/v1/notification-preferences')) return Promise.resolve(jsonResponse(notifications))
     return Promise.resolve(jsonResponse(profile))
   })
 }
 
+let originalNotification: typeof globalThis.Notification
+
 beforeEach(() => {
   mockFetch.mockReset()
+  originalNotification = globalThis.Notification
+  Object.defineProperty(globalThis, 'Notification', {
+    value: { permission: 'default', requestPermission: vi.fn() },
+    writable: true,
+    configurable: true,
+  })
+})
+
+afterEach(() => {
+  Object.defineProperty(globalThis, 'Notification', {
+    value: originalNotification,
+    writable: true,
+    configurable: true,
+  })
 })
 
 describe('SettingsPage', () => {
@@ -143,16 +201,16 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Research Participation')).toBeInTheDocument()
   })
 
-  it('renders notifications placeholder section', async () => {
+  it('renders notifications section with channel toggles', async () => {
     setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Notifications' })).toBeInTheDocument()
+      expect(screen.getByText('Push Notifications')).toBeInTheDocument()
     })
-    expect(screen.getByText('Push notifications')).toBeInTheDocument()
-    expect(screen.getByText('Email notifications')).toBeInTheDocument()
-    expect(screen.getByText('SMS notifications')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Notifications' })).toBeInTheDocument()
+    expect(screen.getByText('Email Notifications')).toBeInTheDocument()
+    expect(screen.getByText('SMS Notifications')).toBeInTheDocument()
   })
 
   it('renders account section with sign out', async () => {
@@ -196,6 +254,7 @@ describe('SettingsPage', () => {
 
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(mockConsents))
+      if (url.includes('/v1/notification-preferences')) return Promise.resolve(jsonResponse(mockNotificationPrefs))
       return Promise.resolve(jsonResponse({ ...mockProfile, name: 'Arjun Patel' }))
     })
     await userEvent.click(screen.getByTestId('profile-save-button'))
