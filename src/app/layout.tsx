@@ -35,7 +35,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${dmSerifDisplay.variable} ${outfit.variable} ${dmMono.variable}`}
       suppressHydrationWarning
     >
-      <body>
+      <body suppressHydrationWarning>
         <Providers>
           <AmbientOrbs />
           {children}
