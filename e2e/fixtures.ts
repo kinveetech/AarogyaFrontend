@@ -1,4 +1,4 @@
-import { test as base, expect } from '@playwright/test'
+import { test as base } from '@playwright/test'
 import type { Page } from '@playwright/test'
 
 type Fixtures = {
@@ -17,4 +17,4 @@ export const test = base.extend<Fixtures>({
   },
 })
 
-export { expect }
+export { expect } from '@playwright/test'
