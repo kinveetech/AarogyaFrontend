@@ -35,7 +35,7 @@ export function useAuth(): UseAuthReturn {
     user,
     isLoading: status === 'loading',
     isAuthenticated: status === 'authenticated',
-    login: () => signIn('cognito-pkce', { callbackUrl: '/reports' }),
-    logout: () => signOut({ callbackUrl: '/login' }),
+    login: () => void signIn('cognito-pkce', { callbackUrl: '/reports' }),
+    logout: () => void signOut({ callbackUrl: '/login' }),
   }
 }
