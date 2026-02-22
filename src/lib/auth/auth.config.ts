@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth'
 import CognitoPKCE from './cognito-provider'
 import { refreshAccessToken } from './refresh-token'
+import { revokeToken } from './revoke-token'
 import './types'
 
 const PROTECTED_ROUTES = ['/reports', '/access', '/emergency', '/settings']
@@ -11,6 +12,13 @@ export const authConfig: NextAuthConfig = {
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
+  },
+  events: {
+    async signOut(message) {
+      if ('token' in message && message.token?.refreshToken) {
+        await revokeToken(message.token.refreshToken)
+      }
+    },
   },
   callbacks: {
     async jwt({ token, account, user }) {

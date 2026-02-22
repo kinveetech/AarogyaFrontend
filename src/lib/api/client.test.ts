@@ -25,7 +25,7 @@ describe('apiFetch', () => {
 
     expect(result).toEqual({ id: 1, name: 'test' })
     expect(mockFetch).toHaveBeenCalledWith(
-      '/api/v1/reports',
+      '/api/proxy/v1/reports',
       expect.objectContaining({
         headers: expect.objectContaining({ 'Content-Type': 'application/json' }),
       }),
@@ -54,7 +54,7 @@ describe('apiFetch', () => {
     })
 
     expect(mockFetch).toHaveBeenCalledWith(
-      '/api/v1/reports',
+      '/api/proxy/v1/reports',
       expect.objectContaining({
         method: 'POST',
         body: JSON.stringify({ title: 'Report' }),
@@ -181,7 +181,7 @@ describe('apiFetch', () => {
 
     expect(onRequest).toHaveBeenCalledOnce()
     expect(mockFetch).toHaveBeenCalledWith(
-      '/api/v1/test',
+      '/api/proxy/v1/test',
       expect.objectContaining({
         headers: expect.objectContaining({ 'X-Custom': 'value' }),
       }),

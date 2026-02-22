@@ -22,9 +22,14 @@ vi.mock('./refresh-token', () => ({
   }),
 }))
 
+vi.mock('./revoke-token', () => ({
+  revokeToken: vi.fn().mockResolvedValue(undefined),
+}))
+
 const { authConfig } = await import('./auth.config')
 
 const { refreshAccessToken } = await import('./refresh-token')
+const { revokeToken } = await import('./revoke-token')
 
 beforeEach(() => {
   vi.clearAllMocks()
@@ -194,5 +199,47 @@ describe('authorized callback', () => {
     })
 
     expect(result).toBe(true)
+  })
+})
+
+describe('signOut event', () => {
+  const signOut = authConfig.events!.signOut!
+
+  it('calls revokeToken with the refresh token from JWT', async () => {
+    await signOut({
+      token: {
+        accessToken: 'at-123',
+        refreshToken: 'rt-456',
+        expiresAt: 9999999999,
+        userId: 'user-1',
+        role: 'patient',
+        sub: 'user-1',
+      },
+    })
+
+    expect(revokeToken).toHaveBeenCalledWith('rt-456')
+  })
+
+  it('does not call revokeToken when token has no refreshToken', async () => {
+    await signOut({
+      token: {
+        accessToken: 'at-123',
+        refreshToken: '',
+        expiresAt: 9999999999,
+        userId: 'user-1',
+        role: 'patient',
+        sub: 'user-1',
+      },
+    })
+
+    expect(revokeToken).not.toHaveBeenCalled()
+  })
+
+  it('does not call revokeToken for session-based sign-out', async () => {
+    await signOut({
+      session: { sessionToken: 'st-123' },
+    } as Parameters<typeof signOut>[0])
+
+    expect(revokeToken).not.toHaveBeenCalled()
   })
 })
