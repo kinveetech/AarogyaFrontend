@@ -5,7 +5,7 @@ import { Box, VStack } from '@chakra-ui/react'
 import { useProfile, useUpdateProfile } from '@/hooks/profile'
 import {
   ProfileSection,
-  ConsentsPlaceholder,
+  ConsentsSection,
   NotificationsPlaceholder,
   AccountSection,
 } from '@/components/settings'
@@ -38,7 +38,7 @@ export default function SettingsPage() {
           isSaving={updateProfile.isPending}
           onSave={handleSave}
         />
-        <ConsentsPlaceholder />
+        <ConsentsSection />
         <NotificationsPlaceholder />
         <AccountSection />
       </VStack>

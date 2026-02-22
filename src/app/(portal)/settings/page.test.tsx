@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, userEvent, waitFor } from '@/test/render'
 import SettingsPage from './page'
 import type { Profile } from '@/types/profile'
+import type { ConsentListResponse } from '@/types/consent'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
@@ -29,6 +30,24 @@ const mockProfile: Profile = {
   updatedAt: '2024-06-01T00:00:00Z',
 }
 
+const mockConsents: ConsentListResponse = {
+  items: [
+    { id: 'c1', purpose: 'analytics', granted: true, updatedAt: '2025-06-01T00:00:00Z' },
+    { id: 'c2', purpose: 'marketing', granted: false, updatedAt: '2025-05-15T00:00:00Z' },
+    { id: 'c3', purpose: 'data-sharing', granted: true, updatedAt: '2025-04-20T00:00:00Z' },
+    { id: 'c4', purpose: 'research', granted: false, updatedAt: '2025-03-10T00:00:00Z' },
+  ],
+}
+
+function setupFetchMock(overrides?: { profile?: Profile; consents?: ConsentListResponse }) {
+  const profile = overrides?.profile ?? mockProfile
+  const consents = overrides?.consents ?? mockConsents
+  mockFetch.mockImplementation((url: string) => {
+    if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(consents))
+    return Promise.resolve(jsonResponse(profile))
+  })
+}
+
 beforeEach(() => {
   mockFetch.mockReset()
 })
@@ -41,7 +60,7 @@ describe('SettingsPage', () => {
   })
 
   it('renders profile section heading', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -50,7 +69,7 @@ describe('SettingsPage', () => {
   })
 
   it('renders profile data after loading', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -60,7 +79,7 @@ describe('SettingsPage', () => {
   })
 
   it('renders avatar with initials', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -69,7 +88,7 @@ describe('SettingsPage', () => {
   })
 
   it('shows email field as readonly', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -78,7 +97,7 @@ describe('SettingsPage', () => {
   })
 
   it('populates form fields from profile data', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -92,7 +111,7 @@ describe('SettingsPage', () => {
   })
 
   it('shows Aadhaar not verified badge when unverified', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -102,9 +121,7 @@ describe('SettingsPage', () => {
   })
 
   it('shows Aadhaar verified badge when verified', async () => {
-    mockFetch.mockResolvedValue(
-      jsonResponse({ ...mockProfile, aadhaarVerified: true }),
-    )
+    setupFetchMock({ profile: { ...mockProfile, aadhaarVerified: true } })
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -113,21 +130,21 @@ describe('SettingsPage', () => {
     expect(screen.getByText('Verified')).toBeInTheDocument()
   })
 
-  it('renders consents placeholder section', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+  it('renders consents section with toggle rows', async () => {
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByRole('heading', { name: 'Data Consents' })).toBeInTheDocument()
+      expect(screen.getByText('Data Processing (Analytics)')).toBeInTheDocument()
     })
-    expect(screen.getByText('Analytics')).toBeInTheDocument()
-    expect(screen.getByText('Research')).toBeInTheDocument()
-    expect(screen.getByText('Marketing')).toBeInTheDocument()
-    expect(screen.getByText('Third-party Sharing')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Data Consents' })).toBeInTheDocument()
+    expect(screen.getByText('Marketing Communications')).toBeInTheDocument()
+    expect(screen.getByText('Third-party Data Sharing')).toBeInTheDocument()
+    expect(screen.getByText('Research Participation')).toBeInTheDocument()
   })
 
   it('renders notifications placeholder section', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -139,7 +156,7 @@ describe('SettingsPage', () => {
   })
 
   it('renders account section with sign out', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -150,7 +167,7 @@ describe('SettingsPage', () => {
   })
 
   it('enables Save Changes button when form is edited', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -167,7 +184,7 @@ describe('SettingsPage', () => {
   })
 
   it('submits profile update with PUT request', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -177,9 +194,10 @@ describe('SettingsPage', () => {
     await userEvent.clear(screen.getByTestId('profile-name-input'))
     await userEvent.type(screen.getByTestId('profile-name-input'), 'Arjun Patel')
 
-    mockFetch.mockResolvedValue(
-      jsonResponse({ ...mockProfile, name: 'Arjun Patel' }),
-    )
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(mockConsents))
+      return Promise.resolve(jsonResponse({ ...mockProfile, name: 'Arjun Patel' }))
+    })
     await userEvent.click(screen.getByTestId('profile-save-button'))
 
     await waitFor(() => {
@@ -193,7 +211,7 @@ describe('SettingsPage', () => {
   })
 
   it('shows validation error for empty name', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -209,7 +227,7 @@ describe('SettingsPage', () => {
   })
 
   it('shows validation error for invalid phone', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
@@ -226,7 +244,7 @@ describe('SettingsPage', () => {
   })
 
   it('opens sign out confirmation dialog', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+    setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
