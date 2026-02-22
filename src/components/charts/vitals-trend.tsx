@@ -59,17 +59,14 @@ export function VitalsTooltip({
   payload,
   label,
   series,
-  isDark,
 }: TooltipProps<number, string> & { series: VitalSeries[]; isDark: boolean }) {
-  const colors = getChartColors(isDark)
-
   if (!active || !payload?.length) return null
 
   const seriesMap = new Map(series.map((s) => [s.type, s]))
 
   return (
     <Box
-      bg={isDark ? 'bg.card' : 'bg.card'}
+      bg="bg.card"
       borderWidth="1px"
       borderColor="border.subtle"
       borderRadius="md"

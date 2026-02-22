@@ -45,7 +45,6 @@ export function ParameterTooltip({
   active,
   payload,
   unit,
-  isDark,
 }: TooltipProps<number, string> & { unit: string; isDark: boolean }) {
   if (!active || !payload?.length) return null
 
@@ -53,7 +52,7 @@ export function ParameterTooltip({
 
   return (
     <Box
-      bg={isDark ? 'bg.card' : 'bg.card'}
+      bg="bg.card"
       borderWidth="1px"
       borderColor="border.subtle"
       borderRadius="md"
