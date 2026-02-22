@@ -1,0 +1,1226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarogya — Loading Screen Concepts</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@200;300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   BASE & PAGE LAYOUT
+   ═══════════════════════════════════════════ */
+:root {
+  --teal-deep: #0A4D4A;
+  --teal-mid: #0E6B66;
+  --teal-light: #1A9E97;
+  --sage: #7FB285;
+  --sage-light: #A8D5AE;
+  --cream: #FFF8F0;
+  --cream-warm: #FFF1E0;
+  --coral: #FF6B6B;
+  --coral-soft: #FF8A8A;
+  --amber: #FFB347;
+  --amber-glow: #FFD693;
+  --dark-bg: #0B1A1A;
+  --dark-surface: #112626;
+  --dark-card: #1A3535;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #E8E0D8;
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.page-header {
+  text-align: center;
+  padding: 60px 20px 20px;
+}
+
+.page-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.8rem;
+  color: var(--teal-deep);
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 1.1rem;
+  color: #6B7C7C;
+  margin-top: 8px;
+}
+
+.concepts-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding: 40px 20px 100px;
+}
+
+.concept-section {
+  text-align: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.concept-label {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 8px;
+}
+
+.concept-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--teal-deep);
+  margin-bottom: 6px;
+}
+
+.concept-desc {
+  font-weight: 300;
+  font-size: 0.95rem;
+  color: #8A9494;
+  margin-bottom: 32px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+/* ═══════════════════════════════════════════
+   DEVICE FRAMES
+   ═══════════════════════════════════════════ */
+.phone-frame {
+  width: 375px;
+  height: 812px;
+  border-radius: 50px;
+  position: relative;
+  margin: 0 auto;
+  box-shadow:
+    0 0 0 2px #1a1a1a,
+    0 0 0 6px #2a2a2a,
+    0 0 0 8px #1a1a1a,
+    0 30px 80px rgba(0,0,0,0.35),
+    0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 28px;
+  background: #1a1a1a;
+  border-radius: 0 0 20px 20px;
+  z-index: 100;
+}
+
+.phone-frame::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 12px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  z-index: 101;
+  box-shadow: inset 0 0 3px rgba(0,0,0,0.5);
+}
+
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  overflow: hidden;
+  position: relative;
+}
+
+.browser-frame {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 1px rgba(0,0,0,0.08),
+    0 30px 80px rgba(0,0,0,0.25),
+    0 10px 30px rgba(0,0,0,0.15);
+}
+
+.browser-chrome {
+  background: #2C2C2C;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.browser-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.browser-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.browser-dots span:nth-child(1) { background: #FF5F57; }
+.browser-dots span:nth-child(2) { background: #FFBD2E; }
+.browser-dots span:nth-child(3) { background: #28CA41; }
+
+.browser-url {
+  flex: 1;
+  background: #1A1A1A;
+  border-radius: 8px;
+  padding: 7px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.browser-url svg {
+  width: 14px;
+  height: 14px;
+  fill: #666;
+  flex-shrink: 0;
+}
+
+.browser-url span {
+  font-size: 0.8rem;
+  color: #999;
+  font-family: 'Outfit', sans-serif;
+}
+
+.browser-viewport {
+  height: 620px;
+  position: relative;
+  overflow: hidden;
+}
+
+
+/* ═══════════════════════════════════════════
+   VARIANT 1: SHIELD TREE GROWTH (Light Mobile)
+   ═══════════════════════════════════════════ */
+.v1-screen {
+  background: linear-gradient(165deg, #FFF8F0 0%, #F0FAF0 40%, #E0F5F0 70%, #D5F0EA 100%);
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+
+.v1-orb {
+  position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.4;
+  animation: v1Float 8s ease-in-out infinite;
+}
+.v1-orb--1 { width: 300px; height: 300px; background: var(--sage-light); top: -80px; right: -80px; }
+.v1-orb--2 { width: 250px; height: 250px; background: var(--amber-glow); bottom: -60px; left: -60px; animation-delay: -3s; }
+.v1-orb--3 { width: 180px; height: 180px; background: var(--coral-soft); top: 50%; left: 60%; animation-delay: -5s; opacity: 0.2; }
+@keyframes v1Float {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33% { transform: translate(20px,-30px) scale(1.05); }
+  66% { transform: translate(-15px,15px) scale(0.95); }
+}
+
+/* Tree animation container */
+.v1-tree-container {
+  position: relative; width: 200px; height: 200px; margin-bottom: 20px; z-index: 2;
+}
+
+/* Concentric ripples */
+.v1-ripple {
+  position: absolute; top: 62%; left: 50%; transform: translate(-50%,-50%);
+  border-radius: 50%; border-style: solid; border-width: 1.5px; opacity: 0; pointer-events: none;
+}
+.v1-ripple--1 { border-color: var(--teal-mid); animation: v1RippleOut 3.5s ease-out 2.2s infinite; }
+.v1-ripple--2 { border-color: var(--sage); animation: v1RippleOut 3.5s ease-out 2.8s infinite; }
+.v1-ripple--3 { border-color: var(--amber); animation: v1RippleOut 3.5s ease-out 3.4s infinite; }
+@keyframes v1RippleOut {
+  0%   { width: 40px; height: 40px; opacity: 0.7; border-width: 2px; }
+  100% { width: 280px; height: 280px; opacity: 0; border-width: 0.5px; }
+}
+
+/* Tree SVG */
+.v1-tree-svg {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 160px; height: 160px; z-index: 3;
+}
+
+.v1-tree-svg .shield-path {
+  stroke-dasharray: 300; stroke-dashoffset: 300;
+  animation: v1ShieldDraw 1.5s ease-out 0.3s forwards;
+}
+@keyframes v1ShieldDraw {
+  0%   { stroke-dashoffset: 300; fill-opacity: 0; }
+  60%  { fill-opacity: 0; }
+  100% { stroke-dashoffset: 0; fill-opacity: 0.9; }
+}
+
+.v1-tree-svg .seed { opacity: 0; animation: v1SeedPop 0.8s ease-out 1.2s forwards; }
+@keyframes v1SeedPop {
+  0% { opacity: 0; transform: scale(0); } 50% { opacity: 1; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); }
+}
+
+.v1-tree-svg .trunk {
+  stroke-dasharray: 40; stroke-dashoffset: 40; opacity: 0;
+  animation: v1TrunkGrow 1s ease-out 1.8s forwards;
+}
+@keyframes v1TrunkGrow { 0% { stroke-dashoffset: 40; opacity: 0; } 10% { opacity: 1; } 100% { stroke-dashoffset: 0; opacity: 1; } }
+
+.v1-tree-svg .root {
+  stroke-dasharray: 30; stroke-dashoffset: 30; opacity: 0;
+  animation: v1RootSpread 0.8s ease-out forwards;
+}
+.v1-tree-svg .root:nth-child(1) { animation-delay: 2.0s; }
+.v1-tree-svg .root:nth-child(2) { animation-delay: 2.1s; }
+.v1-tree-svg .root:nth-child(3) { animation-delay: 2.2s; }
+.v1-tree-svg .root:nth-child(4) { animation-delay: 2.3s; }
+@keyframes v1RootSpread { 0% { stroke-dashoffset: 30; opacity: 0; } 10% { opacity: 0.3; } 100% { stroke-dashoffset: 0; opacity: 0.3; } }
+
+.v1-tree-svg .branch {
+  stroke-dasharray: 30; stroke-dashoffset: 30; opacity: 0;
+  animation: v1BranchGrow 0.7s ease-out forwards;
+}
+.v1-tree-svg .branch:nth-child(1) { animation-delay: 2.4s; }
+.v1-tree-svg .branch:nth-child(2) { animation-delay: 2.5s; }
+.v1-tree-svg .branch:nth-child(3) { animation-delay: 2.6s; }
+.v1-tree-svg .branch:nth-child(4) { animation-delay: 2.7s; }
+@keyframes v1BranchGrow { 0% { stroke-dashoffset: 30; opacity: 0; } 10% { opacity: 0.35; } 100% { stroke-dashoffset: 0; opacity: 0.35; } }
+
+.v1-tree-svg .canopy { opacity: 0; transform-origin: center; }
+.v1-tree-svg .canopy--1 { animation: v1CanopyBloom 0.8s cubic-bezier(0.34,1.56,0.64,1) 2.8s forwards; }
+.v1-tree-svg .canopy--2 { animation: v1CanopyBloom 0.8s cubic-bezier(0.34,1.56,0.64,1) 3.0s forwards; }
+.v1-tree-svg .canopy--3 { animation: v1CanopyBloom 0.8s cubic-bezier(0.34,1.56,0.64,1) 3.2s forwards; }
+.v1-tree-svg .canopy--4 { animation: v1CanopyBloom 0.8s cubic-bezier(0.34,1.56,0.64,1) 3.4s forwards; }
+@keyframes v1CanopyBloom { 0% { opacity: 0; transform: scale(0.2); } 60% { opacity: 0.5; } 100% { opacity: 1; transform: scale(1); } }
+
+.v1-tree-svg .ground { opacity: 0; animation: v1GroundGlow 1s ease-out 3.2s forwards; }
+@keyframes v1GroundGlow { 0% { opacity: 0; } 100% { opacity: 0.3; } }
+
+/* Brand */
+.v1-brand {
+  z-index: 2; text-align: center; opacity: 0;
+  animation: v1FadeUp 1.2s ease-out 3.5s forwards;
+}
+.v1-brand h1 { font-family: 'DM Serif Display', serif; font-size: 3.2rem; color: var(--teal-deep); letter-spacing: -0.02em; line-height: 1; }
+.v1-brand .tagline { font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 0.9rem; color: var(--teal-mid); margin-top: 8px; letter-spacing: 0.15em; text-transform: uppercase; }
+@keyframes v1FadeUp { 0% { opacity: 0; transform: translateY(20px); } 100% { opacity: 1; transform: translateY(0); } }
+
+/* Progress */
+.v1-progress {
+  margin-top: 40px; z-index: 2; opacity: 0;
+  animation: v1FadeUp 1s ease-out 4s forwards;
+  display: flex; flex-direction: column; align-items: center; gap: 16px;
+}
+.v1-progress-track { width: 200px; height: 3px; background: rgba(10,77,74,0.1); border-radius: 4px; overflow: hidden; }
+.v1-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--teal-mid), var(--sage), var(--amber)); border-radius: 4px; animation: v1ProgressGrow 4s ease-in-out 4.3s infinite; }
+@keyframes v1ProgressGrow { 0% { width: 0%; } 20% { width: 25%; } 50% { width: 55%; } 70% { width: 72%; } 90% { width: 90%; } 100% { width: 100%; } }
+.v1-progress-text { font-weight: 300; font-size: 0.75rem; color: var(--teal-mid); letter-spacing: 0.1em; }
+
+
+/* ═══════════════════════════════════════════
+   VARIANT 2: DARK VITALITY (Dark Mobile)
+   ═══════════════════════════════════════════ */
+.v2-screen {
+  background: var(--dark-bg);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Mesh gradient background */
+.v2-mesh {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 80%, rgba(10, 77, 74, 0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 20%, rgba(26, 158, 151, 0.3) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(255, 107, 107, 0.08) 0%, transparent 50%);
+  animation: v2MeshShift 12s ease-in-out infinite alternate;
+}
+
+@keyframes v2MeshShift {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+/* DNA Helix */
+.v2-dna-container {
+  position: relative;
+  width: 200px;
+  height: 260px;
+  margin-bottom: 48px;
+  z-index: 2;
+}
+
+.v2-dna {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.v2-dna-strand {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.v2-dna-node {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  left: 50%;
+  animation: v2HelixSpin 4s linear infinite;
+}
+
+.v2-dna-node--left {
+  background: var(--teal-light);
+  box-shadow: 0 0 15px rgba(26, 158, 151, 0.6);
+}
+
+.v2-dna-node--right {
+  background: var(--coral);
+  box-shadow: 0 0 15px rgba(255, 107, 107, 0.6);
+  animation-direction: reverse;
+}
+
+.v2-dna-connector {
+  position: absolute;
+  height: 1.5px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, var(--teal-light), transparent 30%, transparent 70%, var(--coral));
+  opacity: 0.3;
+  animation: v2ConnectorPulse 2s ease-in-out infinite;
+}
+
+@keyframes v2HelixSpin {
+  0% { transform: translateX(calc(-50% + 60px)) scale(1); opacity: 1; }
+  25% { transform: translateX(-50%) scale(0.6); opacity: 0.4; }
+  50% { transform: translateX(calc(-50% - 60px)) scale(1); opacity: 1; }
+  75% { transform: translateX(-50%) scale(0.6); opacity: 0.4; }
+  100% { transform: translateX(calc(-50% + 60px)) scale(1); opacity: 1; }
+}
+
+@keyframes v2ConnectorPulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.5; }
+}
+
+/* Glow ring behind DNA */
+.v2-glow-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  border: 1px solid rgba(26, 158, 151, 0.15);
+  animation: v2GlowPulse 4s ease-in-out infinite;
+}
+
+.v2-glow-ring::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  border-radius: 50%;
+  border: 1px solid rgba(26, 158, 151, 0.08);
+  animation: v2GlowPulse 4s ease-in-out infinite reverse;
+}
+
+@keyframes v2GlowPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+  50% { transform: translate(-50%, -50%) scale(1.15); opacity: 1; }
+}
+
+/* Brand */
+.v2-brand {
+  z-index: 2;
+  text-align: center;
+  opacity: 0;
+  animation: v2FadeUp 1.2s ease-out 0.8s forwards;
+}
+
+.v2-brand h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.2rem;
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--sage-light) 50%, var(--teal-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+}
+
+.v2-brand .tagline {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 200;
+  font-size: 0.85rem;
+  color: rgba(168, 213, 174, 0.7);
+  margin-top: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+@keyframes v2FadeUp {
+  0% { opacity: 0; transform: translateY(25px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Heartbeat line progress */
+.v2-heartbeat-container {
+  margin-top: 56px;
+  z-index: 2;
+  opacity: 0;
+  animation: v2FadeUp 1s ease-out 1.5s forwards;
+  position: relative;
+}
+
+.v2-heartbeat-svg {
+  width: 240px;
+  height: 50px;
+}
+
+.v2-heartbeat-line {
+  fill: none;
+  stroke: var(--teal-light);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: v2HeartbeatDraw 2s ease-in-out 2s infinite;
+  filter: drop-shadow(0 0 6px rgba(26, 158, 151, 0.5));
+}
+
+@keyframes v2HeartbeatDraw {
+  0% { stroke-dashoffset: 400; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.v2-loading-dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.v2-loading-dots span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  opacity: 0.3;
+  animation: v2DotPulse 1.5s ease-in-out infinite;
+}
+
+.v2-loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+.v2-loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes v2DotPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.4); }
+}
+
+/* Floating particles */
+.v2-particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--teal-light);
+  opacity: 0;
+  animation: v2Sparkle 5s ease-in-out infinite;
+}
+
+.v2-particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.v2-particle:nth-child(2) { left: 85%; top: 30%; animation-delay: 1s; background: var(--coral-soft); }
+.v2-particle:nth-child(3) { left: 20%; top: 75%; animation-delay: 2.5s; background: var(--amber); }
+.v2-particle:nth-child(4) { left: 75%; top: 80%; animation-delay: 3.5s; }
+.v2-particle:nth-child(5) { left: 55%; top: 12%; animation-delay: 1.8s; background: var(--sage); }
+.v2-particle:nth-child(6) { left: 40%; top: 90%; animation-delay: 4s; background: var(--coral-soft); }
+.v2-particle:nth-child(7) { left: 90%; top: 55%; animation-delay: 0.5s; }
+.v2-particle:nth-child(8) { left: 8%; top: 50%; animation-delay: 3s; background: var(--amber-glow); }
+
+@keyframes v2Sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  30% { opacity: 0.8; transform: scale(1.5); }
+  70% { opacity: 0.4; transform: scale(1); }
+}
+
+
+/* ═══════════════════════════════════════════
+   VARIANT 3: WEB PANORAMIC (Browser)
+   ═══════════════════════════════════════════ */
+.v3-screen {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(170deg, #FFF8F0 0%, #F5FBF5 30%, #EAF7F4 60%, #E0F2EE 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Large ambient shapes */
+.v3-shape {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.3;
+}
+
+.v3-shape--1 {
+  width: 600px;
+  height: 600px;
+  background: var(--sage-light);
+  top: -200px;
+  left: -100px;
+  animation: v3ShapeFloat 10s ease-in-out infinite;
+}
+
+.v3-shape--2 {
+  width: 500px;
+  height: 500px;
+  background: var(--amber-glow);
+  bottom: -200px;
+  right: -100px;
+  animation: v3ShapeFloat 10s ease-in-out infinite reverse;
+}
+
+.v3-shape--3 {
+  width: 300px;
+  height: 300px;
+  background: var(--coral-soft);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.12;
+  animation: v3ShapeFloat 8s ease-in-out infinite;
+  animation-delay: -4s;
+}
+
+@keyframes v3ShapeFloat {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(30px, -20px); }
+}
+
+/* Glass card */
+.v3-glass-card {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 32px;
+  padding: 56px 72px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow:
+    0 8px 32px rgba(10, 77, 74, 0.06),
+    0 2px 8px rgba(10, 77, 74, 0.04);
+  opacity: 0;
+  animation: v3CardReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+@keyframes v3CardReveal {
+  0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Animated logo mark */
+.v3-logo-mark {
+  width: 90px;
+  height: 90px;
+  position: relative;
+  margin-bottom: 32px;
+}
+
+.v3-logo-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--teal-mid);
+  animation: v3LogoSpin 3s linear infinite;
+}
+
+.v3-logo-ring:nth-child(2) {
+  inset: 8px;
+  border-top-color: var(--sage);
+  animation-duration: 2.5s;
+  animation-direction: reverse;
+}
+
+.v3-logo-ring:nth-child(3) {
+  inset: 16px;
+  border-top-color: var(--coral);
+  animation-duration: 2s;
+}
+
+@keyframes v3LogoSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.v3-logo-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 36px;
+}
+
+.v3-logo-cross {
+  position: absolute;
+  background: var(--teal-deep);
+  border-radius: 3px;
+}
+
+.v3-logo-cross--h {
+  width: 28px;
+  height: 8px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.v3-logo-cross--v {
+  width: 8px;
+  height: 28px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Brand */
+.v3-brand h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 3.6rem;
+  color: var(--teal-deep);
+  letter-spacing: -0.03em;
+  line-height: 1;
+  opacity: 0;
+  animation: v3TextReveal 1s ease-out 1s forwards;
+}
+
+.v3-brand .tagline {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--teal-mid);
+  margin-top: 10px;
+  letter-spacing: 0.12em;
+  opacity: 0;
+  animation: v3TextReveal 1s ease-out 1.3s forwards;
+}
+
+@keyframes v3TextReveal {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Heartbeat line (wide) */
+.v3-heartbeat-wide {
+  margin-top: 40px;
+  opacity: 0;
+  animation: v3TextReveal 1s ease-out 1.6s forwards;
+}
+
+.v3-heartbeat-wide svg {
+  width: 320px;
+  height: 60px;
+}
+
+.v3-heartbeat-wide .hb-line {
+  fill: none;
+  stroke: var(--teal-light);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: v3HBDraw 3s ease-in-out 2s infinite;
+  filter: drop-shadow(0 0 4px rgba(26, 158, 151, 0.3));
+}
+
+.v3-heartbeat-wide .hb-glow {
+  fill: none;
+  stroke: var(--teal-light);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: v3HBDraw 3s ease-in-out 2s infinite;
+  opacity: 0.15;
+  filter: blur(4px);
+}
+
+@keyframes v3HBDraw {
+  0% { stroke-dashoffset: 600; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Circular progress ring */
+.v3-ring-progress {
+  margin-top: 32px;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  opacity: 0;
+  animation: v3TextReveal 1s ease-out 1.8s forwards;
+}
+
+.v3-ring-progress svg {
+  width: 48px;
+  height: 48px;
+  transform: rotate(-90deg);
+}
+
+.v3-ring-bg {
+  fill: none;
+  stroke: rgba(10, 77, 74, 0.08);
+  stroke-width: 3;
+}
+
+.v3-ring-fill {
+  fill: none;
+  stroke: var(--teal-mid);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 125.6;
+  stroke-dashoffset: 125.6;
+  animation: v3RingFill 5s ease-in-out 2.2s forwards;
+}
+
+@keyframes v3RingFill {
+  0% { stroke-dashoffset: 125.6; }
+  100% { stroke-dashoffset: 0; }
+}
+
+.v3-ring-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  font-weight: 500;
+  color: var(--teal-deep);
+}
+
+/* Corner decorations */
+.v3-corner-deco {
+  position: absolute;
+  z-index: 1;
+}
+
+.v3-corner-deco--tl {
+  top: 30px;
+  left: 30px;
+  width: 60px;
+  height: 60px;
+  border-left: 2px solid rgba(10, 77, 74, 0.1);
+  border-top: 2px solid rgba(10, 77, 74, 0.1);
+  border-radius: 4px 0 0 0;
+  opacity: 0;
+  animation: v3CornerFade 1s ease-out 0.8s forwards;
+}
+
+.v3-corner-deco--br {
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  border-right: 2px solid rgba(10, 77, 74, 0.1);
+  border-bottom: 2px solid rgba(10, 77, 74, 0.1);
+  border-radius: 0 0 4px 0;
+  opacity: 0;
+  animation: v3CornerFade 1s ease-out 1s forwards;
+}
+
+@keyframes v3CornerFade {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* Floating cross particles */
+.v3-cross-particle {
+  position: absolute;
+  z-index: 1;
+  opacity: 0;
+  animation: v3CrossFloat 7s ease-in-out infinite;
+}
+
+.v3-cross-particle svg {
+  width: 16px;
+  height: 16px;
+}
+
+.v3-cross-particle:nth-child(1) { left: 8%; top: 20%; animation-delay: 0s; }
+.v3-cross-particle:nth-child(2) { right: 12%; top: 30%; animation-delay: 2s; }
+.v3-cross-particle:nth-child(3) { left: 15%; bottom: 25%; animation-delay: 4s; }
+.v3-cross-particle:nth-child(4) { right: 8%; bottom: 20%; animation-delay: 1s; }
+.v3-cross-particle:nth-child(5) { left: 45%; top: 10%; animation-delay: 3s; }
+
+@keyframes v3CrossFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) rotate(0deg); }
+  25% { opacity: 0.3; }
+  50% { opacity: 0.15; transform: translateY(-25px) rotate(45deg); }
+  75% { opacity: 0.25; }
+}
+
+
+/* ═══════════════════════════════════════════
+   PAGE RESPONSIVENESS
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .page-header h1 { font-size: 2rem; }
+  .phone-frame {
+    width: 300px;
+    height: 650px;
+    border-radius: 40px;
+  }
+  .phone-frame::before { width: 120px; height: 24px; }
+  .phone-screen { border-radius: 40px; }
+  .v1-brand h1, .v2-brand h1 { font-size: 2.6rem; }
+  .v1-lotus-container { width: 140px; height: 140px; }
+  .v2-dna-container { width: 160px; height: 220px; }
+  .v3-glass-card { padding: 40px 32px; }
+  .v3-brand h1 { font-size: 2.6rem; }
+  .browser-viewport { height: 500px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page-header">
+  <h1>Aarogya — Loading Screens</h1>
+  <p>Three concept variants for iOS, Android &amp; Web</p>
+</div>
+
+<div class="concepts-grid">
+
+  <!-- ═══════════ VARIANT 1: SERENE BLOOM ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Concept 01</div>
+    <div class="concept-title">Shield Tree Growth</div>
+    <div class="concept-desc">Light mode mobile — A seed grows into a sheltered tree with ripples of energy, symbolizing rooted health</div>
+
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="v1-screen">
+          <div class="v1-orb v1-orb--1"></div>
+          <div class="v1-orb v1-orb--2"></div>
+          <div class="v1-orb v1-orb--3"></div>
+
+          <div class="v1-tree-container">
+            <div class="v1-ripple v1-ripple--1"></div>
+            <div class="v1-ripple v1-ripple--2"></div>
+            <div class="v1-ripple v1-ripple--3"></div>
+
+            <svg class="v1-tree-svg" viewBox="0 0 80 80" fill="none">
+              <defs>
+                <linearGradient id="v1ShieldG" x1="20" y1="4" x2="60" y2="76" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#0E6B66"/>
+                  <stop offset="100%" stop-color="#0A4D4A"/>
+                </linearGradient>
+                <linearGradient id="v1CanopyG" x1="24" y1="14" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#A8D5AE"/>
+                  <stop offset="50%" stop-color="#7FB285"/>
+                  <stop offset="100%" stop-color="#0E6B66"/>
+                </linearGradient>
+              </defs>
+              <path class="shield-path" d="M40 4 C22 4 10 10 10 10 L10 36 C10 56 24 70 40 76 C56 70 70 56 70 36 L70 10 C70 10 58 4 40 4Z" fill="url(#v1ShieldG)" fill-opacity="0" stroke="#0E6B66" stroke-width="1"/>
+              <circle class="seed" cx="40" cy="66" r="3" fill="#FFB347"/>
+              <path class="trunk" d="M40 66 L40 44" stroke="#FFF8F0" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+              <g class="roots">
+                <path class="root" d="M40 66 C36 68 30 69 28 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C44 68 50 69 52 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C38 69 36 71 34 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C42 69 44 71 46 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+              </g>
+              <g class="branches">
+                <path class="branch" d="M40 48 C34 44 28 42 24 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 48 C46 44 52 42 56 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C36 40 32 36 30 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C44 40 48 36 50 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+              </g>
+              <ellipse class="canopy canopy--1" cx="40" cy="36" rx="22" ry="16" fill="url(#v1CanopyG)" opacity="0.45"/>
+              <ellipse class="canopy canopy--2" cx="40" cy="32" rx="17" ry="13" fill="#7FB285" opacity="0.4"/>
+              <ellipse class="canopy canopy--3" cx="40" cy="27" rx="12" ry="10" fill="#A8D5AE" opacity="0.35"/>
+              <ellipse class="canopy canopy--4" cx="40" cy="22" rx="7" ry="6" fill="rgba(255,255,255,0.3)"/>
+              <ellipse class="ground" cx="40" cy="68" rx="12" ry="2.5" fill="#FFB347"/>
+            </svg>
+          </div>
+
+          <div class="v1-brand">
+            <h1>Aarogya</h1>
+            <div class="tagline">Your Health, Our Priority</div>
+          </div>
+
+          <div class="v1-progress">
+            <div class="v1-progress-track">
+              <div class="v1-progress-fill"></div>
+            </div>
+            <div class="v1-progress-text">Growing your wellness journey...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ VARIANT 2: DARK VITALITY ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Concept 02</div>
+    <div class="concept-title">Dark Vitality</div>
+    <div class="concept-desc">Dark mode mobile — DNA helix animation with bioluminescent glow, evoking cutting-edge health tech</div>
+
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="v2-screen">
+          <!-- Mesh background -->
+          <div class="v2-mesh"></div>
+
+          <!-- Sparkle particles -->
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+          <div class="v2-particle"></div>
+
+          <!-- DNA Helix -->
+          <div class="v2-dna-container">
+            <div class="v2-glow-ring"></div>
+            <div class="v2-dna" id="dnaHelix"></div>
+          </div>
+
+          <!-- Brand -->
+          <div class="v2-brand">
+            <h1>Aarogya</h1>
+            <div class="tagline">Your Health, Our Priority</div>
+          </div>
+
+          <!-- Heartbeat progress -->
+          <div class="v2-heartbeat-container">
+            <svg class="v2-heartbeat-svg" viewBox="0 0 240 50">
+              <path class="v2-heartbeat-line"
+                d="M0 25 L40 25 L50 25 L55 10 L60 40 L65 5 L70 35 L75 25 L85 25 L120 25 L130 25 L135 10 L140 40 L145 5 L150 35 L155 25 L165 25 L200 25 L210 25 L215 15 L220 35 L225 25 L240 25"/>
+            </svg>
+            <div class="v2-loading-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ VARIANT 3: WEB PANORAMIC ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Concept 03</div>
+    <div class="concept-title">Web Panoramic</div>
+    <div class="concept-desc">Browser loading screen — Glassmorphic elegance with spinning health rings and animated heartbeat</div>
+
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z"/></svg>
+          <span>aarogya.health</span>
+        </div>
+      </div>
+      <div class="browser-viewport">
+        <div class="v3-screen">
+          <!-- Background shapes -->
+          <div class="v3-shape v3-shape--1"></div>
+          <div class="v3-shape v3-shape--2"></div>
+          <div class="v3-shape v3-shape--3"></div>
+
+          <!-- Corner decorations -->
+          <div class="v3-corner-deco v3-corner-deco--tl"></div>
+          <div class="v3-corner-deco v3-corner-deco--br"></div>
+
+          <!-- Floating cross particles -->
+          <div class="v3-cross-particle">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="0" width="4" height="16" rx="2" fill="rgba(10,77,74,0.15)"/><rect x="0" y="6" width="16" height="4" rx="2" fill="rgba(10,77,74,0.15)"/></svg>
+          </div>
+          <div class="v3-cross-particle">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="0" width="4" height="16" rx="2" fill="rgba(127,178,133,0.2)"/><rect x="0" y="6" width="16" height="4" rx="2" fill="rgba(127,178,133,0.2)"/></svg>
+          </div>
+          <div class="v3-cross-particle">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="0" width="4" height="16" rx="2" fill="rgba(255,107,107,0.15)"/><rect x="0" y="6" width="16" height="4" rx="2" fill="rgba(255,107,107,0.15)"/></svg>
+          </div>
+          <div class="v3-cross-particle">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="0" width="4" height="16" rx="2" fill="rgba(10,77,74,0.12)"/><rect x="0" y="6" width="16" height="4" rx="2" fill="rgba(10,77,74,0.12)"/></svg>
+          </div>
+          <div class="v3-cross-particle">
+            <svg viewBox="0 0 16 16" fill="none"><rect x="6" y="0" width="4" height="16" rx="2" fill="rgba(255,179,71,0.2)"/><rect x="0" y="6" width="16" height="4" rx="2" fill="rgba(255,179,71,0.2)"/></svg>
+          </div>
+
+          <!-- Glass Card -->
+          <div class="v3-glass-card">
+            <!-- Animated logo -->
+            <div class="v3-logo-mark">
+              <div class="v3-logo-ring"></div>
+              <div class="v3-logo-ring"></div>
+              <div class="v3-logo-ring"></div>
+              <div class="v3-logo-center">
+                <div class="v3-logo-cross v3-logo-cross--h"></div>
+                <div class="v3-logo-cross v3-logo-cross--v"></div>
+              </div>
+            </div>
+
+            <!-- Brand -->
+            <div class="v3-brand">
+              <h1>Aarogya</h1>
+              <div class="tagline">Your Health, Our Priority</div>
+            </div>
+
+            <!-- Heartbeat -->
+            <div class="v3-heartbeat-wide">
+              <svg viewBox="0 0 320 60">
+                <path class="hb-glow"
+                  d="M0 30 L60 30 L80 30 L88 12 L96 48 L104 6 L112 42 L120 30 L140 30 L180 30 L200 30 L208 14 L216 46 L224 8 L232 40 L240 30 L260 30 L320 30"/>
+                <path class="hb-line"
+                  d="M0 30 L60 30 L80 30 L88 12 L96 48 L104 6 L112 42 L120 30 L140 30 L180 30 L200 30 L208 14 L216 46 L224 8 L232 40 L240 30 L260 30 L320 30"/>
+              </svg>
+            </div>
+
+            <!-- Ring progress -->
+            <div class="v3-ring-progress">
+              <svg viewBox="0 0 48 48">
+                <circle class="v3-ring-bg" cx="24" cy="24" r="20"/>
+                <circle class="v3-ring-fill" cx="24" cy="24" r="20"/>
+              </svg>
+              <div class="v3-ring-text" id="v3Percent">0%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// DNA HELIX GENERATOR (Variant 2)
+// ═══════════════════════════════════════════
+(function buildDNA() {
+  const container = document.getElementById('dnaHelix');
+  if (!container) return;
+  const nodeCount = 14;
+  const height = 260;
+  const spacing = height / (nodeCount + 1);
+
+  for (let i = 0; i < nodeCount; i++) {
+    const topOffset = spacing * (i + 1);
+    const delay = i * 0.28;
+
+    // Left node
+    const leftNode = document.createElement('div');
+    leftNode.className = 'v2-dna-node v2-dna-node--left';
+    leftNode.style.top = topOffset + 'px';
+    leftNode.style.animationDelay = delay + 's';
+    container.appendChild(leftNode);
+
+    // Right node
+    const rightNode = document.createElement('div');
+    rightNode.className = 'v2-dna-node v2-dna-node--right';
+    rightNode.style.top = topOffset + 'px';
+    rightNode.style.animationDelay = delay + 's';
+    container.appendChild(rightNode);
+
+    // Connector
+    if (i % 2 === 0) {
+      const connector = document.createElement('div');
+      connector.className = 'v2-dna-connector';
+      connector.style.top = (topOffset + 4) + 'px';
+      connector.style.width = '120px';
+      connector.style.animationDelay = (delay + 0.5) + 's';
+      container.appendChild(connector);
+    }
+  }
+})();
+
+
+// ═══════════════════════════════════════════
+// RING PROGRESS COUNTER (Variant 3)
+// ═══════════════════════════════════════════
+(function animatePercent() {
+  const el = document.getElementById('v3Percent');
+  if (!el) return;
+
+  let current = 0;
+  const target = 100;
+  const startDelay = 2200;
+  const duration = 5000;
+  const startTime = performance.now() + startDelay;
+
+  function easeInOutCubic(t) {
+    return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  }
+
+  function update(now) {
+    const elapsed = now - startTime;
+    if (elapsed < 0) {
+      requestAnimationFrame(update);
+      return;
+    }
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = easeInOutCubic(progress);
+    current = Math.round(eased * target);
+    el.textContent = current + '%';
+    if (progress < 1) requestAnimationFrame(update);
+  }
+
+  requestAnimationFrame(update);
+})();
+</script>
+
+</body>
+</html>

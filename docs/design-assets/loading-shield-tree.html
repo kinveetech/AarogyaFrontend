@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarogya — Shield Tree Loading Animation</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@200;300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --teal-deep: #0A4D4A;
+  --teal-mid: #0E6B66;
+  --teal-light: #1A9E97;
+  --sage: #7FB285;
+  --sage-light: #A8D5AE;
+  --cream: #FFF8F0;
+  --coral: #FF6B6B;
+  --amber: #FFB347;
+  --amber-glow: #FFD693;
+  --dark-bg: #0B1A1A;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #E8E0D8;
+  font-family: 'Outfit', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.page-header {
+  text-align: center;
+  padding: 60px 20px 20px;
+}
+
+.page-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2.8rem;
+  color: var(--teal-deep);
+  letter-spacing: -0.02em;
+}
+
+.page-header p {
+  font-weight: 300;
+  font-size: 1.05rem;
+  color: #6B7C7C;
+  margin-top: 8px;
+}
+
+.concepts-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 80px;
+  padding: 40px 20px 100px;
+}
+
+.concept-section { text-align: center; width: 100%; max-width: 1200px; }
+
+.concept-label {
+  font-weight: 600; font-size: 0.75rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--coral); margin-bottom: 8px;
+}
+.concept-title {
+  font-family: 'DM Serif Display', serif; font-size: 1.6rem;
+  color: var(--teal-deep); margin-bottom: 6px;
+}
+.concept-desc {
+  font-weight: 300; font-size: 0.95rem; color: #8A9494;
+  margin-bottom: 32px; max-width: 540px; margin-left: auto; margin-right: auto;
+}
+
+/* ═══════════════════════════════════════════
+   PHONE FRAME
+   ═══════════════════════════════════════════ */
+.phone-frame {
+  width: 375px; height: 812px; border-radius: 50px;
+  position: relative; margin: 0 auto;
+  box-shadow: 0 0 0 2px #1a1a1a, 0 0 0 6px #2a2a2a, 0 0 0 8px #1a1a1a,
+    0 30px 80px rgba(0,0,0,0.35), 0 10px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.phone-frame::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 150px; height: 28px; background: #1a1a1a;
+  border-radius: 0 0 20px 20px; z-index: 100;
+}
+.phone-frame::after {
+  content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  width: 12px; height: 12px; background: #2a2a2a; border-radius: 50%;
+  z-index: 101; box-shadow: inset 0 0 3px rgba(0,0,0,0.5);
+}
+.phone-screen {
+  width: 100%; height: 100%; border-radius: 50px;
+  overflow: hidden; position: relative;
+}
+
+/* ═══════════════════════════════════════════
+   LIGHT SCREEN
+   ═══════════════════════════════════════════ */
+.screen-light {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: linear-gradient(165deg, #FFF8F0 0%, #F0FAF0 40%, #E0F5F0 70%, #D5F0EA 100%);
+}
+
+/* ═══════════════════════════════════════════
+   DARK SCREEN
+   ═══════════════════════════════════════════ */
+.screen-dark {
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: var(--dark-bg);
+}
+
+.screen-dark .dark-mesh {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 80%, rgba(10,77,74,0.5) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 60% at 80% 20%, rgba(26,158,151,0.3) 0%, transparent 60%);
+  animation: meshShift 12s ease-in-out infinite alternate;
+}
+@keyframes meshShift { 0% { opacity: 0.7; } 50% { opacity: 1; } 100% { opacity: 0.7; } }
+
+/* ambient orbs (light mode) */
+.orb { position: absolute; border-radius: 50%; filter: blur(60px); opacity: 0.35; animation: orbFloat 8s ease-in-out infinite; }
+.orb--1 { width: 280px; height: 280px; background: var(--sage-light); top: -80px; right: -80px; }
+.orb--2 { width: 220px; height: 220px; background: var(--amber-glow); bottom: -60px; left: -60px; animation-delay: -3s; }
+.orb--3 { width: 160px; height: 160px; background: #FF8A8A; top: 50%; left: 60%; animation-delay: -5s; opacity: 0.18; }
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(20px, -30px) scale(1.05); }
+  66% { transform: translate(-15px, 15px) scale(0.95); }
+}
+
+/* ═══════════════════════════════════════════
+   SHIELD TREE GROWTH ANIMATION
+   ═══════════════════════════════════════════ */
+.tree-anim-container {
+  position: relative;
+  width: 200px; height: 200px;
+  z-index: 2;
+  margin-bottom: 20px;
+}
+
+/* — Concentric ripples — */
+.ripple {
+  position: absolute;
+  top: 62%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 1.5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.ripple--1 { border-color: var(--teal-mid); animation: rippleOut 3.5s ease-out 2.2s infinite; }
+.ripple--2 { border-color: var(--sage); animation: rippleOut 3.5s ease-out 2.8s infinite; }
+.ripple--3 { border-color: var(--amber); animation: rippleOut 3.5s ease-out 3.4s infinite; }
+
+.screen-dark .ripple--1 { border-color: var(--teal-light); }
+.screen-dark .ripple--2 { border-color: var(--sage-light); }
+.screen-dark .ripple--3 { border-color: var(--amber-glow); }
+
+@keyframes rippleOut {
+  0%   { width: 40px; height: 40px; opacity: 0.7; border-width: 2px; }
+  100% { width: 280px; height: 280px; opacity: 0; border-width: 0.5px; }
+}
+
+/* — The SVG tree that grows — */
+.tree-svg {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 160px; height: 160px;
+  z-index: 3;
+}
+
+/* Shield draws in first */
+.tree-svg .shield-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: shieldDraw 1.5s ease-out 0.3s forwards;
+}
+@keyframes shieldDraw {
+  0%   { stroke-dashoffset: 300; fill-opacity: 0; }
+  60%  { fill-opacity: 0; }
+  100% { stroke-dashoffset: 0; fill-opacity: 0.9; }
+}
+
+/* Seed appears */
+.tree-svg .seed {
+  opacity: 0;
+  animation: seedAppear 0.8s ease-out 1.2s forwards;
+}
+@keyframes seedAppear {
+  0%   { opacity: 0; transform: scale(0); }
+  50%  { opacity: 1; transform: scale(1.3); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Trunk grows upward */
+.tree-svg .trunk {
+  stroke-dasharray: 40;
+  stroke-dashoffset: 40;
+  opacity: 0;
+  animation: trunkGrow 1s ease-out 1.8s forwards;
+}
+@keyframes trunkGrow {
+  0%   { stroke-dashoffset: 40; opacity: 0; }
+  10%  { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 1; }
+}
+
+/* Roots spread */
+.tree-svg .root {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  opacity: 0;
+  animation: rootSpread 0.8s ease-out forwards;
+}
+.tree-svg .root:nth-child(1) { animation-delay: 2.0s; }
+.tree-svg .root:nth-child(2) { animation-delay: 2.1s; }
+.tree-svg .root:nth-child(3) { animation-delay: 2.2s; }
+.tree-svg .root:nth-child(4) { animation-delay: 2.3s; }
+@keyframes rootSpread {
+  0%   { stroke-dashoffset: 30; opacity: 0; }
+  10%  { opacity: 0.3; }
+  100% { stroke-dashoffset: 0; opacity: 0.3; }
+}
+
+/* Branches reach out */
+.tree-svg .branch {
+  stroke-dasharray: 30;
+  stroke-dashoffset: 30;
+  opacity: 0;
+  animation: branchGrow 0.7s ease-out forwards;
+}
+.tree-svg .branch:nth-child(1) { animation-delay: 2.4s; }
+.tree-svg .branch:nth-child(2) { animation-delay: 2.5s; }
+.tree-svg .branch:nth-child(3) { animation-delay: 2.6s; }
+.tree-svg .branch:nth-child(4) { animation-delay: 2.7s; }
+@keyframes branchGrow {
+  0%   { stroke-dashoffset: 30; opacity: 0; }
+  10%  { opacity: 0.35; }
+  100% { stroke-dashoffset: 0; opacity: 0.35; }
+}
+
+/* Canopy blooms layer by layer */
+.tree-svg .canopy {
+  opacity: 0;
+  transform-origin: center center;
+}
+.tree-svg .canopy--1 { animation: canopyBloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 2.8s forwards; }
+.tree-svg .canopy--2 { animation: canopyBloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.0s forwards; }
+.tree-svg .canopy--3 { animation: canopyBloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.2s forwards; }
+.tree-svg .canopy--4 { animation: canopyBloom 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 3.4s forwards; }
+@keyframes canopyBloom {
+  0%   { opacity: 0; transform: scale(0.2); }
+  60%  { opacity: 0.5; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Ground glow appears last */
+.tree-svg .ground {
+  opacity: 0;
+  animation: groundGlow 1s ease-out 3.2s forwards;
+}
+@keyframes groundGlow {
+  0% { opacity: 0; }
+  100% { opacity: 0.3; }
+}
+
+/* ═══════════════════════════════════════════
+   BRAND + PROGRESS
+   ═══════════════════════════════════════════ */
+.brand {
+  z-index: 2; text-align: center;
+  opacity: 0; animation: fadeUp 1.2s ease-out 3.5s forwards;
+}
+.brand h1 {
+  font-family: 'DM Serif Display', serif; font-size: 3.2rem;
+  letter-spacing: -0.02em; line-height: 1;
+}
+.brand .tagline {
+  font-weight: 300; font-size: 0.9rem;
+  margin-top: 8px; letter-spacing: 0.15em; text-transform: uppercase;
+}
+
+.screen-light .brand h1 { color: var(--teal-deep); }
+.screen-light .brand .tagline { color: var(--teal-mid); }
+.screen-dark .brand h1 {
+  background: linear-gradient(135deg, #fff 0%, var(--sage-light) 50%, var(--teal-light) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.screen-dark .brand .tagline { color: rgba(168,213,174,0.7); }
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.progress-bar {
+  margin-top: 40px; z-index: 2; opacity: 0;
+  animation: fadeUp 1s ease-out 4s forwards;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.progress-track {
+  width: 200px; height: 3px; border-radius: 4px; overflow: hidden;
+}
+.screen-light .progress-track { background: rgba(10,77,74,0.1); }
+.screen-dark .progress-track { background: rgba(255,255,255,0.08); }
+
+.progress-fill {
+  height: 100%; width: 0%; border-radius: 4px;
+  background: linear-gradient(90deg, var(--teal-mid), var(--sage), var(--amber));
+  animation: progressGrow 4s ease-in-out 4.3s infinite;
+}
+@keyframes progressGrow {
+  0% { width: 0%; } 20% { width: 25%; } 50% { width: 55%; }
+  70% { width: 72%; } 90% { width: 90%; } 100% { width: 100%; }
+}
+
+.progress-text {
+  font-weight: 300; font-size: 0.75rem; letter-spacing: 0.1em;
+}
+.screen-light .progress-text { color: var(--teal-mid); }
+.screen-dark .progress-text { color: rgba(168,213,174,0.6); }
+
+/* ═══════════════════════════════════════════
+   BROWSER FRAME
+   ═══════════════════════════════════════════ */
+.browser-frame {
+  width: 100%; max-width: 1100px; margin: 0 auto; border-radius: 16px; overflow: hidden;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.08), 0 30px 80px rgba(0,0,0,0.25), 0 10px 30px rgba(0,0,0,0.15);
+}
+.browser-chrome {
+  background: #2C2C2C; padding: 12px 16px;
+  display: flex; align-items: center; gap: 12px;
+}
+.browser-dots { display: flex; gap: 6px; }
+.browser-dots span { width: 12px; height: 12px; border-radius: 50%; }
+.browser-dots span:nth-child(1) { background: #FF5F57; }
+.browser-dots span:nth-child(2) { background: #FFBD2E; }
+.browser-dots span:nth-child(3) { background: #28CA41; }
+.browser-url {
+  flex: 1; background: #1A1A1A; border-radius: 8px;
+  padding: 7px 14px; display: flex; align-items: center; gap: 8px;
+}
+.browser-url svg { width: 14px; height: 14px; fill: #666; flex-shrink: 0; }
+.browser-url span { font-size: 0.8rem; color: #999; }
+.browser-viewport { height: 620px; position: relative; overflow: hidden; }
+
+/* Web screen */
+.screen-web {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+  background: linear-gradient(170deg, #FFF8F0 0%, #F5FBF5 30%, #EAF7F4 60%, #E0F2EE 100%);
+}
+.screen-web .web-shape {
+  position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.3;
+}
+.screen-web .web-shape--1 { width: 600px; height: 600px; background: var(--sage-light); top: -200px; left: -100px; animation: shapeFloat 10s ease-in-out infinite; }
+.screen-web .web-shape--2 { width: 500px; height: 500px; background: var(--amber-glow); bottom: -200px; right: -100px; animation: shapeFloat 10s ease-in-out infinite reverse; }
+@keyframes shapeFloat { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -20px); } }
+
+/* Glass card for web variant */
+.glass-card {
+  position: relative; z-index: 2;
+  background: rgba(255,255,255,0.45); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255,255,255,0.6); border-radius: 32px;
+  padding: 48px 64px; display: flex; flex-direction: column; align-items: center; text-align: center;
+  box-shadow: 0 8px 32px rgba(10,77,74,0.06), 0 2px 8px rgba(10,77,74,0.04);
+  opacity: 0; animation: cardReveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+@keyframes cardReveal {
+  0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.glass-card .brand { animation-delay: 3.5s; }
+.glass-card .progress-bar { animation-delay: 4s; margin-top: 28px; }
+.glass-card .progress-fill { animation-delay: 4.3s; }
+
+/* responsive */
+@media (max-width: 768px) {
+  .page-header h1 { font-size: 2rem; }
+  .phone-frame { width: 300px; height: 650px; border-radius: 40px; }
+  .phone-frame::before { width: 120px; height: 24px; }
+  .phone-screen { border-radius: 40px; }
+  .brand h1 { font-size: 2.6rem; }
+  .glass-card { padding: 36px 28px; }
+  .browser-viewport { height: 500px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="page-header">
+  <h1>Aarogya — Shield Tree Loading</h1>
+  <p>Seed to tree growth animation with concentric ripples — light, dark &amp; web variants</p>
+</div>
+
+<div class="concepts-grid">
+
+  <!-- ═══════════ VARIANT 1: LIGHT MOBILE ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Light Mobile</div>
+    <div class="concept-title">Serene Growth</div>
+    <div class="concept-desc">The shield draws itself, a seed appears and grows into a full tree while ripples of energy radiate outward</div>
+
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="screen-light">
+          <div class="orb orb--1"></div>
+          <div class="orb orb--2"></div>
+          <div class="orb orb--3"></div>
+
+          <div class="tree-anim-container">
+            <!-- Ripples -->
+            <div class="ripple ripple--1"></div>
+            <div class="ripple ripple--2"></div>
+            <div class="ripple ripple--3"></div>
+
+            <!-- Animated tree SVG -->
+            <svg class="tree-svg" viewBox="0 0 80 80" fill="none">
+              <defs>
+                <linearGradient id="shieldG" x1="20" y1="4" x2="60" y2="76" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#0E6B66"/>
+                  <stop offset="100%" stop-color="#0A4D4A"/>
+                </linearGradient>
+                <linearGradient id="canopyG" x1="24" y1="14" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#A8D5AE"/>
+                  <stop offset="50%" stop-color="#7FB285"/>
+                  <stop offset="100%" stop-color="#0E6B66"/>
+                </linearGradient>
+              </defs>
+
+              <!-- Shield (draws in) -->
+              <path class="shield-path" d="M40 4 C22 4 10 10 10 10 L10 36 C10 56 24 70 40 76 C56 70 70 56 70 36 L70 10 C70 10 58 4 40 4Z"
+                fill="url(#shieldG)" fill-opacity="0" stroke="#0E6B66" stroke-width="1"/>
+
+              <!-- Seed (amber dot at bottom) -->
+              <circle class="seed" cx="40" cy="66" r="3" fill="#FFB347"/>
+
+              <!-- Trunk (grows up) -->
+              <path class="trunk" d="M40 66 L40 44" stroke="#FFF8F0" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+              <!-- Roots (spread from base) -->
+              <g class="roots">
+                <path class="root" d="M40 66 C36 68 30 69 28 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C44 68 50 69 52 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C38 69 36 71 34 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C42 69 44 71 46 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+              </g>
+
+              <!-- Branches -->
+              <g class="branches">
+                <path class="branch" d="M40 48 C34 44 28 42 24 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 48 C46 44 52 42 56 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C36 40 32 36 30 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C44 40 48 36 50 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+              </g>
+
+              <!-- Canopy (blooms in layers) -->
+              <ellipse class="canopy canopy--1" cx="40" cy="36" rx="22" ry="16" fill="url(#canopyG)" opacity="0.45"/>
+              <ellipse class="canopy canopy--2" cx="40" cy="32" rx="17" ry="13" fill="#7FB285" opacity="0.4"/>
+              <ellipse class="canopy canopy--3" cx="40" cy="27" rx="12" ry="10" fill="#A8D5AE" opacity="0.35"/>
+              <ellipse class="canopy canopy--4" cx="40" cy="22" rx="7" ry="6" fill="rgba(255,255,255,0.3)"/>
+
+              <!-- Ground glow -->
+              <ellipse class="ground" cx="40" cy="68" rx="12" ry="2.5" fill="#FFB347"/>
+            </svg>
+          </div>
+
+          <div class="brand">
+            <h1>Aarogya</h1>
+            <div class="tagline">Your Health, Our Priority</div>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">Growing your wellness journey...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ VARIANT 2: DARK MOBILE ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Dark Mobile</div>
+    <div class="concept-title">Dark Vitality</div>
+    <div class="concept-desc">Same seed-to-tree growth on a deep teal mesh background — bioluminescent glow meets organic growth</div>
+
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="screen-dark">
+          <div class="dark-mesh"></div>
+
+          <div class="tree-anim-container">
+            <div class="ripple ripple--1"></div>
+            <div class="ripple ripple--2"></div>
+            <div class="ripple ripple--3"></div>
+
+            <svg class="tree-svg" viewBox="0 0 80 80" fill="none">
+              <defs>
+                <linearGradient id="shieldGD" x1="20" y1="4" x2="60" y2="76" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="#1A9E97"/>
+                  <stop offset="100%" stop-color="#0E6B66"/>
+                </linearGradient>
+                <linearGradient id="canopyGD" x1="24" y1="14" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stop-color="rgba(168,213,174,0.5)"/>
+                  <stop offset="100%" stop-color="rgba(26,158,151,0.3)"/>
+                </linearGradient>
+              </defs>
+
+              <path class="shield-path" d="M40 4 C22 4 10 10 10 10 L10 36 C10 56 24 70 40 76 C56 70 70 56 70 36 L70 10 C70 10 58 4 40 4Z"
+                fill="url(#shieldGD)" fill-opacity="0" stroke="#1A9E97" stroke-width="1"/>
+
+              <circle class="seed" cx="40" cy="66" r="3" fill="#FFB347"/>
+
+              <path class="trunk" d="M40 66 L40 44" stroke="rgba(255,255,255,0.4)" stroke-width="3" stroke-linecap="round"/>
+
+              <g class="roots">
+                <path class="root" d="M40 66 C36 68 30 69 28 68" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C44 68 50 69 52 68" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C38 69 36 71 34 71" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-linecap="round"/>
+                <path class="root" d="M40 66 C42 69 44 71 46 71" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-linecap="round"/>
+              </g>
+
+              <g class="branches">
+                <path class="branch" d="M40 48 C34 44 28 42 24 42" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 48 C46 44 52 42 56 42" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C36 40 32 36 30 34" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+                <path class="branch" d="M40 44 C44 40 48 36 50 34" stroke="rgba(255,255,255,0.15)" stroke-width="1.2" stroke-linecap="round"/>
+              </g>
+
+              <ellipse class="canopy canopy--1" cx="40" cy="36" rx="22" ry="16" fill="url(#canopyGD)" opacity="0.5"/>
+              <ellipse class="canopy canopy--2" cx="40" cy="32" rx="17" ry="13" fill="rgba(168,213,174,0.2)"/>
+              <ellipse class="canopy canopy--3" cx="40" cy="27" rx="12" ry="10" fill="rgba(168,213,174,0.15)"/>
+              <ellipse class="canopy canopy--4" cx="40" cy="22" rx="7" ry="6" fill="rgba(255,255,255,0.08)"/>
+
+              <ellipse class="ground" cx="40" cy="68" rx="12" ry="2.5" fill="#FFB347"/>
+            </svg>
+          </div>
+
+          <div class="brand">
+            <h1>Aarogya</h1>
+            <div class="tagline">Your Health, Our Priority</div>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-track">
+              <div class="progress-fill"></div>
+            </div>
+            <div class="progress-text">Growing your wellness journey...</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════ VARIANT 3: WEB PANORAMIC ═══════════ -->
+  <section class="concept-section">
+    <div class="concept-label">Web Browser</div>
+    <div class="concept-title">Web Panoramic</div>
+    <div class="concept-desc">Glass-card framed growth animation for the desktop browser experience</div>
+
+    <div class="browser-frame">
+      <div class="browser-chrome">
+        <div class="browser-dots"><span></span><span></span><span></span></div>
+        <div class="browser-url">
+          <svg viewBox="0 0 24 24"><path d="M12 22C6.477 22 2 17.523 2 12S6.477 2 12 2s10 4.477 10 10-4.477 10-10 10zm-1-11v6h2v-6h-2zm0-4v2h2V7h-2z"/></svg>
+          <span>aarogya.health</span>
+        </div>
+      </div>
+      <div class="browser-viewport">
+        <div class="screen-web">
+          <div class="web-shape web-shape--1"></div>
+          <div class="web-shape web-shape--2"></div>
+
+          <div class="glass-card">
+            <div class="tree-anim-container" style="margin-bottom: 12px;">
+              <div class="ripple ripple--1"></div>
+              <div class="ripple ripple--2"></div>
+              <div class="ripple ripple--3"></div>
+
+              <svg class="tree-svg" viewBox="0 0 80 80" fill="none">
+                <defs>
+                  <linearGradient id="shieldGW" x1="20" y1="4" x2="60" y2="76" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#0E6B66"/>
+                    <stop offset="100%" stop-color="#0A4D4A"/>
+                  </linearGradient>
+                  <linearGradient id="canopyGW" x1="24" y1="14" x2="56" y2="48" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stop-color="#A8D5AE"/>
+                    <stop offset="50%" stop-color="#7FB285"/>
+                    <stop offset="100%" stop-color="#0E6B66"/>
+                  </linearGradient>
+                </defs>
+
+                <path class="shield-path" d="M40 4 C22 4 10 10 10 10 L10 36 C10 56 24 70 40 76 C56 70 70 56 70 36 L70 10 C70 10 58 4 40 4Z"
+                  fill="url(#shieldGW)" fill-opacity="0" stroke="#0E6B66" stroke-width="1"/>
+
+                <circle class="seed" cx="40" cy="66" r="3" fill="#FFB347"/>
+
+                <path class="trunk" d="M40 66 L40 44" stroke="#FFF8F0" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+
+                <g class="roots">
+                  <path class="root" d="M40 66 C36 68 30 69 28 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                  <path class="root" d="M40 66 C44 68 50 69 52 68" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                  <path class="root" d="M40 66 C38 69 36 71 34 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+                  <path class="root" d="M40 66 C42 69 44 71 46 71" stroke="#FFF8F0" stroke-width="1" stroke-linecap="round"/>
+                </g>
+
+                <g class="branches">
+                  <path class="branch" d="M40 48 C34 44 28 42 24 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                  <path class="branch" d="M40 48 C46 44 52 42 56 42" stroke="#FFF8F0" stroke-width="1.5" stroke-linecap="round"/>
+                  <path class="branch" d="M40 44 C36 40 32 36 30 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                  <path class="branch" d="M40 44 C44 40 48 36 50 34" stroke="#FFF8F0" stroke-width="1.2" stroke-linecap="round"/>
+                </g>
+
+                <ellipse class="canopy canopy--1" cx="40" cy="36" rx="22" ry="16" fill="url(#canopyGW)" opacity="0.45"/>
+                <ellipse class="canopy canopy--2" cx="40" cy="32" rx="17" ry="13" fill="#7FB285" opacity="0.4"/>
+                <ellipse class="canopy canopy--3" cx="40" cy="27" rx="12" ry="10" fill="#A8D5AE" opacity="0.35"/>
+                <ellipse class="canopy canopy--4" cx="40" cy="22" rx="7" ry="6" fill="rgba(255,255,255,0.3)"/>
+
+                <ellipse class="ground" cx="40" cy="68" rx="12" ry="2.5" fill="#FFB347"/>
+              </svg>
+            </div>
+
+            <div class="brand">
+              <h1 style="font-size:3.6rem;">Aarogya</h1>
+              <div class="tagline">Your Health, Our Priority</div>
+            </div>
+
+            <div class="progress-bar">
+              <div class="progress-track" style="background: rgba(10,77,74,0.08);">
+                <div class="progress-fill"></div>
+              </div>
+              <div class="progress-text" style="color: var(--teal-mid);">Growing your wellness journey...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+</body>
+</html>
