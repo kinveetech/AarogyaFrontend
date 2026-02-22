@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { screen } from '@testing-library/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { render } from '@/test/render'
 import { Providers } from './providers'
 
@@ -36,5 +37,20 @@ describe('Providers', () => {
 
     expect(screen.getByText('first')).toBeInTheDocument()
     expect(screen.getByText('second')).toBeInTheDocument()
+  })
+
+  it('provides QueryClient context to children', () => {
+    function QueryClientConsumer() {
+      const client = useQueryClient()
+      return <p data-testid="qc">{client ? 'has-client' : 'no-client'}</p>
+    }
+
+    render(
+      <Providers>
+        <QueryClientConsumer />
+      </Providers>,
+    )
+
+    expect(screen.getByTestId('qc')).toHaveTextContent('has-client')
   })
 })

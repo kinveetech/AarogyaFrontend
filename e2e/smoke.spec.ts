@@ -2,6 +2,20 @@ import { test, expect } from './fixtures'
 import { navigateAndWait } from './helpers/navigation'
 
 test.describe('Smoke tests', () => {
+  test('no console errors on page load', async ({ page }) => {
+    const errors: string[] = []
+    page.on('console', (msg) => {
+      if (msg.type() === 'error') {
+        errors.push(msg.text())
+      }
+    })
+
+    await navigateAndWait(page, '/')
+    await expect(page).toHaveURL(/\/reports/)
+
+    expect(errors).toEqual([])
+  })
+
   test('/ redirects to /reports', async ({ page }) => {
     await navigateAndWait(page, '/')
     await expect(page).toHaveURL(/\/reports/)
