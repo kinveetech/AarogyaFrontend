@@ -16,24 +16,20 @@ test.describe('Smoke tests', () => {
     expect(errors).toEqual([])
   })
 
-  test('/login loads and contains "Login"', async ({ page }) => {
+  test('/login loads and contains sign-in UI', async ({ page }) => {
     await navigateAndWait(page, '/login')
-    await expect(page.getByText('Login')).toBeVisible()
+    await expect(page.getByText('Welcome back')).toBeVisible()
   })
 
-  test('/callback loads and contains "Processing authentication"', async ({
-    page,
-  }) => {
+  test('/callback loads and shows loader', async ({ page }) => {
     await navigateAndWait(page, '/callback')
-    await expect(
-      page.getByText('Processing authentication...')
-    ).toBeVisible()
+    await expect(page.getByRole('status')).toBeVisible()
   })
 
   test('unauthenticated /reports redirects to /login', async ({ page }) => {
     await navigateAndWait(page, '/reports')
     await expect(page).toHaveURL(/\/login/)
-    await expect(page.getByText('Login')).toBeVisible()
+    await expect(page.getByText('Welcome back')).toBeVisible()
   })
 
   test('unauthenticated /access redirects to /login', async ({ page }) => {

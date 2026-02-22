@@ -12,6 +12,7 @@ export const authConfig: NextAuthConfig = {
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/login',
+    error: '/callback',
   },
   events: {
     async signOut(message) {
