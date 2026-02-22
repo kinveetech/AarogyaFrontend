@@ -29,4 +29,10 @@ export const queryKeys = {
     detail: (id: string) =>
       [...queryKeys.consents.all, 'detail', id] as const,
   },
+  emergencyContacts: {
+    all: ['emergencyContacts'] as const,
+    list: () => [...queryKeys.emergencyContacts.all, 'list'] as const,
+    detail: (id: string) =>
+      [...queryKeys.emergencyContacts.all, 'detail', id] as const,
+  },
 }

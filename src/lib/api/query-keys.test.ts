@@ -64,4 +64,18 @@ describe('queryKeys', () => {
       expect(queryKeys.consents.detail('y')).toEqual(['consents', 'detail', 'y'])
     })
   })
+
+  describe('emergencyContacts', () => {
+    it('has correct base key', () => {
+      expect(queryKeys.emergencyContacts.all).toEqual(['emergencyContacts'])
+    })
+
+    it('produces list key', () => {
+      expect(queryKeys.emergencyContacts.list()).toEqual(['emergencyContacts', 'list'])
+    })
+
+    it('produces detail key', () => {
+      expect(queryKeys.emergencyContacts.detail('z')).toEqual(['emergencyContacts', 'detail', 'z'])
+    })
+  })
 })

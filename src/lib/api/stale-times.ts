@@ -3,4 +3,5 @@ export const staleTimes = {
   profile: 10 * 60 * 1000, // 10 min
   accessGrants: 1 * 60 * 1000, // 1 min
   consents: 30 * 1000, // 30 sec
+  emergencyContacts: 1 * 60 * 1000, // 1 min
 }
