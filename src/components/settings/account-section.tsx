@@ -1,34 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Box, Button, Heading, Text, VStack } from '@chakra-ui/react'
+import { Button, Text, VStack } from '@chakra-ui/react'
 import { signOut } from 'next-auth/react'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
+import { SettingsSection } from './settings-section'
 
 export function AccountSection() {
   const [signOutOpen, setSignOutOpen] = useState(false)
 
   return (
-    <Box>
-      <Heading
-        as="h2"
-        fontFamily="heading"
-        fontSize="1.5rem"
-        color="text.primary"
-        mb="4"
-        letterSpacing="-0.01em"
-      >
-        Account
-      </Heading>
-      <Box
-        bg="bg.glass"
-        backdropFilter="blur(20px)"
-        borderWidth="1px"
-        borderColor="border.subtle"
-        borderRadius="2xl"
-        boxShadow="glass"
-        p="6"
-      >
+    <>
+      <SettingsSection title="Account">
         <VStack align="flex-start" gap="4">
           <Button
             variant="outline"
@@ -60,7 +43,7 @@ export function AccountSection() {
             Aarogya v0.1.0
           </Text>
         </VStack>
-      </Box>
+      </SettingsSection>
 
       <ConfirmDialog
         open={signOutOpen}
@@ -72,6 +55,6 @@ export function AccountSection() {
         cancelLabel="Cancel"
         destructive
       />
-    </Box>
+    </>
   )
 }

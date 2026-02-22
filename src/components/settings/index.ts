@@ -1,3 +1,5 @@
+export { SettingsSection } from './settings-section'
+export { DisabledToggleRow } from './disabled-toggle-row'
 export { ProfileSection } from './profile-section'
 export { ConsentsPlaceholder } from './consents-placeholder'
 export { NotificationsPlaceholder } from './notifications-placeholder'
