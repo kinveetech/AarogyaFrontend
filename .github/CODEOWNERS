@@ -1,0 +1,7 @@
+# Default owner for everything
+* @skrx7392
+
+# Security-sensitive paths require explicit review
+.github/          @skrx7392
+src/app/api/      @skrx7392
+src/lib/schemas/  @skrx7392
