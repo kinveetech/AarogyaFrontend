@@ -176,6 +176,6 @@ jobs:
             KEOF
 
             sed -i "s|PLACEHOLDER_REPLACED_BY_CD|${AUTH_SECRET}|g" ~/k8s-frontend/app.yaml
-            kubectl apply -k ~/k8s-frontend/
-            kubectl -n aarogya-frontend set image deployment/aarogya-frontend aarogya-frontend=ghcr.io/kinveetech/aarogyafrontend:${IMAGE_TAG}
-            kubectl -n aarogya-frontend rollout status deployment/aarogya-frontend --timeout=120s
+            sudo kubectl apply -k ~/k8s-frontend/
+            sudo kubectl -n aarogya-frontend set image deployment/aarogya-frontend aarogya-frontend=ghcr.io/kinveetech/aarogyafrontend:${IMAGE_TAG}
+            sudo kubectl -n aarogya-frontend rollout status deployment/aarogya-frontend --timeout=120s
