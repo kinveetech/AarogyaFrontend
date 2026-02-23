@@ -5,7 +5,7 @@ metadata:
   namespace: aarogya-frontend
 type: Opaque
 stringData:
-  AUTH_SECRET: "SGPtgR1UHADyQISheEoDQQSar5X0KpmDeZBj83vlX/cV"
+  AUTH_SECRET: "PLACEHOLDER_REPLACED_BY_CD"
 ---
 apiVersion: apps/v1
 kind: Deployment

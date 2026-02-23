@@ -21,6 +21,7 @@ jobs:
 
     env:
       IMAGE_TAG: ${{ github.sha }}
+      AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
 
     steps:
       - uses: actions/checkout@v6
@@ -54,7 +55,7 @@ jobs:
           host: 100.108.60.90
           username: sk
           key: ${{ secrets.DEV_SSH_KEY }}
-          envs: IMAGE_TAG
+          envs: IMAGE_TAG,AUTH_SECRET
           script: |
             mkdir -p ~/k8s-frontend
             cat > ~/k8s-frontend/namespace.yaml << 'NSEOF'
@@ -72,7 +73,7 @@ jobs:
               namespace: aarogya-frontend
             type: Opaque
             stringData:
-              AUTH_SECRET: "SGPtgR1UHADyQISheEoDQQSar5X0KpmDeZBj83vlX/cV"
+              AUTH_SECRET: "PLACEHOLDER_REPLACED_BY_CD"
             ---
             apiVersion: apps/v1
             kind: Deployment
@@ -174,6 +175,7 @@ jobs:
               - app.yaml
             KEOF
 
+            sed -i "s|PLACEHOLDER_REPLACED_BY_CD|${AUTH_SECRET}|g" ~/k8s-frontend/app.yaml
             kubectl apply -k ~/k8s-frontend/
             kubectl -n aarogya-frontend set image deployment/aarogya-frontend aarogya-frontend=ghcr.io/kinveetech/aarogyafrontend:${IMAGE_TAG}
             kubectl -n aarogya-frontend rollout status deployment/aarogya-frontend --timeout=120s
