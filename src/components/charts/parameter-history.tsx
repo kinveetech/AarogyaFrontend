@@ -13,7 +13,6 @@ import {
   Cell,
   ReferenceLine,
   Tooltip,
-  type TooltipProps,
 } from 'recharts'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ChartSkeleton } from './chart-skeleton'
@@ -40,15 +39,22 @@ function formatXAxisDate(dateStr: string) {
   return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
+interface ParameterTooltipProps {
+  active?: boolean
+  payload?: Array<{ payload: ParameterDataPoint }>
+  unit: string
+  isDark: boolean
+}
+
 /** @internal Exported for testing */
 export function ParameterTooltip({
   active,
   payload,
   unit,
-}: TooltipProps<number, string> & { unit: string; isDark: boolean }) {
+}: ParameterTooltipProps) {
   if (!active || !payload?.length) return null
 
-  const entry = payload[0].payload as ParameterDataPoint
+  const entry = payload[0].payload
 
   return (
     <Box
