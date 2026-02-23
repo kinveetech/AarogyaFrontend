@@ -1,0 +1,12 @@
+.next/
+node_modules/
+.git/
+docs/
+coverage/
+test-results/
+playwright-report/
+.env.local
+.env*.local
+*.md
+.github/
+k8s/

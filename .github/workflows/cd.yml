@@ -1,0 +1,179 @@
+name: CD
+
+on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
+
+concurrency:
+  group: cd-deploy-frontend
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    env:
+      IMAGE_TAG: ${{ github.sha }}
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            ghcr.io/kinveetech/aarogyafrontend:latest
+            ghcr.io/kinveetech/aarogyafrontend:${{ env.IMAGE_TAG }}
+
+      - name: Connect to Tailscale
+        uses: tailscale/github-action@v3
+        with:
+          oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+          oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+          tags: tag:ci
+
+      - name: Deploy to k3s
+        uses: appleboy/ssh-action@v1
+        with:
+          host: 100.108.60.90
+          username: sk
+          key: ${{ secrets.DEV_SSH_KEY }}
+          envs: IMAGE_TAG
+          script: |
+            mkdir -p ~/k8s-frontend
+            cat > ~/k8s-frontend/namespace.yaml << 'NSEOF'
+            apiVersion: v1
+            kind: Namespace
+            metadata:
+              name: aarogya-frontend
+            NSEOF
+
+            cat > ~/k8s-frontend/app.yaml << 'APPEOF'
+            apiVersion: v1
+            kind: Secret
+            metadata:
+              name: frontend-secret
+              namespace: aarogya-frontend
+            type: Opaque
+            stringData:
+              AUTH_SECRET: "CHANGE_ME"
+            ---
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: aarogya-frontend
+              namespace: aarogya-frontend
+              labels:
+                app: aarogya-frontend
+            spec:
+              replicas: 1
+              selector:
+                matchLabels:
+                  app: aarogya-frontend
+              template:
+                metadata:
+                  labels:
+                    app: aarogya-frontend
+                spec:
+                  imagePullSecrets:
+                    - name: ghcr-secret
+                  containers:
+                    - name: aarogya-frontend
+                      image: ghcr.io/kinveetech/aarogyafrontend:latest
+                      imagePullPolicy: Always
+                      ports:
+                        - containerPort: 3000
+                      env:
+                        - name: AUTH_SECRET
+                          valueFrom:
+                            secretKeyRef:
+                              name: frontend-secret
+                              key: AUTH_SECRET
+                        - name: AUTH_URL
+                          value: "http://dev.kinvee.in:30000"
+                        - name: API_URL
+                          value: "http://aarogya-api.aarogya.svc.cluster.local"
+                        - name: COGNITO_DOMAIN
+                          value: ""
+                        - name: COGNITO_ISSUER
+                          value: ""
+                        - name: COGNITO_CLIENT_ID
+                          value: ""
+                        - name: COGNITO_CLIENT_SECRET
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_API_KEY
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_APP_ID
+                          value: ""
+                        - name: NEXT_PUBLIC_FIREBASE_VAPID_KEY
+                          value: ""
+                      livenessProbe:
+                        httpGet:
+                          path: /api/health
+                          port: 3000
+                        initialDelaySeconds: 15
+                        periodSeconds: 20
+                      readinessProbe:
+                        httpGet:
+                          path: /api/health
+                          port: 3000
+                        initialDelaySeconds: 10
+                        periodSeconds: 10
+                      resources:
+                        requests:
+                          memory: "128Mi"
+                          cpu: "100m"
+                        limits:
+                          memory: "512Mi"
+                          cpu: "500m"
+            ---
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: aarogya-frontend
+              namespace: aarogya-frontend
+              labels:
+                app: aarogya-frontend
+            spec:
+              type: NodePort
+              selector:
+                app: aarogya-frontend
+              ports:
+                - port: 80
+                  targetPort: 3000
+                  nodePort: 30000
+            APPEOF
+
+            cat > ~/k8s-frontend/kustomization.yaml << 'KEOF'
+            apiVersion: kustomize.config.k8s.io/v1beta1
+            kind: Kustomization
+            resources:
+              - namespace.yaml
+              - app.yaml
+            KEOF
+
+            kubectl apply -k ~/k8s-frontend/
+            kubectl -n aarogya-frontend set image deployment/aarogya-frontend aarogya-frontend=ghcr.io/kinveetech/aarogyafrontend:${IMAGE_TAG}
+            kubectl -n aarogya-frontend rollout status deployment/aarogya-frontend --timeout=120s
