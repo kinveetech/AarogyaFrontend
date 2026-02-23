@@ -51,13 +51,19 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.DEV_SSH_KEY }}
           IMAGE_TAG: ${{ github.event.workflow_run.head_sha }}
           AUTH_SECRET: ${{ secrets.AUTH_SECRET }}
+          COGNITO_CLIENT_ID: ${{ secrets.COGNITO_CLIENT_ID }}
+          COGNITO_CLIENT_SECRET: ${{ secrets.COGNITO_CLIENT_SECRET }}
         run: |
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
 
-          # Inject AUTH_SECRET into manifest before copying
-          sed -i "s|PLACEHOLDER_REPLACED_BY_CD|${AUTH_SECRET}|g" k8s/app.yaml
+          # Inject secrets into manifest before copying
+          sed -i \
+            -e "s|PLACEHOLDER_REPLACED_BY_CD|${AUTH_SECRET}|g" \
+            -e "s|REPLACE_WITH_WEB_CLIENT_ID|${COGNITO_CLIENT_ID}|g" \
+            -e "s|REPLACE_WITH_WEB_CLIENT_SECRET|${COGNITO_CLIENT_SECRET}|g" \
+            k8s/app.yaml
 
           ssh -o StrictHostKeyChecking=no sk@100.108.60.90 "mkdir -p ~/k8s-frontend"
           scp -o StrictHostKeyChecking=no k8s/*.yaml sk@100.108.60.90:~/k8s-frontend/
