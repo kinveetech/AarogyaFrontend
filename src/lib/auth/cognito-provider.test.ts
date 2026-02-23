@@ -27,10 +27,10 @@ describe('CognitoPKCE provider', () => {
     })
   })
 
-  it('uses backend token endpoint', () => {
+  it('uses Cognito token endpoint', () => {
     const provider = CognitoPKCE()
     expect(provider.token).toEqual({
-      url: 'https://api.example.com/auth/pkce/token',
+      url: 'https://auth.example.com/oauth2/token',
     })
   })
 

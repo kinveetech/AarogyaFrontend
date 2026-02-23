@@ -18,7 +18,6 @@ function requireEnv(name: string): string {
 
 export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
   const cognitoDomain = requireEnv('COGNITO_DOMAIN')
-  const apiUrl = requireEnv('API_URL')
 
   return {
     id: 'cognito-pkce',
@@ -32,7 +31,7 @@ export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
       params: { scope: 'openid email profile' },
     },
     token: {
-      url: `${apiUrl}/auth/pkce/token`,
+      url: `${cognitoDomain}/oauth2/token`,
     },
     userinfo: {
       url: `${cognitoDomain}/oauth2/userInfo`,
