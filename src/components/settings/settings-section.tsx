@@ -33,6 +33,7 @@ export function SettingsSection({
       <Box
         as={asForm ? 'form' : undefined}
         onSubmit={asForm ? onSubmit : undefined}
+        {...(asForm ? { noValidate: true } : {})}
         bg="bg.glass"
         backdropFilter="blur(20px)"
         borderWidth="1px"

@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen, userEvent, within } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { DataTable, type DataTableColumn } from './data-table'
 
 interface TestRow {
@@ -165,7 +166,9 @@ describe('DataTable', () => {
     render(
       <DataTable columns={columns} data={data} rowKey="id" aria-label="Reports table" />,
     )
-    expect(screen.getByLabelText('Reports table')).toBeInTheDocument()
+    const tables = screen.getAllByLabelText('Reports table')
+    // Desktop table + mobile card table both get the label
+    expect(tables.length).toBeGreaterThanOrEqual(1)
   })
 
   it('shows aria-sort on sortable columns', () => {
@@ -257,5 +260,13 @@ describe('DataTable', () => {
       (td) => td.textContent?.trim() === '',
     )
     expect(valueCell).toBeTruthy()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(
+      <DataTable columns={columns} data={data} rowKey="id" aria-label="Reports table" />,
+    )
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

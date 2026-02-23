@@ -50,7 +50,7 @@ export function BottomNav() {
             _hover={{ color: isActive ? 'action.primary' : 'text.secondary' }}
             transition="all 0.15s ease"
           >
-            <Link href={item.href}>
+            <Link href={item.href} aria-current={isActive ? 'page' : undefined}>
               <Icon />
               <Box
                 as="span"

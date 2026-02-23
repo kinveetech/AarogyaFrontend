@@ -158,7 +158,7 @@ export const semanticTokens = defineSemanticTokens({
       value: { base: '{colors.brand.500}', _dark: '{colors.sage.300}' },
     },
     'text.muted': {
-      value: { base: '{colors.sage.500}', _dark: '{colors.sage.400}' },
+      value: { base: '{colors.sage.600}', _dark: '{colors.sage.400}' },
     },
     'text.inverse': {
       value: { base: '#FFFFFF', _dark: '{colors.brand.600}' },
@@ -199,13 +199,13 @@ export const semanticTokens = defineSemanticTokens({
 
     // ── Status ────────────────────────────────────────────────
     'status.success': {
-      value: { base: '{colors.sage.500}', _dark: '{colors.sage.300}' },
+      value: { base: '{colors.sage.600}', _dark: '{colors.sage.300}' },
     },
     'status.warning': {
-      value: { base: '{colors.amber.400}', _dark: '{colors.amber.300}' },
+      value: { base: '{colors.amber.500}', _dark: '{colors.amber.300}' },
     },
     'status.error': {
-      value: { base: '{colors.coral.400}', _dark: '{colors.coral.300}' },
+      value: { base: '{colors.coral.600}', _dark: '{colors.coral.300}' },
     },
     'status.info': {
       value: { base: '{colors.brand.500}', _dark: '{colors.brand.400}' },

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, userEvent } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { ConfirmDialog } from './confirm-dialog'
 
 describe('ConfirmDialog', () => {
@@ -69,6 +70,12 @@ describe('ConfirmDialog', () => {
     expect(screen.getByRole('alertdialog')).toBeInTheDocument()
   })
 
+  it('has aria-describedby linking to body', () => {
+    render(<ConfirmDialog {...defaultProps} />)
+    const dialog = screen.getByRole('alertdialog')
+    expect(dialog).toHaveAttribute('aria-describedby', expect.stringContaining('confirm-dialog-body'))
+  })
+
   it('renders destructive variant with coral styling', () => {
     render(<ConfirmDialog {...defaultProps} destructive confirmLabel="Delete" />)
     expect(screen.getByRole('button', { name: 'Delete' })).toBeInTheDocument()
@@ -80,5 +87,11 @@ describe('ConfirmDialog', () => {
     const header = container.querySelector('.chakra-dialog__header')
     expect(header).toBeInTheDocument()
     expect(screen.queryByText('This cannot be undone')).not.toBeInTheDocument()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<ConfirmDialog {...defaultProps} />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

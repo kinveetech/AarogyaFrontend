@@ -31,7 +31,7 @@ export function ReportFilterBar({
 }: ReportFilterBarProps) {
   return (
     <Box mb="6">
-      <HStack gap="2" flexWrap="wrap" mb="3">
+      <HStack gap="2" flexWrap="wrap" mb="3" role="group" aria-label="Filter by report type">
         {TYPE_FILTER_OPTIONS.map((option) => (
           <Button
             key={option.value}
@@ -47,7 +47,7 @@ export function ReportFilterBar({
         ))}
       </HStack>
 
-      <HStack gap="2" flexWrap="wrap">
+      <HStack gap="2" flexWrap="wrap" role="group" aria-label="Filter by status">
         {STATUS_FILTER_OPTIONS.map((option) => (
           <Button
             key={option.value}

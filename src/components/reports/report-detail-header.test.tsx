@@ -75,4 +75,10 @@ describe('ReportDetailHeader', () => {
     await userEvent.click(screen.getByLabelText('Back to reports'))
     expect(onBack).toHaveBeenCalledOnce()
   })
+
+  it('renders title as an h1 heading', () => {
+    render(<ReportDetailHeader {...defaultProps} />)
+    const heading = screen.getByRole('heading', { level: 1 })
+    expect(heading).toHaveTextContent('Complete Blood Count')
+  })
 })

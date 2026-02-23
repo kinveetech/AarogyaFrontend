@@ -132,7 +132,7 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
         gap="5"
       >
         {/* Full Name */}
-        <Field.Root invalid={!!errors.name}>
+        <Field.Root invalid={!!errors.name} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
             Full Name
           </Field.Label>
@@ -184,7 +184,7 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
         </Field.Root>
 
         {/* Phone */}
-        <Field.Root invalid={!!errors.phone}>
+        <Field.Root invalid={!!errors.phone} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
             Phone
           </Field.Label>
@@ -221,7 +221,7 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
         </Field.Root>
 
         {/* Date of Birth */}
-        <Field.Root invalid={!!errors.dateOfBirth}>
+        <Field.Root invalid={!!errors.dateOfBirth} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
             Date of Birth
           </Field.Label>

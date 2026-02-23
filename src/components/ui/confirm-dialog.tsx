@@ -54,6 +54,7 @@ export function ConfirmDialog({
           borderWidth="1px"
           boxShadow="glass"
           borderRadius="xl"
+          aria-describedby="confirm-dialog-body"
         >
           <DialogHeader>
             <DialogTitle fontFamily="heading" color="text.primary">
@@ -65,7 +66,7 @@ export function ConfirmDialog({
               </Text>
             )}
           </DialogHeader>
-          <DialogBody>
+          <DialogBody id="confirm-dialog-body">
             <Text color="text.secondary" fontSize="sm">
               {message}
             </Text>

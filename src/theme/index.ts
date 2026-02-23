@@ -22,6 +22,12 @@ const globalCss = defineGlobalStyles({
     bg: { base: '{colors.brand.100}', _dark: '{colors.brand.700}' },
     color: { base: '{colors.brand.700}', _dark: '{colors.brand.300}' },
   },
+  '*:focus-visible': {
+    outline: '2px solid',
+    outlineColor: 'action.primary',
+    outlineOffset: '2px',
+    borderRadius: 'sm',
+  },
 })
 
 const config = defineConfig({

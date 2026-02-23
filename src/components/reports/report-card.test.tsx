@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, userEvent } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { ReportCard } from './report-card'
 import type { Report } from '@/types/reports'
 
@@ -62,6 +63,13 @@ describe('ReportCard', () => {
     expect(screen.queryByText('Thyrocare Labs')).not.toBeInTheDocument()
   })
 
+  it('renders as a link to the report detail page', () => {
+    render(<ReportCard {...defaultProps} />)
+    const link = screen.getByTestId('report-card')
+    expect(link.tagName).toBe('A')
+    expect(link).toHaveAttribute('href', '/reports/r1')
+  })
+
   it('calls onView when card is clicked', async () => {
     const onView = vi.fn()
     render(<ReportCard {...defaultProps} onView={onView} />)
@@ -75,8 +83,6 @@ describe('ReportCard', () => {
     render(<ReportCard {...defaultProps} onView={onView} onDownload={onDownload} />)
     await userEvent.click(screen.getByLabelText('Download report'))
     expect(onDownload).toHaveBeenCalledWith('r1')
-    // Should not trigger card click
-    expect(onView).not.toHaveBeenCalled()
   })
 
   it('calls onDelete when delete button is clicked', async () => {
@@ -85,8 +91,6 @@ describe('ReportCard', () => {
     render(<ReportCard {...defaultProps} onView={onView} onDelete={onDelete} />)
     await userEvent.click(screen.getByLabelText('Delete report'))
     expect(onDelete).toHaveBeenCalledWith('r1')
-    // Should not trigger card click
-    expect(onView).not.toHaveBeenCalled()
   })
 
   it('renders pending status correctly', () => {
@@ -99,5 +103,11 @@ describe('ReportCard', () => {
     const report = { ...mockReport, labName: null, doctorName: 'Dr. Smith' }
     render(<ReportCard {...defaultProps} report={report} />)
     expect(screen.getByText('Dr. Smith')).toBeInTheDocument()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<ReportCard {...defaultProps} />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

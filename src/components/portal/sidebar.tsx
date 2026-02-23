@@ -67,7 +67,7 @@ export function Sidebar({ collapsed, onToggle }: SidebarProps) {
               }}
               transition="all 0.15s ease"
             >
-              <Link href={item.href}>
+              <Link href={item.href} aria-current={isActive ? 'page' : undefined}>
                 <Box flexShrink={0}>
                   <Icon />
                 </Box>

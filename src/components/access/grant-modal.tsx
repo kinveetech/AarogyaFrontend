@@ -125,17 +125,19 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
           maxW="520px"
           w="full"
           mx="4"
+          aria-describedby="grant-modal-desc"
         >
           <DialogHeader>
             <DialogTitle fontFamily="heading" fontSize="1.3rem" color="text.primary">
               Grant Doctor Access
             </DialogTitle>
-            <Text fontSize="0.88rem" color="text.muted" mt="1">
+            <Text id="grant-modal-desc" fontSize="0.88rem" color="text.muted" mt="1">
               Search for a doctor and choose which reports to share.
             </Text>
           </DialogHeader>
           <DialogBody pb="6">
             {/* Step 1: Search Doctor */}
+            <Box role="group" aria-label="Step 1: Search Doctor">
             <StepLabel
               step={1}
               label="Search Doctor"
@@ -155,10 +157,11 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
                 onClear={() => setSelectedDoctor(null)}
               />
             )}
+            </Box>
 
             {/* Step 2: Select Reports */}
             {selectedDoctor && (
-              <>
+              <Box role="group" aria-label="Step 2: Select Reports">
                 <StepLabel
                   step={2}
                   label="Select Reports"
@@ -170,12 +173,12 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
                   onToggle={toggleReport}
                   loading={reportsLoading}
                 />
-              </>
+              </Box>
             )}
 
             {/* Step 3: Set Duration */}
             {selectedDoctor && selectedReportIds.size > 0 && (
-              <>
+              <Box role="group" aria-label="Step 3: Set Duration">
                 <StepLabel
                   step={3}
                   label="Set Duration"
@@ -187,7 +190,7 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
                   onSelect={handleDurationSelect}
                   onCustomChange={handleCustomDaysChange}
                 />
-              </>
+              </Box>
             )}
 
             {/* Submit */}
@@ -242,6 +245,7 @@ function StepLabel({ step, label, active }: { step: number; label: string; activ
       color={active ? 'text.secondary' : 'text.muted'}
       mt={step === 1 ? '0' : '6'}
       mb="2.5"
+      aria-live="polite"
     >
       Step {step} &mdash; {label}
     </Text>

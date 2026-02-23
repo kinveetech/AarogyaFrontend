@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, userEvent } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { Sidebar } from './sidebar'
 
 let mockPathname = '/reports'
@@ -69,5 +70,25 @@ describe('Sidebar', () => {
     const { container } = render(<Sidebar collapsed={false} onToggle={vi.fn()} />)
     const nav = container.querySelector('nav[aria-label="Main navigation"]')
     expect(nav).toBeInTheDocument()
+  })
+
+  it('sets aria-current=page on active link', () => {
+    mockPathname = '/reports'
+    render(<Sidebar collapsed={false} onToggle={vi.fn()} />)
+    const reportsLink = screen.getByRole('link', { name: /reports/i, hidden: true })
+    expect(reportsLink).toHaveAttribute('aria-current', 'page')
+  })
+
+  it('does not set aria-current on inactive links', () => {
+    mockPathname = '/reports'
+    render(<Sidebar collapsed={false} onToggle={vi.fn()} />)
+    const accessLink = screen.getByRole('link', { name: /access/i, hidden: true })
+    expect(accessLink).not.toHaveAttribute('aria-current')
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<Sidebar collapsed={false} onToggle={vi.fn()} />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

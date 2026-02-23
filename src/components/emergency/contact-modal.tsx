@@ -90,6 +90,7 @@ export function ContactModal({
           maxW="480px"
           w="full"
           mx="4"
+          aria-describedby="contact-modal-body"
         >
           <DialogHeader>
             <DialogTitle fontFamily="heading" fontSize="1.2rem" color="text.primary">
@@ -97,8 +98,8 @@ export function ContactModal({
             </DialogTitle>
           </DialogHeader>
 
-          <Box as="form" onSubmit={handleSubmit(onSubmit)}>
-            <DialogBody>
+          <Box as="form" onSubmit={handleSubmit(onSubmit)} {...{ noValidate: true }}>
+            <DialogBody id="contact-modal-body">
               <Box
                 height="1px"
                 bg="border.subtle"
@@ -107,7 +108,7 @@ export function ContactModal({
 
               <Box display="flex" flexDirection="column" gap="4">
                 {/* Name */}
-                <Field.Root invalid={!!errors.name}>
+                <Field.Root invalid={!!errors.name} required>
                   <Field.Label color="text.secondary" fontSize="0.82rem" fontWeight="semibold">
                     Full Name
                   </Field.Label>
@@ -125,7 +126,7 @@ export function ContactModal({
                 </Field.Root>
 
                 {/* Relationship */}
-                <Field.Root invalid={!!errors.relationship}>
+                <Field.Root invalid={!!errors.relationship} required>
                   <Field.Label color="text.secondary" fontSize="0.82rem" fontWeight="semibold">
                     Relationship
                   </Field.Label>
@@ -151,7 +152,7 @@ export function ContactModal({
                 </Field.Root>
 
                 {/* Phone */}
-                <Field.Root invalid={!!errors.phone}>
+                <Field.Root invalid={!!errors.phone} required>
                   <Field.Label color="text.secondary" fontSize="0.82rem" fontWeight="semibold">
                     Phone Number
                   </Field.Label>
