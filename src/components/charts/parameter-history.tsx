@@ -19,6 +19,11 @@ import { ChartSkeleton } from './chart-skeleton'
 import { getChartColors } from './chart-colors'
 import type { ParameterDataPoint, ParameterReferenceRange, ParameterPointStatus } from '@/types/charts'
 
+/** @internal Exported for testing */
+export function StatusBar(props: BarShapeProps) {
+  return <rect x={props.x} y={props.y} width={props.width} height={props.height} rx={4} ry={4} fill={props.fill} />
+}
+
 export interface ParameterHistoryProps {
   parameterName: string
   unit: string
@@ -114,9 +119,9 @@ export function ParameterHistory({
     )
   }
 
-  const sortedData = [...data].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  )
+  const sortedData = [...data]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map((d) => ({ ...d, fill: colors.status[d.status] }))
 
   return (
     <motion.div
@@ -179,10 +184,7 @@ export function ParameterHistory({
               dataKey="value"
               radius={[4, 4, 0, 0]}
               maxBarSize={40}
-              shape={(props: BarShapeProps) => {
-                const entry = sortedData[props.index]
-                return <rect x={props.x} y={props.y} width={props.width} height={props.height} rx={4} ry={4} fill={colors.status[entry.status]} />
-              }}
+              shape={StatusBar}
             />
           </BarChart>
         </ResponsiveContainer>

@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@/test/render'
-import { ParameterHistory, ParameterTooltip } from './parameter-history'
+import { ParameterHistory, ParameterTooltip, StatusBar } from './parameter-history'
 import type { ParameterDataPoint } from '@/types/charts'
+import type { BarShapeProps } from 'recharts'
 
 let mockResolvedTheme = 'light'
 
@@ -158,6 +159,32 @@ describe('ParameterHistory', () => {
       />,
     )
     expect(screen.getByTestId('parameter-history-chart')).toBeInTheDocument()
+  })
+})
+
+describe('StatusBar', () => {
+  it('renders a rect with the given props', () => {
+    const props = {
+      x: 10,
+      y: 20,
+      width: 30,
+      height: 40,
+      fill: '#7FB285',
+      index: 0,
+    } as unknown as BarShapeProps
+    const { container } = render(
+      <svg>
+        <StatusBar {...props} />
+      </svg>,
+    )
+    const rect = container.querySelector('rect')
+    expect(rect).toBeInTheDocument()
+    expect(rect).toHaveAttribute('x', '10')
+    expect(rect).toHaveAttribute('y', '20')
+    expect(rect).toHaveAttribute('width', '30')
+    expect(rect).toHaveAttribute('height', '40')
+    expect(rect).toHaveAttribute('rx', '4')
+    expect(rect).toHaveAttribute('fill', '#7FB285')
   })
 })
 
