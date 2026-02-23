@@ -155,7 +155,7 @@ describe('useSwRegistration', () => {
 
   it('handles missing serviceWorker gracefully', () => {
     // Delete the property so 'serviceWorker' in navigator returns false
-    delete (navigator as Record<string, unknown>).serviceWorker
+    delete (navigator as unknown as Record<string, unknown>).serviceWorker
 
     const { result } = renderHook(() => useSwRegistration())
     expect(result.current.isRegistered).toBe(false)
