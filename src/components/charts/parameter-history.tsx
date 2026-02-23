@@ -10,9 +10,9 @@ import {
   XAxis,
   YAxis,
   Bar,
-  Cell,
   ReferenceLine,
   Tooltip,
+  type BarShapeProps,
 } from 'recharts'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ChartSkeleton } from './chart-skeleton'
@@ -40,10 +40,9 @@ function formatXAxisDate(dateStr: string) {
 }
 
 interface ParameterTooltipProps {
-  active?: boolean
-  payload?: Array<{ payload: ParameterDataPoint }>
-  unit: string
-  isDark: boolean
+  readonly active?: boolean
+  readonly payload?: ReadonlyArray<{ payload: ParameterDataPoint }>
+  readonly unit: string
 }
 
 /** @internal Exported for testing */
@@ -157,7 +156,7 @@ export function ParameterHistory({
               axisLine={false}
             />
             <Tooltip
-              content={<ParameterTooltip unit={unit} isDark={isDark} />}
+              content={<ParameterTooltip unit={unit} />}
               cursor={{ fill: 'rgba(127, 178, 133, 0.06)' }}
             />
             {referenceRange && (
@@ -176,11 +175,15 @@ export function ParameterHistory({
                 />
               </>
             )}
-            <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
-              {sortedData.map((entry, index) => (
-                <Cell key={index} fill={colors.status[entry.status]} />
-              ))}
-            </Bar>
+            <Bar
+              dataKey="value"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={40}
+              shape={(props: BarShapeProps) => {
+                const entry = sortedData[props.index]
+                return <rect x={props.x} y={props.y} width={props.width} height={props.height} rx={4} ry={4} fill={colors.status[entry.status]} />
+              }}
+            />
           </BarChart>
         </ResponsiveContainer>
 

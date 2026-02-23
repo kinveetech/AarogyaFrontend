@@ -53,11 +53,10 @@ interface VitalsTooltipPayloadEntry {
 }
 
 interface VitalsTooltipProps {
-  active?: boolean
-  payload?: VitalsTooltipPayloadEntry[]
-  label?: string
-  series: VitalSeries[]
-  isDark: boolean
+  readonly active?: boolean
+  readonly payload?: VitalsTooltipPayloadEntry[]
+  readonly label?: string
+  readonly series: VitalSeries[]
 }
 
 /** @internal Exported for testing */
@@ -185,7 +184,7 @@ export function VitalsTrend({ series, height = 300, isLoading }: VitalsTrendProp
               axisLine={false}
             />
             <Tooltip
-              content={<VitalsTooltip series={series} isDark={isDark} />}
+              content={<VitalsTooltip series={series} />}
               cursor={{ stroke: colors.gridLine }}
             />
             {series.map((s) => (

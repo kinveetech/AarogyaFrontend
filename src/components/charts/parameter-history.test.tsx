@@ -164,14 +164,14 @@ describe('ParameterHistory', () => {
 describe('ParameterTooltip', () => {
   it('returns null when not active', () => {
     const { container } = render(
-      <ParameterTooltip active={false} payload={[]} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={false} payload={[]} unit="mg/dL"  />,
     )
     expect(container.innerHTML).toBe('')
   })
 
   it('returns null when payload is empty', () => {
     const { container } = render(
-      <ParameterTooltip active={true} payload={[]} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={[]} unit="mg/dL"  />,
     )
     expect(container.innerHTML).toBe('')
   })
@@ -186,7 +186,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByTestId('parameter-tooltip')).toBeInTheDocument()
     expect(screen.getByText(/95 mg\/dL/)).toBeInTheDocument()
@@ -203,7 +203,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={true} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByTestId('parameter-tooltip')).toBeInTheDocument()
     expect(screen.getByText('Abnormal')).toBeInTheDocument()
@@ -219,7 +219,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByText('Borderline')).toBeInTheDocument()
   })

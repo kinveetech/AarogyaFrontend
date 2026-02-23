@@ -150,8 +150,7 @@ describe('VitalsTooltip', () => {
         payload={[]}
         label="2025-01-10"
         series={sampleSeries}
-        isDark={false}
-      />,
+              />,
     )
     expect(container.innerHTML).toBe('')
   })
@@ -163,8 +162,7 @@ describe('VitalsTooltip', () => {
         payload={[]}
         label="2025-01-10"
         series={sampleSeries}
-        isDark={false}
-      />,
+              />,
     )
     expect(container.innerHTML).toBe('')
   })
@@ -180,8 +178,7 @@ describe('VitalsTooltip', () => {
         payload={payload}
         label="2025-01-10"
         series={sampleSeries}
-        isDark={false}
-      />,
+              />,
     )
     expect(screen.getByTestId('vitals-tooltip')).toBeInTheDocument()
     expect(screen.getByText(/Systolic BP/)).toBeInTheDocument()
@@ -200,8 +197,7 @@ describe('VitalsTooltip', () => {
         payload={payload}
         label="2025-01-17"
         series={sampleSeries}
-        isDark={true}
-      />,
+              />,
     )
     expect(screen.getByTestId('vitals-tooltip')).toBeInTheDocument()
   })
@@ -216,8 +212,7 @@ describe('VitalsTooltip', () => {
         payload={payload}
         label="2025-01-10"
         series={sampleSeries}
-        isDark={false}
-      />,
+              />,
     )
     expect(screen.getByTestId('vitals-tooltip')).toBeInTheDocument()
   })
