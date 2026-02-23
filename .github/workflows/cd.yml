@@ -72,7 +72,7 @@ jobs:
               namespace: aarogya-frontend
             type: Opaque
             stringData:
-              AUTH_SECRET: "CHANGE_ME"
+              AUTH_SECRET: "SGPtgR1UHADyQISheEoDQQSar5X0KpmDeZBj83vlX/cV"
             ---
             apiVersion: apps/v1
             kind: Deployment
