@@ -22,9 +22,9 @@ describe('refreshAccessToken', () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          access_token: 'new-access',
-          refresh_token: 'new-refresh',
-          expires_in: 3600,
+          accessToken: 'new-access',
+          refreshToken: 'new-refresh',
+          expiresInSeconds: 3600,
         }),
         { status: 200 },
       ),
@@ -32,11 +32,14 @@ describe('refreshAccessToken', () => {
 
     const result = await refreshAccessToken(baseToken)
 
-    expect(fetch).toHaveBeenCalledWith('https://api.example.com/auth/token/refresh', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh_token: 'old-refresh' }),
-    })
+    expect(fetch).toHaveBeenCalledWith(
+      'https://api.example.com/api/auth/social/token/refresh',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refreshToken: 'old-refresh' }),
+      },
+    )
 
     expect(result.accessToken).toBe('new-access')
     expect(result.refreshToken).toBe('new-refresh')
@@ -48,9 +51,9 @@ describe('refreshAccessToken', () => {
     vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
       new Response(
         JSON.stringify({
-          access_token: 'rotated-access',
-          refresh_token: 'rotated-refresh',
-          expires_in: 1800,
+          accessToken: 'rotated-access',
+          refreshToken: 'rotated-refresh',
+          expiresInSeconds: 1800,
         }),
         { status: 200 },
       ),

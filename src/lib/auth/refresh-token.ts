@@ -1,9 +1,9 @@
 import type { JWT } from 'next-auth/jwt'
 
 interface RefreshResponse {
-  access_token: string
-  refresh_token: string
-  expires_in: number
+  accessToken: string
+  refreshToken: string
+  expiresInSeconds: number
 }
 
 export async function refreshAccessToken(token: JWT): Promise<JWT> {
@@ -12,10 +12,10 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     throw new Error('Missing required environment variable: API_URL')
   }
 
-  const response = await fetch(`${apiUrl}/auth/token/refresh`, {
+  const response = await fetch(`${apiUrl}/api/auth/social/token/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ refresh_token: token.refreshToken }),
+    body: JSON.stringify({ refreshToken: token.refreshToken }),
   })
 
   if (!response.ok) {
@@ -26,9 +26,9 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
 
   return {
     ...token,
-    accessToken: data.access_token,
-    refreshToken: data.refresh_token,
-    expiresAt: Math.floor(Date.now() / 1000) + data.expires_in,
+    accessToken: data.accessToken,
+    refreshToken: data.refreshToken,
+    expiresAt: Math.floor(Date.now() / 1000) + data.expiresInSeconds,
     error: undefined,
   }
 }

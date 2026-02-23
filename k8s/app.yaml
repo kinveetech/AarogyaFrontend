@@ -6,6 +6,8 @@ metadata:
 type: Opaque
 stringData:
   AUTH_SECRET: "PLACEHOLDER_REPLACED_BY_CD"
+  COGNITO_CLIENT_ID: "REPLACE_WITH_WEB_CLIENT_ID"
+  COGNITO_CLIENT_SECRET: "REPLACE_WITH_WEB_CLIENT_SECRET"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -43,13 +45,19 @@ spec:
             - name: API_URL
               value: "http://aarogya-api.aarogya.svc.cluster.local"
             - name: COGNITO_DOMAIN
-              value: "https://auth.dev-placeholder.example.com"
+              value: "https://aarogya-dev.auth.ap-south-1.amazoncognito.com"
             - name: COGNITO_ISSUER
-              value: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder"
+              value: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_I827gkdF7"
             - name: COGNITO_CLIENT_ID
-              value: "dev-placeholder-client-id"
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-secret
+                  key: COGNITO_CLIENT_ID
             - name: COGNITO_CLIENT_SECRET
-              value: "dev-placeholder-client-secret"
+              valueFrom:
+                secretKeyRef:
+                  name: frontend-secret
+                  key: COGNITO_CLIENT_SECRET
             - name: NEXT_PUBLIC_FIREBASE_API_KEY
               value: ""
             - name: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
