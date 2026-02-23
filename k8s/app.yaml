@@ -43,13 +43,13 @@ spec:
             - name: API_URL
               value: "http://aarogya-api.aarogya.svc.cluster.local"
             - name: COGNITO_DOMAIN
-              value: ""
+              value: "https://auth.dev-placeholder.example.com"
             - name: COGNITO_ISSUER
-              value: ""
+              value: "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder"
             - name: COGNITO_CLIENT_ID
-              value: ""
+              value: "dev-placeholder-client-id"
             - name: COGNITO_CLIENT_SECRET
-              value: ""
+              value: "dev-placeholder-client-secret"
             - name: NEXT_PUBLIC_FIREBASE_API_KEY
               value: ""
             - name: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
