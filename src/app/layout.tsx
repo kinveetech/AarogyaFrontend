@@ -1,7 +1,8 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { DM_Serif_Display, Outfit, DM_Mono } from 'next/font/google'
 import { Providers } from './providers'
 import { AmbientOrbs } from './ambient-orbs'
+import { InstallPrompt, SwUpdateNotification } from '@/components/pwa'
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: '400',
@@ -26,6 +27,19 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: 'Aarogya',
   description: 'Your health records, simplified.',
+  applicationName: 'Aarogya',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Aarogya',
+  },
+  formatDetection: {
+    telephone: false,
+  },
+}
+
+export const viewport: Viewport = {
+  themeColor: '#0A4D4A',
 }
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -38,6 +52,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         <Providers>
           <AmbientOrbs />
+          <InstallPrompt />
+          <SwUpdateNotification />
           {children}
         </Providers>
       </body>
