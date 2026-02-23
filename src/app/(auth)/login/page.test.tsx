@@ -63,10 +63,11 @@ describe('LoginPage', () => {
     mockSignIn.mockReset()
   })
 
-  it('renders three auth buttons', () => {
+  it('renders four auth buttons', () => {
     render(<LoginPage />)
     expect(screen.getByRole('button', { name: /continue with phone/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /continue with google/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /continue with apple/i })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /continue with email/i })).toBeInTheDocument()
   })
 
@@ -119,6 +120,14 @@ describe('LoginPage', () => {
     render(<LoginPage />)
 
     await user.click(screen.getByRole('button', { name: /continue with google/i }))
+    expect(mockSignIn).toHaveBeenCalledWith('cognito-pkce', { callbackUrl: '/reports' })
+  })
+
+  it('calls signIn with cognito-pkce when apple button clicked', async () => {
+    const user = userEvent.setup()
+    render(<LoginPage />)
+
+    await user.click(screen.getByRole('button', { name: /continue with apple/i }))
     expect(mockSignIn).toHaveBeenCalledWith('cognito-pkce', { callbackUrl: '/reports' })
   })
 
