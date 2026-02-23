@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@/test/render'
-import { ParameterHistory, ParameterTooltip } from './parameter-history'
+import { ParameterHistory, ParameterTooltip, StatusBar } from './parameter-history'
 import type { ParameterDataPoint } from '@/types/charts'
+import type { BarShapeProps } from 'recharts'
 
 let mockResolvedTheme = 'light'
 
@@ -161,17 +162,43 @@ describe('ParameterHistory', () => {
   })
 })
 
+describe('StatusBar', () => {
+  it('renders a rect with the given props', () => {
+    const props = {
+      x: 10,
+      y: 20,
+      width: 30,
+      height: 40,
+      fill: '#7FB285',
+      index: 0,
+    } as unknown as BarShapeProps
+    const { container } = render(
+      <svg>
+        <StatusBar {...props} />
+      </svg>,
+    )
+    const rect = container.querySelector('rect')
+    expect(rect).toBeInTheDocument()
+    expect(rect).toHaveAttribute('x', '10')
+    expect(rect).toHaveAttribute('y', '20')
+    expect(rect).toHaveAttribute('width', '30')
+    expect(rect).toHaveAttribute('height', '40')
+    expect(rect).toHaveAttribute('rx', '4')
+    expect(rect).toHaveAttribute('fill', '#7FB285')
+  })
+})
+
 describe('ParameterTooltip', () => {
   it('returns null when not active', () => {
     const { container } = render(
-      <ParameterTooltip active={false} payload={[]} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={false} payload={[]} unit="mg/dL"  />,
     )
     expect(container.innerHTML).toBe('')
   })
 
   it('returns null when payload is empty', () => {
     const { container } = render(
-      <ParameterTooltip active={true} payload={[]} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={[]} unit="mg/dL"  />,
     )
     expect(container.innerHTML).toBe('')
   })
@@ -186,7 +213,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByTestId('parameter-tooltip')).toBeInTheDocument()
     expect(screen.getByText(/95 mg\/dL/)).toBeInTheDocument()
@@ -203,7 +230,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={true} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByTestId('parameter-tooltip')).toBeInTheDocument()
     expect(screen.getByText('Abnormal')).toBeInTheDocument()
@@ -219,7 +246,7 @@ describe('ParameterTooltip', () => {
       },
     ]
     render(
-      <ParameterTooltip active={true} payload={payload} unit="mg/dL" isDark={false} />,
+      <ParameterTooltip active={true} payload={payload} unit="mg/dL"  />,
     )
     expect(screen.getByText('Borderline')).toBeInTheDocument()
   })

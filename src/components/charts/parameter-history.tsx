@@ -10,15 +10,19 @@ import {
   XAxis,
   YAxis,
   Bar,
-  Cell,
   ReferenceLine,
   Tooltip,
-  type TooltipProps,
+  type BarShapeProps,
 } from 'recharts'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ChartSkeleton } from './chart-skeleton'
 import { getChartColors } from './chart-colors'
 import type { ParameterDataPoint, ParameterReferenceRange, ParameterPointStatus } from '@/types/charts'
+
+/** @internal Exported for testing */
+export function StatusBar(props: BarShapeProps) {
+  return <rect x={props.x} y={props.y} width={props.width} height={props.height} rx={4} ry={4} fill={props.fill} />
+}
 
 export interface ParameterHistoryProps {
   parameterName: string
@@ -40,15 +44,21 @@ function formatXAxisDate(dateStr: string) {
   return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
 }
 
+interface ParameterTooltipProps {
+  readonly active?: boolean
+  readonly payload?: ReadonlyArray<{ payload: ParameterDataPoint }>
+  readonly unit: string
+}
+
 /** @internal Exported for testing */
 export function ParameterTooltip({
   active,
   payload,
   unit,
-}: TooltipProps<number, string> & { unit: string; isDark: boolean }) {
+}: ParameterTooltipProps) {
   if (!active || !payload?.length) return null
 
-  const entry = payload[0].payload as ParameterDataPoint
+  const entry = payload[0].payload
 
   return (
     <Box
@@ -109,9 +119,9 @@ export function ParameterHistory({
     )
   }
 
-  const sortedData = [...data].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
-  )
+  const sortedData = [...data]
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .map((d) => ({ ...d, fill: colors.status[d.status] }))
 
   return (
     <motion.div
@@ -151,7 +161,7 @@ export function ParameterHistory({
               axisLine={false}
             />
             <Tooltip
-              content={<ParameterTooltip unit={unit} isDark={isDark} />}
+              content={<ParameterTooltip unit={unit} />}
               cursor={{ fill: 'rgba(127, 178, 133, 0.06)' }}
             />
             {referenceRange && (
@@ -170,11 +180,12 @@ export function ParameterHistory({
                 />
               </>
             )}
-            <Bar dataKey="value" radius={[4, 4, 0, 0]} maxBarSize={40}>
-              {sortedData.map((entry, index) => (
-                <Cell key={index} fill={colors.status[entry.status]} />
-              ))}
-            </Bar>
+            <Bar
+              dataKey="value"
+              radius={[4, 4, 0, 0]}
+              maxBarSize={40}
+              shape={StatusBar}
+            />
           </BarChart>
         </ResponsiveContainer>
 

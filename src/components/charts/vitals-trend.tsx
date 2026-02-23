@@ -12,7 +12,6 @@ import {
   Line,
   ReferenceArea,
   Tooltip,
-  type TooltipProps,
 } from 'recharts'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import { ChartSkeleton } from './chart-skeleton'
@@ -53,13 +52,20 @@ interface VitalsTooltipPayloadEntry {
   color: string
 }
 
+interface VitalsTooltipProps {
+  readonly active?: boolean
+  readonly payload?: VitalsTooltipPayloadEntry[]
+  readonly label?: string
+  readonly series: VitalSeries[]
+}
+
 /** @internal Exported for testing */
 export function VitalsTooltip({
   active,
   payload,
   label,
   series,
-}: TooltipProps<number, string> & { series: VitalSeries[]; isDark: boolean }) {
+}: VitalsTooltipProps) {
   if (!active || !payload?.length) return null
 
   const seriesMap = new Map(series.map((s) => [s.type, s]))
@@ -78,7 +84,7 @@ export function VitalsTooltip({
       <Text fontSize="xs" color="text.muted" mb="1">
         {formatXAxisDate(label as string)}
       </Text>
-      {(payload as VitalsTooltipPayloadEntry[]).map((entry) => {
+      {payload.map((entry) => {
         const meta = seriesMap.get(entry.dataKey as VitalType)
         return (
           <HStack key={entry.dataKey} gap="2" fontSize="xs">
@@ -178,7 +184,7 @@ export function VitalsTrend({ series, height = 300, isLoading }: VitalsTrendProp
               axisLine={false}
             />
             <Tooltip
-              content={<VitalsTooltip series={series} isDark={isDark} />}
+              content={<VitalsTooltip series={series} />}
               cursor={{ stroke: colors.gridLine }}
             />
             {series.map((s) => (
