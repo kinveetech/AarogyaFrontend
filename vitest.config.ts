@@ -27,6 +27,7 @@ export default defineConfig({
         'next.config.*',
         '.next/**',
         'src/test/**',
+        'src/app/sw.ts',
       ],
     },
   },
