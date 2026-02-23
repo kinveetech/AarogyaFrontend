@@ -61,21 +61,34 @@ export function ReportCardGrid({
   }
 
   return (
-    <Box
-      display="grid"
-      gridTemplateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
-      gap="4"
-      data-testid="report-grid"
-    >
-      {reports.map((report) => (
-        <ReportCard
-          key={report.id}
-          report={report}
-          onView={onView}
-          onDownload={onDownload}
-          onDelete={onDelete}
-        />
-      ))}
-    </Box>
+    <>
+      <Box
+        aria-live="polite"
+        position="absolute"
+        width="1px"
+        height="1px"
+        overflow="hidden"
+        clip="rect(0, 0, 0, 0)"
+        whiteSpace="nowrap"
+      >
+        {reports.length} {reports.length === 1 ? 'report' : 'reports'} found
+      </Box>
+      <Box
+        display="grid"
+        gridTemplateColumns={{ base: '1fr', md: 'repeat(2, 1fr)', lg: 'repeat(3, 1fr)' }}
+        gap="4"
+        data-testid="report-grid"
+      >
+        {reports.map((report) => (
+          <ReportCard
+            key={report.id}
+            report={report}
+            onView={onView}
+            onDownload={onDownload}
+            onDelete={onDelete}
+          />
+        ))}
+      </Box>
+    </>
   )
 }

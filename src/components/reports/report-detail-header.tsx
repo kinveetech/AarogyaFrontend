@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Flex, HStack, IconButton, Text } from '@chakra-ui/react'
+import { Box, Flex, HStack, Heading, IconButton, Text } from '@chakra-ui/react'
 import { StatusBadge } from '@/components/ui/status-badge'
 import {
   REPORT_TYPE_LABELS,
@@ -58,14 +58,15 @@ export function ReportDetailHeader({ report, onBack }: ReportDetailHeaderProps) 
           >
             <BackIcon />
           </IconButton>
-          <Text
+          <Heading
+            as="h1"
             fontFamily="heading"
             fontSize={{ base: 'xl', md: '2xl' }}
             color="text.primary"
             fontWeight="semibold"
           >
             {report.title}
-          </Text>
+          </Heading>
         </HStack>
 
         <HStack gap="3" ml={{ base: '0', md: 'auto' }} flexShrink={0}>

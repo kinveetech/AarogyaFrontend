@@ -79,6 +79,8 @@ describe('ReportDetailParameters', () => {
 
   it('renders table with aria-label', () => {
     render(<ReportDetailParameters parameters={mockParameters} />)
-    expect(screen.getByLabelText('Report parameters')).toBeInTheDocument()
+    const tables = screen.getAllByLabelText('Report parameters')
+    // Desktop table + mobile card table both get the label
+    expect(tables.length).toBeGreaterThanOrEqual(1)
   })
 })

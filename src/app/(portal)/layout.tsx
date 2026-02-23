@@ -5,6 +5,7 @@ import { Box } from '@chakra-ui/react'
 import { TopBar } from '@/components/portal/top-bar'
 import { Sidebar, SIDEBAR_EXPANDED, SIDEBAR_COLLAPSED } from '@/components/portal/sidebar'
 import { BottomNav } from '@/components/portal/bottom-nav'
+import { SkipLink } from '@/components/ui/skip-link'
 
 export default function PortalLayout({
   children,
@@ -16,10 +17,12 @@ export default function PortalLayout({
 
   return (
     <>
+      <SkipLink />
       <TopBar onMenuToggle={() => setCollapsed((c) => !c)} />
       <Sidebar collapsed={collapsed} onToggle={() => setCollapsed((c) => !c)} />
       <Box
         as="main"
+        id="main-content"
         ml={{ base: 0, md: `${sidebarWidth}px` }}
         pt="56px"
         pb={{ base: '80px', md: 0 }}

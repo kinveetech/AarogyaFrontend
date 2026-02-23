@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { render, screen } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { StatusBadge } from './status-badge'
 
 describe('StatusBadge', () => {
@@ -11,32 +12,33 @@ describe('StatusBadge', () => {
     },
   )
 
-  it('shows dot by default for non-pending variants', () => {
+  it('shows icon by default for non-pending variants', () => {
     render(<StatusBadge variant="success">Active</StatusBadge>)
-    expect(screen.getByTestId('status-dot')).toBeInTheDocument()
+    expect(screen.getByTestId('status-icon')).toBeInTheDocument()
   })
 
-  it('hides dot by default for pending variant', () => {
+  it('hides icon by default for pending variant', () => {
     render(<StatusBadge variant="pending">Pending</StatusBadge>)
-    expect(screen.queryByTestId('status-dot')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('status-icon')).not.toBeInTheDocument()
   })
 
-  it('hides dot when showDot is false', () => {
+  it('hides icon when showDot is false', () => {
     render(
       <StatusBadge variant="success" showDot={false}>
         Active
       </StatusBadge>,
     )
-    expect(screen.queryByTestId('status-dot')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('status-icon')).not.toBeInTheDocument()
   })
 
-  it('shows dot when showDot is true on pending', () => {
+  it('shows icon when showDot is true on pending', () => {
     render(
       <StatusBadge variant="pending" showDot>
         Pending
       </StatusBadge>,
     )
-    expect(screen.getByTestId('status-dot')).toBeInTheDocument()
+    // pending variant returns null from StatusIcon, so no icon rendered
+    expect(screen.queryByTestId('status-icon')).not.toBeInTheDocument()
   })
 
   it('renders as a span element', () => {
@@ -44,5 +46,25 @@ describe('StatusBadge', () => {
     const badge = screen.getByText('Info').closest('span')
     expect(badge).toBeInTheDocument()
     expect(badge?.tagName).toBe('SPAN')
+  })
+
+  it('renders distinct icons for each variant', () => {
+    const { rerender } = render(<StatusBadge variant="success">S</StatusBadge>)
+    expect(screen.getByTestId('status-icon')).toBeInTheDocument()
+
+    rerender(<StatusBadge variant="warning">W</StatusBadge>)
+    expect(screen.getByTestId('status-icon')).toBeInTheDocument()
+
+    rerender(<StatusBadge variant="error">E</StatusBadge>)
+    expect(screen.getByTestId('status-icon')).toBeInTheDocument()
+
+    rerender(<StatusBadge variant="info">I</StatusBadge>)
+    expect(screen.getByTestId('status-icon')).toBeInTheDocument()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<StatusBadge variant="success">Active</StatusBadge>)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

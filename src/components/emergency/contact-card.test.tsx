@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, userEvent } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { ContactCard } from './contact-card'
 import type { EmergencyContact } from '@/types/emergency'
 
@@ -61,5 +62,13 @@ describe('ContactCard', () => {
     render(<ContactCard contact={makeContact()} onEdit={vi.fn()} onDelete={onDelete} />)
     await userEvent.click(screen.getByRole('button', { name: /remove priya sharma/i }))
     expect(onDelete).toHaveBeenCalledWith('ec1')
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(
+      <ContactCard contact={makeContact()} onEdit={vi.fn()} onDelete={vi.fn()} />,
+    )
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

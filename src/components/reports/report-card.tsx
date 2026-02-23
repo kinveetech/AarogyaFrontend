@@ -1,6 +1,7 @@
 'use client'
 
 import { Box, Text, HStack, IconButton } from '@chakra-ui/react'
+import Link from 'next/link'
 import { StatusBadge } from '@/components/ui/status-badge'
 import {
   REPORT_TYPE_LABELS,
@@ -28,6 +29,7 @@ function formatDate(dateString: string): string {
 export function ReportCard({ report, onView, onDownload, onDelete }: ReportCardProps) {
   return (
     <Box
+      asChild
       bg="bg.glass"
       backdropFilter="blur(12px)"
       borderWidth="1px"
@@ -35,83 +37,88 @@ export function ReportCard({ report, onView, onDownload, onDelete }: ReportCardP
       borderRadius="lg"
       p="5"
       transition="all 0.2s"
-      cursor="pointer"
+      display="block"
+      textDecoration="none"
+      color="inherit"
       _hover={{ boxShadow: 'md', transform: 'translateY(-1px)' }}
-      onClick={() => onView(report.id)}
       data-testid="report-card"
     >
-      <HStack justifyContent="space-between" mb="3">
-        <Text fontSize="xs" color="text.muted" fontWeight="medium">
-          {REPORT_TYPE_LABELS[report.reportType]}
-        </Text>
-        <StatusBadge variant={STATUS_VARIANT_MAP[report.status]}>
-          {REPORT_STATUS_LABELS[report.status]}
-        </StatusBadge>
-      </HStack>
+      <Link href={`/reports/${report.id}`} onClick={() => onView(report.id)}>
+        <HStack justifyContent="space-between" mb="3">
+          <Text fontSize="xs" color="text.muted" fontWeight="medium">
+            {REPORT_TYPE_LABELS[report.reportType]}
+          </Text>
+          <StatusBadge variant={STATUS_VARIANT_MAP[report.status]}>
+            {REPORT_STATUS_LABELS[report.status]}
+          </StatusBadge>
+        </HStack>
 
-      <Text
-        fontSize="md"
-        fontWeight="semibold"
-        color="text.primary"
-        mb="1"
-        lineClamp={2}
-      >
-        {report.title}
-      </Text>
-
-      <Text fontSize="xs" color="text.muted" mb="3">
-        {formatDate(report.reportDate)}
-      </Text>
-
-      {(report.labName ?? report.doctorName) && (
-        <Text fontSize="xs" color="text.secondary" mb="1" lineClamp={1}>
-          {report.labName ?? report.doctorName}
-        </Text>
-      )}
-
-      {report.highlightParameter && (
         <Text
-          fontSize="xs"
-          fontFamily="mono"
-          color="text.secondary"
-          bg="bg.overlay"
-          px="2"
-          py="0.5"
-          borderRadius="md"
-          display="inline-block"
-          mb="3"
+          fontSize="md"
+          fontWeight="semibold"
+          color="text.primary"
+          mb="1"
+          lineClamp={2}
         >
-          {report.highlightParameter}
+          {report.title}
         </Text>
-      )}
 
-      <HStack justifyContent="flex-end" gap="1" mt="2">
-        <IconButton
-          aria-label="Download report"
-          variant="ghost"
-          size="sm"
-          borderRadius="full"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDownload(report.id)
-          }}
-        >
-          <DownloadIcon />
-        </IconButton>
-        <IconButton
-          aria-label="Delete report"
-          variant="ghost"
-          size="sm"
-          borderRadius="full"
-          color="coral.400"
-          onClick={(e) => {
-            e.stopPropagation()
-            onDelete(report.id)
-          }}
-        >
-          <TrashIcon />
-        </IconButton>
-      </HStack>
+        <Text fontSize="xs" color="text.muted" mb="3">
+          {formatDate(report.reportDate)}
+        </Text>
+
+        {(report.labName ?? report.doctorName) && (
+          <Text fontSize="xs" color="text.secondary" mb="1" lineClamp={1}>
+            {report.labName ?? report.doctorName}
+          </Text>
+        )}
+
+        {report.highlightParameter && (
+          <Text
+            fontSize="xs"
+            fontFamily="mono"
+            color="text.secondary"
+            bg="bg.overlay"
+            px="2"
+            py="0.5"
+            borderRadius="md"
+            display="inline-block"
+            mb="3"
+          >
+            {report.highlightParameter}
+          </Text>
+        )}
+
+        <HStack justifyContent="flex-end" gap="1" mt="2">
+          <IconButton
+            aria-label="Download report"
+            variant="ghost"
+            size="sm"
+            borderRadius="full"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onDownload(report.id)
+            }}
+          >
+            <DownloadIcon />
+          </IconButton>
+          <IconButton
+            aria-label="Delete report"
+            variant="ghost"
+            size="sm"
+            borderRadius="full"
+            color="coral.400"
+            onClick={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              onDelete(report.id)
+            }}
+          >
+            <TrashIcon />
+          </IconButton>
+        </HStack>
+      </Link>
     </Box>
   )
 }

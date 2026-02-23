@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { EmptyStateView } from './empty-state'
 
 vi.mock('framer-motion', () => ({
@@ -84,5 +85,11 @@ describe('EmptyStateView', () => {
       screen.getByRole('button', { name: 'Upload Report' }),
     )
     expect(onClick).toHaveBeenCalledOnce()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<EmptyStateView {...defaultProps} />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

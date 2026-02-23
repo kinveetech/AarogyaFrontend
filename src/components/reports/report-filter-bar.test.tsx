@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 import { render, screen, userEvent } from '@/test/render'
+import { axe } from 'vitest-axe'
 import { ReportFilterBar } from './report-filter-bar'
 
 describe('ReportFilterBar', () => {
@@ -45,5 +46,17 @@ describe('ReportFilterBar', () => {
   it('renders the date range picker', () => {
     render(<ReportFilterBar {...defaultProps} />)
     expect(screen.getByLabelText('Filter by date range')).toBeInTheDocument()
+  })
+
+  it('has labeled filter groups', () => {
+    render(<ReportFilterBar {...defaultProps} />)
+    expect(screen.getByRole('group', { name: /filter by report type/i })).toBeInTheDocument()
+    expect(screen.getByRole('group', { name: /filter by status/i })).toBeInTheDocument()
+  })
+
+  it('has no accessibility violations', async () => {
+    const { container } = render(<ReportFilterBar {...defaultProps} />)
+    const results = await axe(container)
+    expect(results).toHaveNoViolations()
   })
 })

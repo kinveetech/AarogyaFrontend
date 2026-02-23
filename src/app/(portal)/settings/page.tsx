@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
-import { Box, VStack } from '@chakra-ui/react'
+import { Box, Heading, VStack } from '@chakra-ui/react'
 import { useProfile, useUpdateProfile } from '@/hooks/profile'
 import {
   ProfileSection,
@@ -31,6 +31,15 @@ export default function SettingsPage() {
 
   return (
     <Box maxW="820px" mx="auto" px={{ base: '4', md: '6' }} py="6">
+      <Heading
+        as="h1"
+        fontFamily="heading"
+        fontSize={{ base: '1.4rem', md: '1.75rem' }}
+        color="text.primary"
+        mb="6"
+      >
+        Settings
+      </Heading>
       <VStack gap="8" align="stretch">
         <ProfileSection
           profile={profile}

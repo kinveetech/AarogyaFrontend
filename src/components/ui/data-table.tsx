@@ -215,7 +215,7 @@ export function DataTable<TData extends Record<string, any>>({
       </Box>
 
       {/* Mobile card layout */}
-      <Box display={{ base: 'block', md: 'none' }}>
+      <Box display={{ base: 'block', md: 'none' }} role="table" aria-label={ariaLabel}>
         {loading
           ? Array.from({ length: loadingRows }, (_, i) => (
               <Box
@@ -238,6 +238,7 @@ export function DataTable<TData extends Record<string, any>>({
           : pagedData.map((row) => (
               <Box
                 key={String(row[rowKey])}
+                role="row"
                 mb="3"
                 p="4"
                 borderRadius="lg"
@@ -250,12 +251,14 @@ export function DataTable<TData extends Record<string, any>>({
                 {columns.map((col) => (
                   <Box
                     key={col.key}
+                    role="cell"
                     display="flex"
                     justifyContent="space-between"
                     alignItems="center"
                     py="1"
                   >
                     <Text
+                      aria-hidden="true"
                       fontSize="xs"
                       fontWeight="semibold"
                       color="text.muted"
@@ -283,7 +286,7 @@ export function DataTable<TData extends Record<string, any>>({
           flexWrap="wrap"
           gap="2"
         >
-          <Text fontSize="sm" color="text.muted" data-testid="pagination-info">
+          <Text fontSize="sm" color="text.muted" data-testid="pagination-info" aria-live="polite">
             Showing {showStart}–{showEnd} of {sortedData.length}
           </Text>
           <Box display="flex" alignItems="center" gap="2">
