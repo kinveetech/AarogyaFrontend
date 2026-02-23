@@ -9,6 +9,7 @@ const withSerwist = withSerwistInit({
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  output: 'standalone',
   // pdfjs-dist optionally depends on canvas (node-only); alias to false for the browser bundle
   turbopack: {
     resolveAlias: {
