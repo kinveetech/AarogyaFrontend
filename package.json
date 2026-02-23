@@ -54,5 +54,10 @@
     "serwist": "^9.5.6",
     "typescript": "^5.8.3",
     "vitest": "^4.0.18"
+  },
+  "overrides": {
+    "glob": {
+      "minimatch": "^10.0.0"
+    }
   }
 }
