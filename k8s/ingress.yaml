@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: aarogya-frontend-ingress
+  namespace: aarogya-frontend
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - dev.kinvee.in
+      secretName: frontend-tls
+  rules:
+    - host: dev.kinvee.in
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: aarogya-frontend
+                port:
+                  number: 80

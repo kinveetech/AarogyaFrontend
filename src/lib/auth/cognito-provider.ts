@@ -25,7 +25,6 @@ export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
     type: 'oidc',
     issuer: process.env.COGNITO_ISSUER,
     clientId: requireEnv('COGNITO_CLIENT_ID'),
-    clientSecret: requireEnv('COGNITO_CLIENT_SECRET'),
     authorization: {
       url: `${cognitoDomain}/oauth2/authorize`,
       params: { scope: 'openid email profile' },
@@ -35,6 +34,9 @@ export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
     },
     userinfo: {
       url: `${cognitoDomain}/oauth2/userInfo`,
+    },
+    client: {
+      token_endpoint_auth_method: 'none',
     },
     checks: ['pkce', 'state'],
     profile(profile, _tokens) {

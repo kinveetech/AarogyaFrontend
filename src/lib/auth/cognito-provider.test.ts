@@ -8,7 +8,6 @@ beforeEach(() => {
   vi.stubEnv('COGNITO_DOMAIN', 'https://auth.example.com')
   vi.stubEnv('COGNITO_ISSUER', 'https://cognito-idp.us-east-1.amazonaws.com/us-east-1_abc')
   vi.stubEnv('COGNITO_CLIENT_ID', 'test-client-id')
-  vi.stubEnv('COGNITO_CLIENT_SECRET', 'test-client-secret')
   vi.stubEnv('API_URL', 'https://api.example.com')
 })
 
@@ -39,6 +38,11 @@ describe('CognitoPKCE provider', () => {
     expect(provider.userinfo).toEqual({
       url: 'https://auth.example.com/oauth2/userInfo',
     })
+  })
+
+  it('uses public client auth method (no client secret)', () => {
+    const provider = CognitoPKCE()
+    expect(provider.client).toEqual({ token_endpoint_auth_method: 'none' })
   })
 
   it('enables PKCE and state checks', () => {

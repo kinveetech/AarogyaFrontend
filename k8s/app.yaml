@@ -7,7 +7,6 @@ type: Opaque
 stringData:
   AUTH_SECRET: "PLACEHOLDER_REPLACED_BY_CD"
   COGNITO_CLIENT_ID: "REPLACE_WITH_WEB_CLIENT_ID"
-  COGNITO_CLIENT_SECRET: "REPLACE_WITH_WEB_CLIENT_SECRET"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -41,7 +40,7 @@ spec:
                   name: frontend-secret
                   key: AUTH_SECRET
             - name: AUTH_URL
-              value: "http://dev.kinvee.in:30000"
+              value: "https://dev.kinvee.in"
             - name: API_URL
               value: "http://aarogya-api.aarogya.svc.cluster.local"
             - name: COGNITO_DOMAIN
@@ -53,11 +52,6 @@ spec:
                 secretKeyRef:
                   name: frontend-secret
                   key: COGNITO_CLIENT_ID
-            - name: COGNITO_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: frontend-secret
-                  key: COGNITO_CLIENT_SECRET
             - name: NEXT_PUBLIC_FIREBASE_API_KEY
               value: ""
             - name: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
@@ -98,10 +92,9 @@ metadata:
   labels:
     app: aarogya-frontend
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: aarogya-frontend
   ports:
     - port: 80
       targetPort: 3000
-      nodePort: 30000

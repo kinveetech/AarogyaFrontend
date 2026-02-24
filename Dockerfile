@@ -14,14 +14,12 @@ ARG AUTH_SECRET=build-placeholder
 ARG COGNITO_DOMAIN=https://placeholder.auth.region.amazoncognito.com
 ARG COGNITO_ISSUER=https://cognito-idp.us-east-1.amazonaws.com/us-east-1_placeholder
 ARG COGNITO_CLIENT_ID=placeholder
-ARG COGNITO_CLIENT_SECRET=placeholder
 ARG API_URL=http://localhost:5000
 
 ENV AUTH_SECRET=$AUTH_SECRET \
     COGNITO_DOMAIN=$COGNITO_DOMAIN \
     COGNITO_ISSUER=$COGNITO_ISSUER \
     COGNITO_CLIENT_ID=$COGNITO_CLIENT_ID \
-    COGNITO_CLIENT_SECRET=$COGNITO_CLIENT_SECRET \
     API_URL=$API_URL
 
 RUN npm run build
