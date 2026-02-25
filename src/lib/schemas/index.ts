@@ -7,6 +7,19 @@ export {
 export { profileUpdateSchema, type ProfileUpdate } from './profileUpdate'
 export { reportUploadSchema, type ReportUpload } from './reportUpload'
 export {
+  roleSelectionSchema,
+  patientProfileSchema,
+  doctorProfileSchema,
+  labTechnicianProfileSchema,
+  consentGrantSchema,
+  roleValues,
+  type RoleSelection,
+  type PatientProfile,
+  type DoctorProfile,
+  type LabTechnicianProfile,
+  type ConsentGrant,
+} from './registration'
+export {
   email,
   futureDate,
   nonEmptyString,

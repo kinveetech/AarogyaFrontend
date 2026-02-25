@@ -5,4 +5,5 @@ export const staleTimes = {
   consents: 30 * 1000, // 30 sec
   emergencyContacts: 1 * 60 * 1000, // 1 min
   notifications: 5 * 60 * 1000, // 5 min
+  registration: 30 * 1000, // 30 sec
 }

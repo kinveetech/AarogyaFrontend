@@ -6,6 +6,7 @@ export const config = {
     '/access/:path*',
     '/emergency/:path*',
     '/settings/:path*',
+    '/register/:path*',
     '/login',
   ],
 }
