@@ -4,6 +4,22 @@ import PortalLayout from './layout'
 
 vi.mock('next/navigation', () => ({
   usePathname: () => '/reports',
+  useRouter: () => ({
+    push: vi.fn(),
+    replace: vi.fn(),
+    refresh: vi.fn(),
+    back: vi.fn(),
+    forward: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}))
+
+vi.mock('@/hooks/registration', () => ({
+  useRegistrationStatus: () => ({
+    data: { status: 'approved' },
+    isLoading: false,
+    isError: false,
+  }),
 }))
 
 vi.mock('next-themes', () => ({
