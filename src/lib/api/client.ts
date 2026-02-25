@@ -71,10 +71,31 @@ export async function apiFetch<T>(
     try {
       const errorBody = await response.json()
       message = errorBody.message ?? message
-      code = errorBody.code
+      code = errorBody.code ?? errorBody.error
     } catch {
       // use statusText
     }
+
+    if (response.status === 403 && code && typeof window !== 'undefined') {
+      const pathname = window.location.pathname
+      const isRegistrationRoute = pathname.startsWith('/register')
+
+      if (!isRegistrationRoute) {
+        if (code === 'registration_required') {
+          window.location.href = '/register'
+          throw new ApiError(response.status, message, code)
+        }
+        if (code === 'registration_pending_approval') {
+          window.location.href = '/register/pending'
+          throw new ApiError(response.status, message, code)
+        }
+        if (code === 'registration_rejected') {
+          window.location.href = '/register/rejected'
+          throw new ApiError(response.status, message, code)
+        }
+      }
+    }
+
     throw new ApiError(response.status, message, code)
   }
 

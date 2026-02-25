@@ -4,7 +4,7 @@ import { refreshAccessToken } from './refresh-token'
 import { revokeToken } from './revoke-token'
 import './types'
 
-const PROTECTED_ROUTES = ['/reports', '/access', '/emergency', '/settings']
+const PROTECTED_ROUTES = ['/reports', '/access', '/emergency', '/settings', '/register']
 const TOKEN_EXPIRY_BUFFER_SECONDS = 60
 
 export const authConfig: NextAuthConfig = {

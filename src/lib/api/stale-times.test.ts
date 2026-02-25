@@ -25,4 +25,8 @@ describe('staleTimes', () => {
   it('notifications stale time is 5 minutes', () => {
     expect(staleTimes.notifications).toBe(300_000)
   })
+
+  it('registration stale time is 30 seconds', () => {
+    expect(staleTimes.registration).toBe(30_000)
+  })
 })

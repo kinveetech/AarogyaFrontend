@@ -6,6 +6,7 @@ import { TopBar } from '@/components/portal/top-bar'
 import { Sidebar, SIDEBAR_EXPANDED, SIDEBAR_COLLAPSED } from '@/components/portal/sidebar'
 import { BottomNav } from '@/components/portal/bottom-nav'
 import { SkipLink } from '@/components/ui/skip-link'
+import { RegistrationGate } from '@/components/auth/registration-gate'
 
 export default function PortalLayout({
   children,
@@ -30,7 +31,7 @@ export default function PortalLayout({
         transition="margin-left 0.2s cubic-bezier(0.4,0,0.2,1)"
         minHeight="100vh"
       >
-        {children}
+        <RegistrationGate>{children}</RegistrationGate>
       </Box>
       <BottomNav />
     </>
