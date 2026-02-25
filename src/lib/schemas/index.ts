@@ -1,3 +1,7 @@
+export {
+  aadhaarVerificationSchema,
+  type AadhaarVerification,
+} from './aadhaarVerification'
 export { accessGrantSchema, type AccessGrant } from './accessGrant'
 export { consentSchema, type Consent } from './consent'
 export {
@@ -20,6 +24,7 @@ export {
   type ConsentGrant,
 } from './registration'
 export {
+  aadhaarNumber,
   email,
   futureDate,
   nonEmptyString,

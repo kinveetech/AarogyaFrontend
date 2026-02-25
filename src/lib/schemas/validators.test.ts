@@ -1,6 +1,26 @@
 import { describe, expect, it } from 'vitest'
 
-import { email, futureDate, nonEmptyString, phoneNumber } from './validators'
+import { aadhaarNumber, email, futureDate, nonEmptyString, phoneNumber } from './validators'
+
+describe('aadhaarNumber', () => {
+  it.each(['234567890123', '912345678901', '500000000000'])(
+    'accepts valid Aadhaar number %s',
+    (value) => {
+      expect(aadhaarNumber.safeParse(value).success).toBe(true)
+    },
+  )
+
+  it.each([
+    '012345678901', // starts with 0
+    '123456789012', // starts with 1
+    '23456789012', // too short (11 digits)
+    '2345678901234', // too long (13 digits)
+    '23456789012a', // contains letter
+    '', // empty
+  ])('rejects invalid Aadhaar number %s', (value) => {
+    expect(aadhaarNumber.safeParse(value).success).toBe(false)
+  })
+})
 
 describe('phoneNumber', () => {
   it.each(['9876543210', '6000000000', '7123456789', '8999999999'])(

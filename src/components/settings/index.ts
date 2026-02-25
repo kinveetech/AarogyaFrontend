@@ -1,3 +1,4 @@
+export { AadhaarVerifyDialog } from './aadhaar-verify-dialog'
 export { SettingsSection } from './settings-section'
 export { DisabledToggleRow } from './disabled-toggle-row'
 export { ProfileSection } from './profile-section'

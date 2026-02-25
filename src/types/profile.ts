@@ -25,3 +25,15 @@ export interface UpdateProfileRequest {
   gender: Gender | null
   city: string | null
 }
+
+export interface VerifyAadhaarRequest {
+  aadhaarNumber: string
+  firstName: string
+  lastName: string
+  dateOfBirth: string
+}
+
+export interface AadhaarVerificationResponse {
+  verified: boolean
+  message: string
+}
