@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Box,
   Button,
@@ -16,6 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { profileUpdateSchema } from '@/lib/schemas/profileUpdate'
 import { BLOOD_GROUP_OPTIONS, GENDER_OPTIONS } from './settings-constants'
 import { SettingsSection } from './settings-section'
+import { AadhaarVerifyDialog } from './aadhaar-verify-dialog'
 import type { ProfileUpdate } from '@/lib/schemas/profileUpdate'
 import type { Profile } from '@/types/profile'
 
@@ -44,6 +45,8 @@ function formatDateForInput(dateStr: string): string {
 }
 
 export function ProfileSection({ profile, isLoading, isSaving, onSave }: ProfileSectionProps) {
+  const [aadhaarDialogOpen, setAadhaarDialogOpen] = useState(false)
+
   const {
     register,
     handleSubmit,
@@ -99,6 +102,7 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
   if (!profile) return null
 
   return (
+    <>
     <SettingsSection title="Profile" asForm onSubmit={handleSubmit(handleFormSubmit)}>
       {/* Avatar + Name Header */}
       <Flex align="center" gap="5" mb="6">
@@ -406,6 +410,8 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
               bg: 'action.primary',
               color: 'action.primary.text',
             }}
+            onClick={() => setAadhaarDialogOpen(true)}
+            data-testid="verify-aadhaar-button"
           >
             Verify Aadhaar
           </Button>
@@ -433,6 +439,15 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
           Save Changes
         </Button>
       </Flex>
+
     </SettingsSection>
+
+    {/* Aadhaar Verification Dialog — outside SettingsSection to avoid nested <form> */}
+    <AadhaarVerifyDialog
+      open={aadhaarDialogOpen}
+      onClose={() => setAadhaarDialogOpen(false)}
+      profile={profile}
+    />
+    </>
   )
 }

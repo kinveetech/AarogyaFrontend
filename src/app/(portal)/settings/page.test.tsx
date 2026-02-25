@@ -302,6 +302,23 @@ describe('SettingsPage', () => {
     })
   })
 
+  it('opens Aadhaar verify dialog when clicking Verify Aadhaar', async () => {
+    setupFetchMock()
+    render(<SettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('verify-aadhaar-button')).toBeInTheDocument()
+    })
+
+    await userEvent.click(screen.getByTestId('verify-aadhaar-button'))
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('Enter your Aadhaar details to verify your identity.'),
+      ).toBeInTheDocument()
+    })
+  })
+
   it('opens sign out confirmation dialog', async () => {
     setupFetchMock()
     render(<SettingsPage />)
