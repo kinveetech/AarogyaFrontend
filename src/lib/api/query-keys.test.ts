@@ -88,4 +88,14 @@ describe('queryKeys', () => {
       expect(queryKeys.notifications.prefs()).toEqual(['notifications', 'prefs'])
     })
   })
+
+  describe('registration', () => {
+    it('has correct base key', () => {
+      expect(queryKeys.registration.all).toEqual(['registration'])
+    })
+
+    it('produces status key', () => {
+      expect(queryKeys.registration.status()).toEqual(['registration', 'status'])
+    })
+  })
 })

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { apiFetch, ApiError, clearEtagCache } from './client'
 
 const mockFetch = vi.fn()
@@ -218,5 +218,115 @@ describe('apiFetch', () => {
     await apiFetch('/v1/test', { onResponse })
 
     expect(onResponse).toHaveBeenCalledWith(res)
+  })
+
+  describe('403 registration redirects', () => {
+    const originalWindow = globalThis.window
+
+    beforeEach(() => {
+      Object.defineProperty(globalThis, 'window', {
+        value: {
+          location: {
+            pathname: '/reports',
+            href: '/reports',
+          },
+        },
+        writable: true,
+        configurable: true,
+      })
+    })
+
+    afterEach(() => {
+      Object.defineProperty(globalThis, 'window', {
+        value: originalWindow,
+        writable: true,
+        configurable: true,
+      })
+    })
+
+    it('redirects to /register on registration_required code', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse(
+          { message: 'Registration required', code: 'registration_required' },
+          403,
+        ),
+      )
+
+      const error = await apiFetch('/v1/reports').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 403, code: 'registration_required' })
+      expect(window.location.href).toBe('/register')
+    })
+
+    it('redirects to /register/pending on registration_pending_approval code', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse(
+          { message: 'Pending approval', code: 'registration_pending_approval' },
+          403,
+        ),
+      )
+
+      const error = await apiFetch('/v1/reports').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 403, code: 'registration_pending_approval' })
+      expect(window.location.href).toBe('/register/pending')
+    })
+
+    it('redirects to /register/rejected on registration_rejected code', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse(
+          { message: 'Registration rejected', code: 'registration_rejected' },
+          403,
+        ),
+      )
+
+      const error = await apiFetch('/v1/reports').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 403, code: 'registration_rejected' })
+      expect(window.location.href).toBe('/register/rejected')
+    })
+
+    it('does not redirect when already on /register route', async () => {
+      window.location.pathname = '/register'
+
+      mockFetch.mockResolvedValue(
+        jsonResponse(
+          { message: 'Registration required', code: 'registration_required' },
+          403,
+        ),
+      )
+
+      const error = await apiFetch('/v1/users/me/registration-status').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 403, code: 'registration_required' })
+      // Should not redirect since we are already on a registration route
+      expect(window.location.href).not.toBe('/register')
+    })
+
+    it('does not redirect when on /register/pending route', async () => {
+      window.location.pathname = '/register/pending'
+
+      mockFetch.mockResolvedValue(
+        jsonResponse(
+          { message: 'Pending', code: 'registration_pending_approval' },
+          403,
+        ),
+      )
+
+      const error = await apiFetch('/v1/users/me/registration-status').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(window.location.href).not.toBe('/register/pending')
+    })
+
+    it('does not redirect for 403 with non-registration code', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse({ message: 'Forbidden', code: 'access_denied' }, 403),
+      )
+
+      const error = await apiFetch('/v1/reports').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 403 })
+      expect(window.location.href).toBe('/reports')
+    })
   })
 })
