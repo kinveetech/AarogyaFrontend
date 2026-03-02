@@ -12,7 +12,7 @@ export function useVerifyAadhaar() {
 
   return useMutation({
     mutationFn: (request: VerifyAadhaarRequest) =>
-      apiFetch<AadhaarVerificationResponse>('/v1/profile/aadhaar/verify', {
+      apiFetch<AadhaarVerificationResponse>('/v1/users/me/aadhaar/verify', {
         method: 'POST',
         body: request,
       }),
@@ -22,7 +22,6 @@ export function useVerifyAadhaar() {
         return {
           ...old,
           aadhaarVerified: true,
-          updatedAt: new Date().toISOString(),
         }
       })
     },

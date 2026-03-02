@@ -30,17 +30,6 @@ export interface AadhaarVerifyDialogProps {
   profile: Profile
 }
 
-function splitName(fullName: string): { firstName: string; lastName: string } {
-  const parts = fullName.trim().split(/\s+/)
-  if (parts.length <= 1) {
-    return { firstName: parts[0] ?? '', lastName: '' }
-  }
-  return {
-    firstName: parts.slice(0, -1).join(' '),
-    lastName: parts[parts.length - 1],
-  }
-}
-
 function formatDateForInput(dateStr: string): string {
   const d = new Date(dateStr)
   const year = d.getUTCFullYear()
@@ -68,11 +57,10 @@ export function AadhaarVerifyDialog({
 
   useEffect(() => {
     if (open) {
-      const { firstName, lastName } = splitName(profile.name)
       reset({
         aadhaarNumber: '',
-        firstName,
-        lastName,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
         dateOfBirth: profile.dateOfBirth
           ? formatDateForInput(profile.dateOfBirth)
           : '',

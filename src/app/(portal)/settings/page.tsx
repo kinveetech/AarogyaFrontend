@@ -18,12 +18,13 @@ export default function SettingsPage() {
   const handleSave = useCallback(
     (data: ProfileUpdate) => {
       updateProfile.mutate({
-        name: data.name,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
         phone: data.phone,
         dateOfBirth: data.dateOfBirth,
         bloodGroup: data.bloodGroup || null,
-        gender: data.gender || null,
-        city: data.city || null,
+        address: data.address || null,
       })
     },
     [updateProfile],

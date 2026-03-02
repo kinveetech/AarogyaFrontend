@@ -19,6 +19,7 @@ import { SettingsSection } from './settings-section'
 import { AadhaarVerifyDialog } from './aadhaar-verify-dialog'
 import type { ProfileUpdate } from '@/lib/schemas/profileUpdate'
 import type { Profile } from '@/types/profile'
+import { getDisplayName } from '@/types/profile'
 
 export interface ProfileSectionProps {
   profile: Profile | undefined
@@ -27,9 +28,9 @@ export interface ProfileSectionProps {
   onSave: (data: ProfileUpdate) => void
 }
 
-function getInitials(name: string): string {
-  return name
-    .split(' ')
+function getInitials(firstName: string, lastName: string): string {
+  const parts = [firstName, lastName].filter(Boolean)
+  return parts
     .slice(0, 2)
     .map((w) => w[0])
     .join('')
@@ -59,13 +60,14 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
   useEffect(() => {
     if (profile) {
       reset({
-        name: profile.name,
+        firstName: profile.firstName,
+        lastName: profile.lastName,
         email: profile.email,
         phone: profile.phone,
         dateOfBirth: formatDateForInput(profile.dateOfBirth),
         bloodGroup: profile.bloodGroup,
         gender: profile.gender,
-        city: profile.city,
+        address: profile.address,
       })
     }
   }, [profile, reset])
@@ -117,11 +119,11 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
           fontFamily="heading"
           fontSize="1.5rem"
         >
-          {getInitials(profile.name)}
+          {getInitials(profile.firstName, profile.lastName)}
         </Flex>
         <Box>
           <Text fontWeight="semibold" fontSize="1.25rem" color="text.primary">
-            {profile.name}
+            {getDisplayName(profile)}
           </Text>
           <Text fontSize="0.9rem" color="text.muted" mt="0.5">
             {profile.email}
@@ -135,21 +137,39 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
         gridTemplateColumns={{ base: '1fr', md: '1fr 1fr' }}
         gap="5"
       >
-        {/* Full Name */}
-        <Field.Root invalid={!!errors.name} required>
+        {/* First Name */}
+        <Field.Root invalid={!!errors.firstName} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-            Full Name
+            First Name
           </Field.Label>
           <Input
-            {...register('name')}
+            {...register('firstName')}
             bg="bg.glass"
             borderColor="border.default"
             borderRadius="xl"
             color="text.primary"
-            data-testid="profile-name-input"
+            data-testid="profile-first-name-input"
           />
-          {errors.name && (
-            <Field.ErrorText>{errors.name.message}</Field.ErrorText>
+          {errors.firstName && (
+            <Field.ErrorText>{errors.firstName.message}</Field.ErrorText>
+          )}
+        </Field.Root>
+
+        {/* Last Name */}
+        <Field.Root invalid={!!errors.lastName} required>
+          <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
+            Last Name
+          </Field.Label>
+          <Input
+            {...register('lastName')}
+            bg="bg.glass"
+            borderColor="border.default"
+            borderRadius="xl"
+            color="text.primary"
+            data-testid="profile-last-name-input"
+          />
+          {errors.lastName && (
+            <Field.ErrorText>{errors.lastName.message}</Field.ErrorText>
           )}
         </Field.Root>
 
@@ -271,18 +291,18 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
           )}
         </Field.Root>
 
-        {/* Gender */}
+        {/* Gender (display only — backend doesn't accept updates) */}
         <Field.Root invalid={!!errors.gender}>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
             Gender
           </Field.Label>
-          <NativeSelect.Root>
+          <NativeSelect.Root disabled>
             <NativeSelect.Field
               {...register('gender')}
-              bg="bg.glass"
+              bg="bg.overlay"
               borderColor="border.default"
               borderRadius="xl"
-              color="text.primary"
+              color="text.muted"
               data-testid="profile-gender-select"
             >
               <option value="">Select</option>
@@ -299,21 +319,21 @@ export function ProfileSection({ profile, isLoading, isSaving, onSave }: Profile
           )}
         </Field.Root>
 
-        {/* City */}
-        <Field.Root invalid={!!errors.city}>
+        {/* Address */}
+        <Field.Root invalid={!!errors.address}>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-            City
+            Address
           </Field.Label>
           <Input
-            {...register('city')}
+            {...register('address')}
             bg="bg.glass"
             borderColor="border.default"
             borderRadius="xl"
             color="text.primary"
-            data-testid="profile-city-input"
+            data-testid="profile-address-input"
           />
-          {errors.city && (
-            <Field.ErrorText>{errors.city.message}</Field.ErrorText>
+          {errors.address && (
+            <Field.ErrorText>{errors.address.message}</Field.ErrorText>
           )}
         </Field.Root>
       </Box>

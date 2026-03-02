@@ -15,18 +15,30 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const mockProfile: Profile = {
-  id: 'u1',
-  name: 'Arjun Kumar',
+  sub: 'u1',
+  firstName: 'Arjun',
+  lastName: 'Kumar',
   email: 'arjun@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-03-15T00:00:00Z',
   bloodGroup: 'B+',
   gender: 'male',
-  city: 'Bengaluru',
+  address: 'Bengaluru',
   aadhaarVerified: false,
-  avatarUrl: null,
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-06-01T00:00:00Z',
+  registrationStatus: 'approved',
+  roles: ['patient'],
+}
+
+const mockVerificationResponse = {
+  referenceToken: 'ref-token-123',
+  existingRecord: false,
+  provider: 'uidai',
+  demographics: {
+    name: 'Arjun Kumar',
+    dateOfBirth: '1990-03-15',
+    gender: 'male',
+    address: 'Bengaluru, Karnataka',
+  },
 }
 
 const defaultProps = {
@@ -120,9 +132,7 @@ describe('AadhaarVerifyDialog', () => {
   })
 
   it('submits POST request with valid data', async () => {
-    mockFetch.mockResolvedValue(
-      jsonResponse({ verified: true, message: 'Aadhaar verified successfully' }),
-    )
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
     const onClose = vi.fn()
 
     render(<AadhaarVerifyDialog {...defaultProps} onClose={onClose} />)
@@ -145,9 +155,7 @@ describe('AadhaarVerifyDialog', () => {
   })
 
   it('calls onClose after successful verification', async () => {
-    mockFetch.mockResolvedValue(
-      jsonResponse({ verified: true, message: 'Aadhaar verified successfully' }),
-    )
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
     const onClose = vi.fn()
 
     render(<AadhaarVerifyDialog {...defaultProps} onClose={onClose} />)

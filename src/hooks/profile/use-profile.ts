@@ -7,7 +7,7 @@ import type { Profile } from '@/types/profile'
 export function useProfile() {
   return useQuery({
     queryKey: queryKeys.profile.me(),
-    queryFn: () => apiFetch<Profile>('/v1/profile'),
+    queryFn: () => apiFetch<Profile>('/v1/users/me'),
     staleTime: staleTimes.profile,
   })
 }
