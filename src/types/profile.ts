@@ -2,28 +2,31 @@ export type BloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-'
 
 export type Gender = 'male' | 'female' | 'other'
 
+export type RegistrationStatus = 'pending_approval' | 'approved' | 'rejected'
+
 export interface Profile {
-  id: string
-  name: string
+  sub: string
+  firstName: string
+  lastName: string
   email: string
   phone: string
   dateOfBirth: string
   bloodGroup: BloodGroup | null
   gender: Gender | null
-  city: string | null
+  address: string | null
   aadhaarVerified: boolean
-  avatarUrl: string | null
-  createdAt: string
-  updatedAt: string
+  registrationStatus: RegistrationStatus
+  roles: string[]
 }
 
 export interface UpdateProfileRequest {
-  name: string
+  firstName: string
+  lastName: string
+  email: string
   phone: string
   dateOfBirth: string
   bloodGroup: BloodGroup | null
-  gender: Gender | null
-  city: string | null
+  address: string | null
 }
 
 export interface VerifyAadhaarRequest {
@@ -33,7 +36,20 @@ export interface VerifyAadhaarRequest {
   dateOfBirth: string
 }
 
+export interface AadhaarDemographics {
+  name: string
+  dateOfBirth: string
+  gender: string
+  address: string
+}
+
 export interface AadhaarVerificationResponse {
-  verified: boolean
-  message: string
+  referenceToken: string
+  existingRecord: boolean
+  provider: string
+  demographics: AadhaarDemographics
+}
+
+export function getDisplayName(profile: Pick<Profile, 'firstName' | 'lastName'>): string {
+  return [profile.firstName, profile.lastName].filter(Boolean).join(' ')
 }

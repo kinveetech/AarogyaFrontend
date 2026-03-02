@@ -8,7 +8,7 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (request: UpdateProfileRequest) =>
-      apiFetch<Profile>('/v1/profile', {
+      apiFetch<Profile>('/v1/users/me', {
         method: 'PUT',
         body: request,
       }),
@@ -24,7 +24,6 @@ export function useUpdateProfile() {
         return {
           ...old,
           ...request,
-          updatedAt: new Date().toISOString(),
         }
       })
 

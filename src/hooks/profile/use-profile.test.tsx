@@ -17,18 +17,18 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const mockProfile: Profile = {
-  id: 'u1',
-  name: 'Arjun Kumar',
+  sub: 'u1',
+  firstName: 'Arjun',
+  lastName: 'Kumar',
   email: 'arjun@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-03-15T00:00:00Z',
   bloodGroup: 'B+',
   gender: 'male',
-  city: 'Bengaluru',
+  address: 'Bengaluru',
   aadhaarVerified: false,
-  avatarUrl: null,
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-06-01T00:00:00Z',
+  registrationStatus: 'approved',
+  roles: ['patient'],
 }
 
 function createWrapper() {
@@ -51,7 +51,7 @@ beforeEach(() => {
 })
 
 describe('useProfile', () => {
-  it('fetches profile from /v1/profile', async () => {
+  it('fetches profile from /v1/users/me', async () => {
     mockFetch.mockResolvedValue(jsonResponse(mockProfile))
 
     const { result } = renderHook(() => useProfile(), {
@@ -63,7 +63,7 @@ describe('useProfile', () => {
     expect(result.current.data).toEqual(mockProfile)
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/profile')
+    expect(calledUrl).toContain('/v1/users/me')
   })
 
   it('returns error on failure', async () => {

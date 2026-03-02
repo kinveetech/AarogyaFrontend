@@ -21,18 +21,18 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const mockProfile: Profile = {
-  id: 'u1',
-  name: 'Arjun Kumar',
+  sub: 'u1',
+  firstName: 'Arjun',
+  lastName: 'Kumar',
   email: 'arjun@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-03-15T00:00:00Z',
   bloodGroup: 'B+',
   gender: 'male',
-  city: 'Bengaluru',
+  address: 'Bengaluru',
   aadhaarVerified: false,
-  avatarUrl: null,
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-06-01T00:00:00Z',
+  registrationStatus: 'approved',
+  roles: ['patient'],
 }
 
 const mockConsents: ConsentListResponse = {
@@ -159,13 +159,14 @@ describe('SettingsPage', () => {
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('profile-name-input')).toHaveValue('Arjun Kumar')
+      expect(screen.getByTestId('profile-first-name-input')).toHaveValue('Arjun')
     })
+    expect(screen.getByTestId('profile-last-name-input')).toHaveValue('Kumar')
     expect(screen.getByTestId('profile-phone-input')).toHaveValue('9876543210')
     expect(screen.getByTestId('profile-dob-input')).toHaveValue('1990-03-15')
     expect(screen.getByTestId('profile-blood-group-select')).toHaveValue('B+')
     expect(screen.getByTestId('profile-gender-select')).toHaveValue('male')
-    expect(screen.getByTestId('profile-city-input')).toHaveValue('Bengaluru')
+    expect(screen.getByTestId('profile-address-input')).toHaveValue('Bengaluru')
   })
 
   it('shows Aadhaar not verified badge when unverified', async () => {
@@ -229,14 +230,14 @@ describe('SettingsPage', () => {
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('profile-name-input')).toHaveValue('Arjun Kumar')
+      expect(screen.getByTestId('profile-first-name-input')).toHaveValue('Arjun')
     })
 
     const saveButton = screen.getByTestId('profile-save-button')
     expect(saveButton).toBeDisabled()
 
-    await userEvent.clear(screen.getByTestId('profile-name-input'))
-    await userEvent.type(screen.getByTestId('profile-name-input'), 'Arjun K')
+    await userEvent.clear(screen.getByTestId('profile-first-name-input'))
+    await userEvent.type(screen.getByTestId('profile-first-name-input'), 'Vikram')
 
     expect(saveButton).not.toBeDisabled()
   })
@@ -246,16 +247,16 @@ describe('SettingsPage', () => {
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('profile-name-input')).toHaveValue('Arjun Kumar')
+      expect(screen.getByTestId('profile-first-name-input')).toHaveValue('Arjun')
     })
 
-    await userEvent.clear(screen.getByTestId('profile-name-input'))
-    await userEvent.type(screen.getByTestId('profile-name-input'), 'Arjun Patel')
+    await userEvent.clear(screen.getByTestId('profile-first-name-input'))
+    await userEvent.type(screen.getByTestId('profile-first-name-input'), 'Vikram')
 
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(mockConsents))
       if (url.includes('/v1/notification-preferences')) return Promise.resolve(jsonResponse(mockNotificationPrefs))
-      return Promise.resolve(jsonResponse({ ...mockProfile, name: 'Arjun Patel' }))
+      return Promise.resolve(jsonResponse({ ...mockProfile, firstName: 'Vikram' }))
     })
     await userEvent.click(screen.getByTestId('profile-save-button'))
 
@@ -269,15 +270,15 @@ describe('SettingsPage', () => {
     })
   })
 
-  it('shows validation error for empty name', async () => {
+  it('shows validation error for empty first name', async () => {
     setupFetchMock()
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('profile-name-input')).toHaveValue('Arjun Kumar')
+      expect(screen.getByTestId('profile-first-name-input')).toHaveValue('Arjun')
     })
 
-    await userEvent.clear(screen.getByTestId('profile-name-input'))
+    await userEvent.clear(screen.getByTestId('profile-first-name-input'))
     await userEvent.click(screen.getByTestId('profile-save-button'))
 
     await waitFor(() => {

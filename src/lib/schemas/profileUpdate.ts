@@ -7,7 +7,8 @@ const bloodGroupValues = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'] as c
 const genderValues = ['male', 'female', 'other'] as const
 
 export const profileUpdateSchema = z.object({
-  name: nonEmptyString.max(100, 'Name must be 100 characters or fewer'),
+  firstName: nonEmptyString.max(120, 'First name must be 120 characters or fewer'),
+  lastName: nonEmptyString.max(120, 'Last name must be 120 characters or fewer'),
   email: email,
   phone: phoneNumber,
   dateOfBirth: z
@@ -16,7 +17,7 @@ export const profileUpdateSchema = z.object({
     .refine((s) => new Date(s) < new Date(), 'Must be in the past'),
   bloodGroup: z.enum(bloodGroupValues).nullable().optional(),
   gender: z.enum(genderValues).nullable().optional(),
-  city: z.string().trim().max(100, 'City must be 100 characters or fewer').nullable().optional(),
+  address: z.string().trim().max(500, 'Address must be 500 characters or fewer').nullable().optional(),
 })
 
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>

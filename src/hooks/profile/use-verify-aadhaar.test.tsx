@@ -18,18 +18,18 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const mockProfile: Profile = {
-  id: 'u1',
-  name: 'Arjun Kumar',
+  sub: 'u1',
+  firstName: 'Arjun',
+  lastName: 'Kumar',
   email: 'arjun@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-03-15',
   bloodGroup: 'B+',
   gender: 'male',
-  city: 'Bengaluru',
+  address: 'Bengaluru',
   aadhaarVerified: false,
-  avatarUrl: null,
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-06-01T00:00:00Z',
+  registrationStatus: 'approved',
+  roles: ['patient'],
 }
 
 const validRequest = {
@@ -37,6 +37,18 @@ const validRequest = {
   firstName: 'Arjun',
   lastName: 'Kumar',
   dateOfBirth: '1990-03-15',
+}
+
+const mockVerificationResponse = {
+  referenceToken: 'ref-token-123',
+  existingRecord: false,
+  provider: 'uidai',
+  demographics: {
+    name: 'Arjun Kumar',
+    dateOfBirth: '1990-03-15',
+    gender: 'male',
+    address: 'Bengaluru, Karnataka',
+  },
 }
 
 let queryClient: QueryClient
@@ -61,10 +73,8 @@ beforeEach(() => {
 })
 
 describe('useVerifyAadhaar', () => {
-  it('sends POST request to /v1/profile/aadhaar/verify', async () => {
-    mockFetch.mockResolvedValue(
-      jsonResponse({ verified: true, message: 'Aadhaar verified successfully' }),
-    )
+  it('sends POST request to /v1/users/me/aadhaar/verify', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
 
     const { result } = renderHook(() => useVerifyAadhaar(), {
       wrapper: createWrapper(),
@@ -75,7 +85,7 @@ describe('useVerifyAadhaar', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/profile/aadhaar/verify')
+    expect(calledUrl).toContain('/v1/users/me/aadhaar/verify')
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('POST')
@@ -86,9 +96,7 @@ describe('useVerifyAadhaar', () => {
 
     queryClient.setQueryData(queryKeys.profile.me(), mockProfile)
 
-    mockFetch.mockResolvedValue(
-      jsonResponse({ verified: true, message: 'Aadhaar verified successfully' }),
-    )
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
 
     const { result } = renderHook(() => useVerifyAadhaar(), { wrapper })
 

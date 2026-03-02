@@ -3,7 +3,8 @@ import { describe, expect, it } from 'vitest'
 import { profileUpdateSchema } from './profileUpdate'
 
 const validData = {
-  name: 'Amit Patel',
+  firstName: 'Amit',
+  lastName: 'Patel',
   email: 'amit@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-05-15',
@@ -48,18 +49,34 @@ describe('profileUpdateSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects empty name', () => {
+  it('rejects empty first name', () => {
     const result = profileUpdateSchema.safeParse({
       ...validData,
-      name: '',
+      firstName: '',
     })
     expect(result.success).toBe(false)
   })
 
-  it('rejects name exceeding 100 characters', () => {
+  it('rejects first name exceeding 120 characters', () => {
     const result = profileUpdateSchema.safeParse({
       ...validData,
-      name: 'a'.repeat(101),
+      firstName: 'a'.repeat(121),
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects empty last name', () => {
+    const result = profileUpdateSchema.safeParse({
+      ...validData,
+      lastName: '',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects last name exceeding 120 characters', () => {
+    const result = profileUpdateSchema.safeParse({
+      ...validData,
+      lastName: 'a'.repeat(121),
     })
     expect(result.success).toBe(false)
   })
@@ -112,18 +129,18 @@ describe('profileUpdateSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('accepts valid city', () => {
+  it('accepts valid address', () => {
     const result = profileUpdateSchema.safeParse({
       ...validData,
-      city: 'Bengaluru',
+      address: 'Bengaluru',
     })
     expect(result.success).toBe(true)
   })
 
-  it('rejects city exceeding 100 characters', () => {
+  it('rejects address exceeding 500 characters', () => {
     const result = profileUpdateSchema.safeParse({
       ...validData,
-      city: 'a'.repeat(101),
+      address: 'a'.repeat(501),
     })
     expect(result.success).toBe(false)
   })

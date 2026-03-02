@@ -18,18 +18,18 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const mockProfile: Profile = {
-  id: 'u1',
-  name: 'Arjun Kumar',
+  sub: 'u1',
+  firstName: 'Arjun',
+  lastName: 'Kumar',
   email: 'arjun@example.com',
   phone: '9876543210',
   dateOfBirth: '1990-03-15',
   bloodGroup: 'B+',
   gender: 'male',
-  city: 'Bengaluru',
+  address: 'Bengaluru',
   aadhaarVerified: false,
-  avatarUrl: null,
-  createdAt: '2024-01-01T00:00:00Z',
-  updatedAt: '2024-06-01T00:00:00Z',
+  registrationStatus: 'approved',
+  roles: ['patient'],
 }
 
 let queryClient: QueryClient
@@ -55,7 +55,7 @@ beforeEach(() => {
 
 describe('useUpdateProfile', () => {
   it('sends PUT request with profile data', async () => {
-    const updated = { ...mockProfile, name: 'Arjun Patel' }
+    const updated = { ...mockProfile, firstName: 'Arjun', lastName: 'Patel' }
     mockFetch.mockResolvedValue(jsonResponse(updated))
 
     const { result } = renderHook(() => useUpdateProfile(), {
@@ -64,19 +64,20 @@ describe('useUpdateProfile', () => {
 
     await act(() =>
       result.current.mutateAsync({
-        name: 'Arjun Patel',
+        firstName: 'Arjun',
+        lastName: 'Patel',
+        email: 'arjun@example.com',
         phone: '9876543210',
         dateOfBirth: '1990-03-15',
         bloodGroup: 'B+',
-        gender: 'male',
-        city: 'Bengaluru',
+        address: 'Bengaluru',
       }),
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/profile')
+    expect(calledUrl).toContain('/v1/users/me')
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('PUT')
@@ -91,7 +92,7 @@ describe('useUpdateProfile', () => {
     mockFetch.mockReturnValue(
       new Promise<Response>((resolve) => {
         resolveUpdate = () =>
-          resolve(jsonResponse({ ...mockProfile, name: 'Arjun Patel' }))
+          resolve(jsonResponse({ ...mockProfile, lastName: 'Patel' }))
       }),
     )
 
@@ -99,18 +100,19 @@ describe('useUpdateProfile', () => {
 
     await act(async () => {
       result.current.mutate({
-        name: 'Arjun Patel',
+        firstName: 'Arjun',
+        lastName: 'Patel',
+        email: 'arjun@example.com',
         phone: '9876543210',
         dateOfBirth: '1990-03-15',
         bloodGroup: 'B+',
-        gender: 'male',
-        city: 'Bengaluru',
+        address: 'Bengaluru',
       })
     })
 
     await waitFor(() => {
       const cached = queryClient.getQueryData<Profile>(queryKeys.profile.me())
-      expect(cached?.name).toBe('Arjun Patel')
+      expect(cached?.lastName).toBe('Patel')
     })
 
     await act(async () => {
@@ -129,18 +131,19 @@ describe('useUpdateProfile', () => {
 
     await act(async () => {
       result.current.mutate({
-        name: 'Arjun Patel',
+        firstName: 'Arjun',
+        lastName: 'Patel',
+        email: 'arjun@example.com',
         phone: '9876543210',
         dateOfBirth: '1990-03-15',
         bloodGroup: 'B+',
-        gender: 'male',
-        city: 'Bengaluru',
+        address: 'Bengaluru',
       })
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))
 
     const cached = queryClient.getQueryData<Profile>(queryKeys.profile.me())
-    expect(cached?.name).toBe('Arjun Kumar')
+    expect(cached?.lastName).toBe('Kumar')
   })
 })
