@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { useVerifiedDownloadUrl } from './use-verified-download-url'
 import {
   downloadAndVerify,
@@ -36,14 +36,9 @@ export function useVerifiedDownload(
   const verifiedDownloadUrl = useVerifiedDownloadUrl()
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<Error | null>(null)
-  const blobUrlRef = useRef<string | null>(null)
 
   const reset = useCallback(() => {
     setError(null)
-    if (blobUrlRef.current) {
-      URL.revokeObjectURL(blobUrlRef.current)
-      blobUrlRef.current = null
-    }
   }, [])
 
   const download = useCallback(
@@ -61,17 +56,9 @@ export function useVerifiedDownload(
                 checksumSha256: urlResult.checksumSha256,
               })
 
-              blobUrlRef.current = result.blobUrl
               const downloadName = fileName ?? `report-${reportId}`
               triggerBrowserDownload(result.blobUrl, downloadName)
-
-              // Revoke after a short delay to ensure download starts
-              setTimeout(() => {
-                if (blobUrlRef.current) {
-                  URL.revokeObjectURL(blobUrlRef.current)
-                  blobUrlRef.current = null
-                }
-              }, 1000)
+              URL.revokeObjectURL(result.blobUrl)
 
               setIsPending(false)
               onSuccess?.()
