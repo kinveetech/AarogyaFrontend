@@ -20,6 +20,7 @@ export const queryKeys = {
   accessGrants: {
     all: ['accessGrants'] as const,
     list: () => [...queryKeys.accessGrants.all, 'list'] as const,
+    received: () => [...queryKeys.accessGrants.all, 'received'] as const,
     detail: (id: string) =>
       [...queryKeys.accessGrants.all, 'detail', id] as const,
   },

@@ -46,6 +46,10 @@ describe('queryKeys', () => {
       expect(queryKeys.accessGrants.list()).toEqual(['accessGrants', 'list'])
     })
 
+    it('produces received key', () => {
+      expect(queryKeys.accessGrants.received()).toEqual(['accessGrants', 'received'])
+    })
+
     it('produces detail key', () => {
       expect(queryKeys.accessGrants.detail('x')).toEqual(['accessGrants', 'detail', 'x'])
     })
