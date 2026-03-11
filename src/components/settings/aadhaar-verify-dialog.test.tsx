@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, userEvent, waitFor } from '@/test/render'
+import { render, screen, userEvent, waitFor, fireEvent } from '@/test/render'
 import { AadhaarVerifyDialog } from './aadhaar-verify-dialog'
 import type { Profile } from '@/types/profile'
 
@@ -47,8 +47,15 @@ const defaultProps = {
   profile: mockProfile,
 }
 
+function typeAadhaarDigits(input: HTMLElement, digits: string) {
+  for (const digit of digits) {
+    fireEvent.keyDown(input, { key: digit })
+  }
+}
+
 beforeEach(() => {
   mockFetch.mockReset()
+  defaultProps.onClose.mockReset()
 })
 
 describe('AadhaarVerifyDialog', () => {
@@ -118,16 +125,20 @@ describe('AadhaarVerifyDialog', () => {
     })
   })
 
-  it('shows validation error for invalid aadhaar number', async () => {
+  it('masks aadhaar input showing only last 4 digits', async () => {
     render(<AadhaarVerifyDialog {...defaultProps} />)
+    const input = screen.getByTestId('aadhaar-number-input')
 
-    await userEvent.type(screen.getByTestId('aadhaar-number-input'), '123456789012')
-    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+    typeAadhaarDigits(input, '234567890123')
 
+    // The input should display masked value, not full Aadhaar
     await waitFor(() => {
-      expect(
-        screen.getByText('Must be a valid 12-digit Aadhaar number'),
-      ).toBeInTheDocument()
+      const value = (input as HTMLInputElement).value
+      // Should not contain the full Aadhaar number
+      expect(value).not.toBe('234567890123')
+      // Should show masked pattern with only last 4 visible
+      expect(value).toContain('0123')
+      expect(value).toContain('X')
     })
   })
 
@@ -141,7 +152,9 @@ describe('AadhaarVerifyDialog', () => {
       expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
     })
 
-    await userEvent.type(screen.getByTestId('aadhaar-number-input'), '234567890123')
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
     await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
 
     await waitFor(() => {
@@ -154,7 +167,49 @@ describe('AadhaarVerifyDialog', () => {
     })
   })
 
-  it('calls onClose after successful verification', async () => {
+  it('shows success view after successful verification', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
+
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-success')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Aadhaar Verified')).toBeInTheDocument()
+    expect(
+      screen.getByText('Your identity has been successfully verified.'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows Done button in success view', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
+
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-done')).toBeInTheDocument()
+    })
+  })
+
+  it('calls onClose when Done is clicked in success view', async () => {
     mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
     const onClose = vi.fn()
 
@@ -164,12 +219,17 @@ describe('AadhaarVerifyDialog', () => {
       expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
     })
 
-    await userEvent.type(screen.getByTestId('aadhaar-number-input'), '234567890123')
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
     await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
 
     await waitFor(() => {
-      expect(onClose).toHaveBeenCalled()
+      expect(screen.getByTestId('aadhaar-verify-done')).toBeInTheDocument()
     })
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-done'))
+    expect(onClose).toHaveBeenCalled()
   })
 
   it('shows API error message on failure', async () => {
@@ -183,7 +243,9 @@ describe('AadhaarVerifyDialog', () => {
       expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
     })
 
-    await userEvent.type(screen.getByTestId('aadhaar-number-input'), '234567890123')
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
     await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
 
     await waitFor(() => {
@@ -191,8 +253,104 @@ describe('AadhaarVerifyDialog', () => {
     })
   })
 
+  it('shows specific message for already verified error', async () => {
+    mockFetch.mockResolvedValue(
+      jsonResponse(
+        { message: 'Already verified', code: 'already_verified' },
+        409,
+      ),
+    )
+
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-error')).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText('Your Aadhaar is already verified.'),
+    ).toBeInTheDocument()
+  })
+
+  it('shows specific message for aadhaar mismatch error', async () => {
+    mockFetch.mockResolvedValue(
+      jsonResponse(
+        { message: 'Mismatch', code: 'aadhaar_mismatch' },
+        400,
+      ),
+    )
+
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-error')).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText(
+        'The details provided do not match the Aadhaar record. Please check and try again.',
+      ),
+    ).toBeInTheDocument()
+  })
+
+  it('shows specific message for invalid aadhaar error', async () => {
+    mockFetch.mockResolvedValue(
+      jsonResponse(
+        { message: 'Invalid', code: 'invalid_aadhaar' },
+        400,
+      ),
+    )
+
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-error')).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText(
+        'The Aadhaar number is invalid. Please check and try again.',
+      ),
+    ).toBeInTheDocument()
+  })
+
   it('does not render dialog content when closed', () => {
     render(<AadhaarVerifyDialog {...defaultProps} open={false} />)
     expect(screen.queryByText('Verify Aadhaar')).not.toBeInTheDocument()
+  })
+
+  it('never displays full Aadhaar number in the UI', async () => {
+    render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    // Check that no element in the document contains the full Aadhaar
+    const bodyText = document.body.textContent ?? ''
+    expect(bodyText).not.toContain('234567890123')
   })
 })
