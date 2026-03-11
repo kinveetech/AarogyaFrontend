@@ -122,4 +122,10 @@ describe('queryKeys', () => {
       expect(queryKeys.registration.status()).toEqual(['registration', 'status'])
     })
   })
+
+  describe('dataExport', () => {
+    it('has correct base key', () => {
+      expect(queryKeys.dataExport.all).toEqual(['dataExport'])
+    })
+  })
 })

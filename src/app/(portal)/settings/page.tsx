@@ -7,6 +7,7 @@ import {
   ProfileSection,
   ConsentsSection,
   NotificationsSection,
+  DataExportSection,
   AccountSection,
 } from '@/components/settings'
 import type { ProfileUpdate } from '@/lib/schemas/profileUpdate'
@@ -50,6 +51,7 @@ export default function SettingsPage() {
         />
         <ConsentsSection />
         <NotificationsSection />
+        <DataExportSection />
         <AccountSection />
       </VStack>
     </Box>
