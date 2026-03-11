@@ -5,7 +5,7 @@ import type { DeviceTokenRequest } from '@/types/notification'
 export function useRegisterDeviceToken() {
   return useMutation({
     mutationFn: (request: DeviceTokenRequest) =>
-      apiFetch<void>('/v1/notification-preferences/device-token', {
+      apiFetch<void>('/v1/notifications/devices', {
         method: 'POST',
         body: request,
       }),
