@@ -22,6 +22,10 @@ describe('staleTimes', () => {
     expect(staleTimes.emergencyContacts).toBe(60_000)
   })
 
+  it('emergencyAccess stale time is 2 minutes', () => {
+    expect(staleTimes.emergencyAccess).toBe(120_000)
+  })
+
   it('notifications stale time is 5 minutes', () => {
     expect(staleTimes.notifications).toBe(300_000)
   })

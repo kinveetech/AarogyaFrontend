@@ -87,6 +87,20 @@ describe('queryKeys', () => {
     it('has correct base key', () => {
       expect(queryKeys.emergencyAccess.all).toEqual(['emergencyAccess'])
     })
+
+    it('produces audit key without page', () => {
+      expect(queryKeys.emergencyAccess.audit()).toEqual(['emergencyAccess', 'audit', undefined])
+    })
+
+    it('produces audit key with page', () => {
+      expect(queryKeys.emergencyAccess.audit(2)).toEqual(['emergencyAccess', 'audit', 2])
+    })
+
+    it('produces different keys for different pages', () => {
+      const a = queryKeys.emergencyAccess.audit(1)
+      const b = queryKeys.emergencyAccess.audit(2)
+      expect(a).not.toEqual(b)
+    })
   })
 
   describe('notifications', () => {

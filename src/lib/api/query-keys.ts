@@ -38,6 +38,8 @@ export const queryKeys = {
   },
   emergencyAccess: {
     all: ['emergencyAccess'] as const,
+    audit: (page?: number) =>
+      [...queryKeys.emergencyAccess.all, 'audit', page] as const,
   },
   notifications: {
     all: ['notifications'] as const,
