@@ -47,7 +47,7 @@ describe('CognitoPKCE provider', () => {
 
   it('enables PKCE and state checks', () => {
     const provider = CognitoPKCE()
-    expect(provider.checks).toEqual(['pkce', 'state'])
+    expect(provider.checks).toEqual(['pkce', 'state', 'nonce'])
   })
 
   it('maps profile correctly', () => {

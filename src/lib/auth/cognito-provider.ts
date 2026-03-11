@@ -38,7 +38,7 @@ export default function CognitoPKCE(): OIDCConfig<CognitoProfile> {
     client: {
       token_endpoint_auth_method: 'none',
     },
-    checks: ['pkce', 'state'],
+    checks: ['pkce', 'state', 'nonce'],
     profile(profile, _tokens) {
       return {
         id: profile.sub,

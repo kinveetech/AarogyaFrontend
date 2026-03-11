@@ -220,6 +220,67 @@ describe('apiFetch', () => {
     expect(onResponse).toHaveBeenCalledWith(res)
   })
 
+  describe('401 session redirect', () => {
+    const originalWindow = globalThis.window
+
+    beforeEach(() => {
+      Object.defineProperty(globalThis, 'window', {
+        value: {
+          location: {
+            pathname: '/reports',
+            href: '/reports',
+          },
+        },
+        writable: true,
+        configurable: true,
+      })
+    })
+
+    afterEach(() => {
+      Object.defineProperty(globalThis, 'window', {
+        value: originalWindow,
+        writable: true,
+        configurable: true,
+      })
+    })
+
+    it('redirects to /login with callbackUrl on 401', async () => {
+      mockFetch.mockResolvedValue(
+        jsonResponse({ message: 'Authentication required' }, 401),
+      )
+
+      const error = await apiFetch('/v1/reports').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(error).toMatchObject({ status: 401 })
+      expect(window.location.href).toBe('/login?callbackUrl=%2Freports')
+    })
+
+    it('encodes nested pathname in callbackUrl', async () => {
+      window.location.pathname = '/settings/profile'
+
+      mockFetch.mockResolvedValue(
+        jsonResponse({ message: 'Authentication required' }, 401),
+      )
+
+      const error = await apiFetch('/v1/users/me').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(window.location.href).toBe('/login?callbackUrl=%2Fsettings%2Fprofile')
+    })
+
+    it('does not redirect when already on /login', async () => {
+      window.location.pathname = '/login'
+      window.location.href = '/login'
+
+      mockFetch.mockResolvedValue(
+        jsonResponse({ message: 'Authentication required' }, 401),
+      )
+
+      const error = await apiFetch('/v1/users/me').catch((e) => e)
+      expect(error).toBeInstanceOf(ApiError)
+      expect(window.location.href).toBe('/login')
+    })
+  })
+
   describe('403 registration redirects', () => {
     const originalWindow = globalThis.window
 

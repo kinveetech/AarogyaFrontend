@@ -76,6 +76,14 @@ export async function apiFetch<T>(
       // use statusText
     }
 
+    if (response.status === 401 && typeof window !== 'undefined') {
+      const pathname = window.location.pathname
+      if (pathname !== '/login') {
+        window.location.href = `/login?callbackUrl=${encodeURIComponent(pathname)}`
+      }
+      throw new ApiError(response.status, message, code)
+    }
+
     if (response.status === 403 && code && typeof window !== 'undefined') {
       const pathname = window.location.pathname
       const isRegistrationRoute = pathname.startsWith('/register')
