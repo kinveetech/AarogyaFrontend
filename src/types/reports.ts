@@ -68,3 +68,16 @@ export interface UploadUrlRequest {
 export interface DownloadUrlRequest {
   reportId: string
 }
+
+export interface VerifiedDownloadUrlRequest {
+  reportId: string
+  expiryMinutes?: number
+}
+
+export interface VerifiedDownloadUrlResponse {
+  reportId: string
+  objectKey: string
+  downloadUrl: string
+  expiresAt: string
+  checksumVerified: boolean
+}

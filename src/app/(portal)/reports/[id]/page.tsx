@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 import { Box, Button, Grid, Text } from '@chakra-ui/react'
 import { useReport } from '@/hooks/reports/use-report'
 import { useDeleteReport } from '@/hooks/reports/use-delete-report'
-import { useDownloadUrl } from '@/hooks/reports/use-download-url'
+import { useVerifiedDownloadUrl } from '@/hooks/reports/use-verified-download-url'
 import { ReportDetailHeader } from '@/components/reports/report-detail-header'
 import { ReportDetailParameters } from '@/components/reports/report-detail-parameters'
 import { ReportDetailActions } from '@/components/reports/report-detail-actions'
@@ -46,7 +46,7 @@ export default function ReportDetailPage() {
 
   const { data: report, isLoading, error } = useReport(id)
   const deleteReport = useDeleteReport()
-  const downloadUrl = useDownloadUrl()
+  const verifiedDownload = useVerifiedDownloadUrl()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [pdfExpanded, setPdfExpanded] = useState(false)
@@ -58,7 +58,7 @@ export default function ReportDetailPage() {
   const handleBack = useCallback(() => router.push('/reports'), [router])
 
   const handleDownload = useCallback(() => {
-    downloadUrl.mutate(
+    verifiedDownload.mutate(
       { reportId: id },
       {
         onSuccess: (res) => {
@@ -66,7 +66,7 @@ export default function ReportDetailPage() {
         },
       },
     )
-  }, [downloadUrl, id])
+  }, [verifiedDownload, id])
 
   const handleDeleteClick = useCallback(() => {
     setDeleteDialogOpen(true)
@@ -180,7 +180,7 @@ export default function ReportDetailPage() {
       <ReportDetailActions
         onDownload={handleDownload}
         onDelete={handleDeleteClick}
-        downloading={downloadUrl.isPending}
+        downloading={verifiedDownload.isPending}
       />
 
       <ConfirmDialog
