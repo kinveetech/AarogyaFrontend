@@ -45,6 +45,7 @@ describe('useUpdateEmergencyContact', () => {
       name: 'Priya S.',
       phone: '9876543210',
       relationship: 'spouse',
+      isPrimary: false,
       createdAt: '2025-01-01T00:00:00Z',
       updatedAt: '2025-01-15T10:00:00Z',
     }
@@ -60,6 +61,7 @@ describe('useUpdateEmergencyContact', () => {
         name: 'Priya S.',
         phone: '9876543210',
         relationship: 'spouse',
+        isPrimary: false,
       }),
     )
 
@@ -82,6 +84,7 @@ describe('useUpdateEmergencyContact', () => {
           name: 'Priya Sharma',
           phone: '9876543210',
           relationship: 'spouse',
+          isPrimary: false,
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
@@ -100,6 +103,7 @@ describe('useUpdateEmergencyContact', () => {
               name: 'Priya S.',
               phone: '9876543210',
               relationship: 'spouse',
+              isPrimary: true,
               createdAt: '2025-01-01T00:00:00Z',
               updatedAt: '2025-01-15T10:00:00Z',
             }),
@@ -115,6 +119,7 @@ describe('useUpdateEmergencyContact', () => {
         name: 'Priya S.',
         phone: '9876543210',
         relationship: 'spouse',
+        isPrimary: true,
       })
     })
 

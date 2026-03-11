@@ -32,6 +32,7 @@ export function useCreateEmergencyContact() {
             name: request.name,
             phone: request.phone,
             relationship: request.relationship,
+            isPrimary: request.isPrimary,
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
           }

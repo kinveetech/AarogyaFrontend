@@ -17,6 +17,7 @@ import {
   Flex,
   Input,
   NativeSelect,
+  Switch,
   Text,
 } from '@chakra-ui/react'
 import { useForm } from 'react-hook-form'
@@ -49,6 +50,8 @@ export function ContactModal({
     register,
     handleSubmit,
     reset,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm<EmergencyContactFormData>({
     resolver: zodResolver(emergencyContactSchema),
@@ -56,8 +59,11 @@ export function ContactModal({
       name: '',
       phone: '',
       relationship: 'spouse',
+      isPrimary: false,
     },
   })
+
+  const isPrimary = watch('isPrimary')
 
   useEffect(() => {
     if (open) {
@@ -67,8 +73,9 @@ export function ContactModal({
               name: initialData.name,
               phone: initialData.phone,
               relationship: initialData.relationship,
+              isPrimary: initialData.isPrimary,
             }
-          : { name: '', phone: '', relationship: 'spouse' },
+          : { name: '', phone: '', relationship: 'spouse', isPrimary: false },
       )
     }
   }, [open, initialData, reset])
@@ -187,6 +194,37 @@ export function ContactModal({
                     <Field.ErrorText>{errors.phone.message}</Field.ErrorText>
                   )}
                 </Field.Root>
+
+                {/* Primary contact toggle */}
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  py="2"
+                >
+                  <Box>
+                    <Text
+                      fontSize="0.82rem"
+                      fontWeight="semibold"
+                      color="text.secondary"
+                    >
+                      Set as primary contact
+                    </Text>
+                    <Text fontSize="0.75rem" color="text.muted" mt="0.5">
+                      Primary contact is notified first in emergencies
+                    </Text>
+                  </Box>
+                  <Switch.Root
+                    checked={isPrimary}
+                    onCheckedChange={(details) => setValue('isPrimary', details.checked)}
+                    colorPalette="teal"
+                    data-testid="is-primary-switch"
+                  >
+                    <Switch.HiddenInput />
+                    <Switch.Control>
+                      <Switch.Thumb />
+                    </Switch.Control>
+                  </Switch.Root>
+                </Flex>
               </Box>
             </DialogBody>
 

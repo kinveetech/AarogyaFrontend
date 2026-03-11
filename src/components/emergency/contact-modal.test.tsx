@@ -16,6 +16,7 @@ const existingContact: EmergencyContact = {
   name: 'Priya Sharma',
   phone: '9876543210',
   relationship: 'spouse',
+  isPrimary: false,
   createdAt: '2025-01-01T00:00:00Z',
   updatedAt: '2025-01-01T00:00:00Z',
 }
@@ -82,6 +83,7 @@ describe('ContactModal', () => {
           name: 'Rajesh Kumar',
           phone: '9123456789',
           relationship: 'spouse',
+          isPrimary: false,
         }),
         expect.anything(),
       )
@@ -129,6 +131,56 @@ describe('ContactModal', () => {
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Enter full name')).toHaveValue('')
+    })
+  })
+
+  it('shows "Set as primary contact" toggle', () => {
+    render(<ContactModal {...defaultProps} />)
+    expect(screen.getByText('Set as primary contact')).toBeInTheDocument()
+    expect(screen.getByTestId('is-primary-switch')).toBeInTheDocument()
+  })
+
+  it('defaults isPrimary to false for new contacts', () => {
+    render(<ContactModal {...defaultProps} />)
+    const switchEl = screen.getByTestId('is-primary-switch')
+    expect(switchEl).toHaveAttribute('data-state', 'unchecked')
+  })
+
+  it('pre-fills isPrimary toggle when editing a primary contact', async () => {
+    const primaryContact: EmergencyContact = {
+      ...existingContact,
+      isPrimary: true,
+    }
+    render(<ContactModal {...defaultProps} initialData={primaryContact} />)
+
+    await waitFor(() => {
+      const switchEl = screen.getByTestId('is-primary-switch')
+      expect(switchEl).toHaveAttribute('data-state', 'checked')
+    })
+  })
+
+  it('includes isPrimary in form submission', async () => {
+    const onSubmit = vi.fn()
+    render(<ContactModal {...defaultProps} onSubmit={onSubmit} />)
+
+    await userEvent.type(screen.getByPlaceholderText('Enter full name'), 'Rajesh Kumar')
+    await userEvent.type(screen.getByPlaceholderText('Enter phone number'), '9123456789')
+
+    const switchEl = screen.getByTestId('is-primary-switch')
+    await userEvent.click(switchEl)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save Contact' }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'Rajesh Kumar',
+          phone: '9123456789',
+          relationship: 'spouse',
+          isPrimary: true,
+        }),
+        expect.anything(),
+      )
     })
   })
 

@@ -37,6 +37,7 @@ const contactRequest = {
   name: 'Priya Sharma',
   phone: '9876543210',
   relationship: 'spouse' as const,
+  isPrimary: false,
 }
 
 beforeEach(() => {
@@ -49,6 +50,7 @@ describe('useCreateEmergencyContact', () => {
     const created = {
       id: 'ec1',
       ...contactRequest,
+      isPrimary: false,
       createdAt: '2025-01-15T10:00:00Z',
       updatedAt: '2025-01-15T10:00:00Z',
     }
@@ -81,6 +83,7 @@ describe('useCreateEmergencyContact', () => {
           name: 'Rajesh Kumar',
           phone: '8765432109',
           relationship: 'parent',
+          isPrimary: false,
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
@@ -97,6 +100,7 @@ describe('useCreateEmergencyContact', () => {
             jsonResponse({
               id: 'ec-new',
               ...contactRequest,
+              isPrimary: false,
               createdAt: '2025-01-15T10:00:00Z',
               updatedAt: '2025-01-15T10:00:00Z',
             }),
@@ -134,6 +138,7 @@ describe('useCreateEmergencyContact', () => {
           name: 'Rajesh Kumar',
           phone: '8765432109',
           relationship: 'parent',
+          isPrimary: false,
           createdAt: '2025-01-01T00:00:00Z',
           updatedAt: '2025-01-01T00:00:00Z',
         },
