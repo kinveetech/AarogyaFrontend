@@ -14,7 +14,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { profileUpdateSchema } from '@/lib/schemas/profileUpdate'
-import { BLOOD_GROUP_OPTIONS, GENDER_OPTIONS } from './settings-constants'
+import { BLOOD_GROUP_OPTIONS, GENDER_OPTIONS, formatDateForInput } from './settings-constants'
 import { SettingsSection } from './settings-section'
 import { AadhaarVerifyDialog } from './aadhaar-verify-dialog'
 import type { ProfileUpdate } from '@/lib/schemas/profileUpdate'
@@ -35,14 +35,6 @@ function getInitials(firstName: string, lastName: string): string {
     .map((w) => w[0])
     .join('')
     .toUpperCase()
-}
-
-function formatDateForInput(dateStr: string): string {
-  const d = new Date(dateStr)
-  const year = d.getUTCFullYear()
-  const month = String(d.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(d.getUTCDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 export function ProfileSection({ profile, isLoading, isSaving, onSave }: ProfileSectionProps) {

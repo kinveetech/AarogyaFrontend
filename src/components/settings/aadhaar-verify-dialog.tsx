@@ -26,19 +26,12 @@ import { MaskedAadhaarInput } from './masked-aadhaar-input'
 import type { AadhaarVerification } from '@/lib/schemas/aadhaarVerification'
 import type { Profile } from '@/types/profile'
 import type { ApiError } from '@/lib/api/client'
+import { formatDateForInput } from './settings-constants'
 
 export interface AadhaarVerifyDialogProps {
   open: boolean
   onClose: () => void
   profile: Profile
-}
-
-function formatDateForInput(dateStr: string): string {
-  const d = new Date(dateStr)
-  const year = d.getUTCFullYear()
-  const month = String(d.getUTCMonth() + 1).padStart(2, '0')
-  const day = String(d.getUTCDate()).padStart(2, '0')
-  return `${year}-${month}-${day}`
 }
 
 function getErrorMessage(error: Error | null): string {
