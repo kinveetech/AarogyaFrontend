@@ -1,7 +1,10 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { useVerifiedDownloadUrl } from './use-verified-download-url'
+import {
+  useVerifiedDownloadUrl,
+  type VerifiedDownloadResult as UrlResult,
+} from './use-verified-download-url'
 import {
   downloadAndVerify,
   triggerBrowserDownload,
@@ -41,6 +44,34 @@ export function useVerifiedDownload(
     setError(null)
   }, [])
 
+  const performDownload = useCallback(
+    async (urlResult: UrlResult, downloadName: string) => {
+      try {
+        const result = await downloadAndVerify({
+          downloadUrl: urlResult.downloadUrl,
+          checksumSha256: urlResult.checksumSha256,
+        })
+
+        triggerBrowserDownload(result.blobUrl, downloadName)
+        setTimeout(() => URL.revokeObjectURL(result.blobUrl), 100)
+
+        setIsPending(false)
+        onSuccess?.()
+      } catch (err) {
+        setIsPending(false)
+        const downloadError = err instanceof Error ? err : new Error(String(err))
+        setError(downloadError)
+
+        if (err instanceof ChecksumMismatchError) {
+          onChecksumMismatch?.(err)
+        } else {
+          onError?.(downloadError)
+        }
+      }
+    },
+    [onChecksumMismatch, onError, onSuccess],
+  )
+
   const download = useCallback(
     (reportId: string, fileName?: string) => {
       setIsPending(true)
@@ -49,31 +80,8 @@ export function useVerifiedDownload(
       verifiedDownloadUrl.mutate(
         { reportId },
         {
-          onSuccess: async (urlResult) => {
-            try {
-              const result = await downloadAndVerify({
-                downloadUrl: urlResult.downloadUrl,
-                checksumSha256: urlResult.checksumSha256,
-              })
-
-              const downloadName = fileName ?? `report-${reportId}`
-              triggerBrowserDownload(result.blobUrl, downloadName)
-              // Delay revocation to ensure download starts
-              setTimeout(() => URL.revokeObjectURL(result.blobUrl), 100)
-
-              setIsPending(false)
-              onSuccess?.()
-            } catch (err) {
-              setIsPending(false)
-              const downloadError = err instanceof Error ? err : new Error(String(err))
-              setError(downloadError)
-
-              if (err instanceof ChecksumMismatchError) {
-                onChecksumMismatch?.(err)
-              } else {
-                onError?.(downloadError)
-              }
-            }
+          onSuccess: (urlResult) => {
+            void performDownload(urlResult, fileName ?? `report-${reportId}`)
           },
           onError: (err) => {
             setIsPending(false)
@@ -84,7 +92,7 @@ export function useVerifiedDownload(
         },
       )
     },
-    [verifiedDownloadUrl, onChecksumMismatch, onError, onSuccess],
+    [verifiedDownloadUrl, performDownload, onError],
   )
 
   return {
