@@ -336,4 +336,14 @@ describe('SettingsPage', () => {
       ).toBeInTheDocument()
     })
   })
+
+  it('renders deletion section', async () => {
+    setupFetchMock()
+    render(<SettingsPage />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('deletion-section')).toBeInTheDocument()
+    })
+    expect(screen.getByTestId('delete-account-button')).toBeInTheDocument()
+  })
 })

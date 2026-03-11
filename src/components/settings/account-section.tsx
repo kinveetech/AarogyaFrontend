@@ -29,16 +29,6 @@ export function AccountSection() {
           >
             Sign Out
           </Button>
-          <Button
-            variant="plain"
-            color="coral.400"
-            fontSize="0.875rem"
-            textDecoration="underline"
-            px="0"
-            _hover={{ opacity: 0.8 }}
-          >
-            Delete Account
-          </Button>
           <Text fontFamily="mono" fontSize="0.75rem" color="text.muted">
             Aarogya v0.1.0
           </Text>

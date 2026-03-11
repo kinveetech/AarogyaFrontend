@@ -21,11 +21,6 @@ describe('AccountSection', () => {
     expect(screen.getByTestId('sign-out-button')).toBeInTheDocument()
   })
 
-  it('renders delete account link', () => {
-    render(<AccountSection />)
-    expect(screen.getByText('Delete Account')).toBeInTheDocument()
-  })
-
   it('renders app version', () => {
     render(<AccountSection />)
     expect(screen.getByText('Aarogya v0.1.0')).toBeInTheDocument()
