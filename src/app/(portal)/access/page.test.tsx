@@ -7,6 +7,18 @@ import type { ReportListResponse } from '@/types/reports'
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
 
+let mockRole: 'patient' | 'doctor' = 'patient'
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: { id: 'user-1', name: 'Test User', email: 'test@example.com', role: mockRole },
+    isLoading: false,
+    isAuthenticated: true,
+    login: vi.fn(),
+    logout: vi.fn(),
+  }),
+}))
+
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -142,9 +154,10 @@ function mockFetchHandler(url: string) {
 
 beforeEach(() => {
   mockFetch.mockReset()
+  mockRole = 'patient'
 })
 
-describe('AccessPage', () => {
+describe('AccessPage — Patient view', () => {
   it('shows loading skeleton on initial render', () => {
     mockFetch.mockReturnValue(new Promise(() => {}))
     render(<AccessPage />)
@@ -330,5 +343,172 @@ describe('AccessPage', () => {
     expect(
       screen.queryByRole('button', { name: /revoke access for dr\. vikram patel/i }),
     ).not.toBeInTheDocument()
+  })
+})
+
+describe('AccessPage — Doctor view', () => {
+  beforeEach(() => {
+    mockRole = 'doctor'
+  })
+
+  it('shows "Received Grants" heading for doctor role', () => {
+    mockFetch.mockReturnValue(new Promise(() => {}))
+    render(<AccessPage />)
+    expect(screen.getByRole('heading', { name: 'Received Grants' })).toBeInTheDocument()
+  })
+
+  it('does not show Grant Access button for doctor role', () => {
+    mockFetch.mockReturnValue(new Promise(() => {}))
+    render(<AccessPage />)
+    expect(screen.queryByRole('button', { name: /grant access/i })).not.toBeInTheDocument()
+  })
+
+  it('shows loading skeleton on initial render', () => {
+    mockFetch.mockReturnValue(new Promise(() => {}))
+    render(<AccessPage />)
+    expect(screen.getByTestId('received-grants-loading')).toBeInTheDocument()
+  })
+
+  it('renders received grant cards', async () => {
+    const receivedGrants = [
+      {
+        grantId: 'rg1',
+        patientSub: 'patient-abc',
+        doctorSub: 'doctor-1',
+        doctorName: 'Dr. Self',
+        allReports: true,
+        reportIds: [],
+        purpose: 'General checkup',
+        startsAt: '2025-01-01T00:00:00Z',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        revoked: false,
+        createdAt: '2025-01-01T00:00:00Z',
+      },
+      {
+        grantId: 'rg2',
+        patientSub: 'patient-xyz',
+        doctorSub: 'doctor-1',
+        doctorName: 'Dr. Self',
+        allReports: false,
+        reportIds: ['r1'],
+        purpose: 'Lab results',
+        startsAt: '2025-02-01T00:00:00Z',
+        expiresAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        revoked: false,
+        createdAt: '2025-02-01T00:00:00Z',
+      },
+    ]
+
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/access-grants/received')) {
+        return Promise.resolve(jsonResponse(receivedGrants))
+      }
+      return Promise.resolve(jsonResponse([]))
+    })
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Patient: patient-abc')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Patient: patient-xyz')).toBeInTheDocument()
+    expect(screen.getAllByTestId('received-grant-card')).toHaveLength(2)
+  })
+
+  it('shows active and inactive sections for received grants', async () => {
+    const receivedGrants = [
+      {
+        grantId: 'rg1',
+        patientSub: 'patient-abc',
+        doctorSub: 'doctor-1',
+        doctorName: 'Dr. Self',
+        allReports: true,
+        reportIds: [],
+        purpose: 'General checkup',
+        startsAt: '2025-01-01T00:00:00Z',
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        revoked: false,
+        createdAt: '2025-01-01T00:00:00Z',
+      },
+      {
+        grantId: 'rg2',
+        patientSub: 'patient-xyz',
+        doctorSub: 'doctor-1',
+        doctorName: 'Dr. Self',
+        allReports: false,
+        reportIds: ['r1'],
+        purpose: 'Lab results',
+        startsAt: '2025-02-01T00:00:00Z',
+        expiresAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),
+        revoked: false,
+        createdAt: '2025-02-01T00:00:00Z',
+      },
+    ]
+
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/access-grants/received')) {
+        return Promise.resolve(jsonResponse(receivedGrants))
+      }
+      return Promise.resolve(jsonResponse([]))
+    })
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Active Grants')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Inactive Grants')).toBeInTheDocument()
+  })
+
+  it('shows empty state when doctor has no received grants', async () => {
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/access-grants/received')) {
+        return Promise.resolve(jsonResponse([]))
+      }
+      return Promise.resolve(jsonResponse([]))
+    })
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('No received grants')).toBeInTheDocument()
+    })
+    expect(
+      screen.getByText('Patients who grant you access to their reports will appear here'),
+    ).toBeInTheDocument()
+  })
+
+  it('empty state does not have an action button for doctors', async () => {
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/access-grants/received')) {
+        return Promise.resolve(jsonResponse([]))
+      }
+      return Promise.resolve(jsonResponse([]))
+    })
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('No received grants')).toBeInTheDocument()
+    })
+    expect(screen.queryByRole('button', { name: /grant access/i })).not.toBeInTheDocument()
+  })
+
+  it('calls the received endpoint, not the patient grants endpoint', async () => {
+    mockFetch.mockImplementation((url: string) => {
+      if (url.includes('/v1/access-grants/received')) {
+        return Promise.resolve(jsonResponse([]))
+      }
+      return Promise.resolve(jsonResponse([]))
+    })
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('No received grants')).toBeInTheDocument()
+    })
+
+    const calledUrls = mockFetch.mock.calls.map((call) => call[0] as string)
+    const receivedCall = calledUrls.find((url) => url.includes('/v1/access-grants/received'))
+    const patientCall = calledUrls.find(
+      (url) => url.includes('/v1/access-grants') && !url.includes('/received'),
+    )
+    expect(receivedCall).toBeTruthy()
+    expect(patientCall).toBeUndefined()
   })
 })
