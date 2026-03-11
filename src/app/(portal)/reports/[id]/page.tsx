@@ -7,10 +7,16 @@ import { Box, Button, Grid, Text } from '@chakra-ui/react'
 import { useReport } from '@/hooks/reports/use-report'
 import { useDeleteReport } from '@/hooks/reports/use-delete-report'
 import { useVerifiedDownload } from '@/hooks/reports/use-verified-download'
+import { useExtractionStatus } from '@/hooks/reports/use-extraction-status'
+import { useTriggerExtraction } from '@/hooks/reports/use-trigger-extraction'
 import { ReportDetailHeader } from '@/components/reports/report-detail-header'
 import { ReportDetailParameters } from '@/components/reports/report-detail-parameters'
 import { ReportDetailActions } from '@/components/reports/report-detail-actions'
 import { ReportDetailSkeleton } from '@/components/reports/report-detail-skeleton'
+import {
+  ExtractionStatusCard,
+  ExtractionStatusSkeleton,
+} from '@/components/reports/extraction-status-card'
 
 // Dynamic import to avoid loading pdfjs-dist on the server (no DOMMatrix in Node.js)
 const PDFViewer = dynamic(
@@ -46,6 +52,8 @@ export default function ReportDetailPage() {
 
   const { data: report, isLoading, error } = useReport(id)
   const deleteReport = useDeleteReport()
+  const extraction = useExtractionStatus(id)
+  const triggerExtraction = useTriggerExtraction(id)
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [downloadError, setDownloadError] = useState<string | null>(null)
@@ -185,6 +193,26 @@ export default function ReportDetailPage() {
           </Box>
         )}
       </Grid>
+
+      {/* Extraction status */}
+      <Box mt="6">
+        {extraction.isLoading && <ExtractionStatusSkeleton />}
+        {extraction.data && (
+          <ExtractionStatusCard
+            status={extraction.data.status}
+            extractionMethod={extraction.data.extractionMethod}
+            structuringModel={extraction.data.structuringModel}
+            extractedParameterCount={extraction.data.extractedParameterCount}
+            overallConfidence={extraction.data.overallConfidence}
+            pageCount={extraction.data.pageCount}
+            extractedAt={extraction.data.extractedAt}
+            errorMessage={extraction.data.errorMessage}
+            attemptCount={extraction.data.attemptCount}
+            onTriggerExtraction={() => triggerExtraction.mutate()}
+            isTriggerPending={triggerExtraction.isPending}
+          />
+        )}
+      </Box>
 
       {downloadError && (
         <Box

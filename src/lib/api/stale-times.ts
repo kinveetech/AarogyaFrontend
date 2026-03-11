@@ -7,4 +7,5 @@ export const staleTimes = {
   emergencyAccess: 2 * 60 * 1000, // 2 min
   notifications: 5 * 60 * 1000, // 5 min
   registration: 30 * 1000, // 30 sec
+  extraction: 30 * 1000, // 30 sec
 }

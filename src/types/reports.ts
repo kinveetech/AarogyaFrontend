@@ -82,3 +82,19 @@ export interface VerifiedDownloadUrlResponse {
   checksumSha256: string | null
   isServerVerified: boolean
 }
+
+export type ExtractionStatus = 'pending' | 'processing' | 'completed' | 'failed'
+
+export type ExtractionMethod = 'ocr' | 'native_text' | 'hybrid'
+
+export interface ExtractionStatusResponse {
+  status: ExtractionStatus
+  extractionMethod: ExtractionMethod | null
+  structuringModel: string | null
+  extractedParameterCount: number
+  overallConfidence: number | null
+  pageCount: number | null
+  extractedAt: string | null
+  errorMessage: string | null
+  attemptCount: number
+}
