@@ -1,3 +1,5 @@
+export type AccessGrantStatus = 'active' | 'revoked' | 'expired'
+
 export interface Doctor {
   id: string
   name: string
@@ -10,11 +12,16 @@ export interface DoctorSearchResult {
 }
 
 export interface AccessGrant {
-  id: string
-  doctorId: string
+  grantId: string
+  patientSub: string
+  doctorSub: string
   doctorName: string
+  allReports: boolean
   reportIds: string[]
+  purpose: string
+  startsAt: string
   expiresAt: string
+  revoked: boolean
   createdAt: string
 }
 
@@ -27,8 +34,10 @@ export interface AccessGrantListResponse {
 }
 
 export interface CreateAccessGrantRequest {
-  doctorId: string
+  doctorSub: string
   doctorName: string
+  allReports: boolean
   reportIds: string[]
+  purpose: string
   expiresAt: string
 }

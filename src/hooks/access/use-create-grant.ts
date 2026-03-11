@@ -28,11 +28,16 @@ export function useCreateGrant() {
         (old) => {
           if (!old?.items) return old
           const optimisticGrant: AccessGrant = {
-            id: `optimistic-${Date.now()}`,
-            doctorId: request.doctorId,
+            grantId: `optimistic-${Date.now()}`,
+            patientSub: '',
+            doctorSub: request.doctorSub,
             doctorName: request.doctorName,
+            allReports: request.allReports,
             reportIds: request.reportIds,
+            purpose: request.purpose,
+            startsAt: new Date().toISOString(),
             expiresAt: request.expiresAt,
+            revoked: false,
             createdAt: new Date().toISOString(),
           }
           return {

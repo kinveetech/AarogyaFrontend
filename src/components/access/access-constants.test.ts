@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import {
   getGrantStatus,
+  deriveAccessGrantStatus,
   formatExpiryText,
   getInitials,
 } from './access-constants'
@@ -45,6 +46,44 @@ describe('getGrantStatus', () => {
     const future = new Date(Date.now() + 8 * 24 * 60 * 60 * 1000).toISOString()
     const result = getGrantStatus(future)
     expect(result.status).toBe('active')
+  })
+
+  it('returns revoked status when revoked is true', () => {
+    const future = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
+    const result = getGrantStatus(future, true)
+    expect(result.status).toBe('revoked')
+    expect(result.label).toBe('Revoked')
+    expect(result.badgeVariant).toBe('error')
+    expect(result.daysRemaining).toBe(0)
+  })
+
+  it('returns revoked even when grant would otherwise be active', () => {
+    const future = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+    const result = getGrantStatus(future, true)
+    expect(result.status).toBe('revoked')
+  })
+
+  it('returns revoked even when grant is expired', () => {
+    const past = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+    const result = getGrantStatus(past, true)
+    expect(result.status).toBe('revoked')
+  })
+})
+
+describe('deriveAccessGrantStatus', () => {
+  it('returns revoked when revoked is true', () => {
+    const future = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
+    expect(deriveAccessGrantStatus(future, true)).toBe('revoked')
+  })
+
+  it('returns active for non-expired non-revoked grant', () => {
+    const future = new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString()
+    expect(deriveAccessGrantStatus(future, false)).toBe('active')
+  })
+
+  it('returns expired for past non-revoked grant', () => {
+    const past = new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
+    expect(deriveAccessGrantStatus(past, false)).toBe('expired')
   })
 })
 

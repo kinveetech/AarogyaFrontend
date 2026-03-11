@@ -17,11 +17,16 @@ export interface GrantCardProps {
 export function GrantCard({ grant, onRevoke }: GrantCardProps) {
   const { label, badgeVariant, daysRemaining, status } = getGrantStatus(
     grant.expiresAt,
+    grant.revoked,
   )
-  const isExpired = status === 'expired'
+  const isInactive = status === 'expired' || status === 'revoked'
   const initials = getInitials(grant.doctorName)
-  const expiryText = formatExpiryText(daysRemaining)
+  const expiryText = status === 'revoked' ? '' : formatExpiryText(daysRemaining)
   const isExpiryWarning = status === 'expiring'
+
+  const reportSummary = grant.allReports
+    ? 'All reports'
+    : `${grant.reportIds.length} report${grant.reportIds.length === 1 ? '' : 's'} shared`
 
   return (
     <Box
@@ -34,7 +39,7 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
       boxShadow="glass"
       transition="transform 0.2s, box-shadow 0.2s"
       _hover={{ transform: 'translateY(-1px)', boxShadow: 'md' }}
-      opacity={isExpired ? 0.6 : 1}
+      opacity={isInactive ? 0.6 : 1}
       data-testid="grant-card"
     >
       <Flex align="center" gap="4" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
@@ -48,8 +53,8 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
           fontFamily="mono"
           fontSize="0.85rem"
           fontWeight="medium"
-          bg={isExpired ? 'border.default' : 'action.primary'}
-          color={isExpired ? 'text.muted' : 'action.primary.text'}
+          bg={isInactive ? 'border.default' : 'action.primary'}
+          color={isInactive ? 'text.muted' : 'action.primary.text'}
         >
           {initials}
         </Flex>
@@ -64,17 +69,31 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
               fontFamily="mono"
               fontSize="0.78rem"
               color="text.secondary"
+              data-testid="report-summary"
             >
-              {grant.reportIds.length} report{grant.reportIds.length === 1 ? '' : 's'} shared
+              {reportSummary}
             </Text>
-            <Text
-              fontFamily="mono"
-              fontSize="0.78rem"
-              color={isExpiryWarning ? 'amber.400' : 'text.muted'}
-            >
-              {expiryText}
-            </Text>
+            {expiryText && (
+              <Text
+                fontFamily="mono"
+                fontSize="0.78rem"
+                color={isExpiryWarning ? 'amber.400' : 'text.muted'}
+              >
+                {expiryText}
+              </Text>
+            )}
           </Flex>
+          {grant.purpose && (
+            <Text
+              fontSize="0.82rem"
+              color="text.muted"
+              mt="1"
+              lineClamp={1}
+              data-testid="grant-purpose"
+            >
+              {grant.purpose}
+            </Text>
+          )}
         </Box>
 
         {/* Actions */}
@@ -87,7 +106,7 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
           mt={{ base: '1', md: '0' }}
         >
           <StatusBadge variant={badgeVariant}>{label}</StatusBadge>
-          {!isExpired && (
+          {!isInactive && (
             <Button
               variant="outline"
               size="sm"
@@ -95,7 +114,7 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
               borderColor="coral.400"
               color="coral.400"
               _hover={{ bg: 'rgba(255, 107, 107, 0.08)' }}
-              onClick={() => onRevoke(grant.id)}
+              onClick={() => onRevoke(grant.grantId)}
               aria-label={`Revoke access for ${grant.doctorName}`}
             >
               Revoke

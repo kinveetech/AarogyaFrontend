@@ -16,37 +16,66 @@ function jsonResponse(data: unknown, status = 200) {
 }
 
 const activeGrant = {
-  id: 'g1',
-  doctorId: 'd1',
+  grantId: 'g1',
+  patientSub: 'p1',
+  doctorSub: 'd1',
   doctorName: 'Dr. Priya Sharma',
+  allReports: false,
   reportIds: ['r1', 'r2', 'r3'],
+  purpose: 'Blood test review',
+  startsAt: '2025-01-01T00:00:00Z',
   expiresAt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+  revoked: false,
   createdAt: '2025-01-01T00:00:00Z',
 }
 
 const expiringGrant = {
-  id: 'g2',
-  doctorId: 'd2',
+  grantId: 'g2',
+  patientSub: 'p1',
+  doctorSub: 'd2',
   doctorName: 'Dr. Rajesh Kumar',
-  reportIds: ['r1'],
+  allReports: true,
+  reportIds: [],
+  purpose: 'Ongoing treatment',
+  startsAt: '2025-01-10T00:00:00Z',
   expiresAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+  revoked: false,
   createdAt: '2025-01-10T00:00:00Z',
 }
 
 const expiredGrant = {
-  id: 'g3',
-  doctorId: 'd3',
+  grantId: 'g3',
+  patientSub: 'p1',
+  doctorSub: 'd3',
   doctorName: 'Dr. Anita Desai',
+  allReports: false,
   reportIds: ['r2'],
+  purpose: 'X-ray analysis',
+  startsAt: '2024-12-01T00:00:00Z',
   expiresAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+  revoked: false,
   createdAt: '2024-12-01T00:00:00Z',
 }
 
+const revokedGrant = {
+  grantId: 'g4',
+  patientSub: 'p1',
+  doctorSub: 'd4',
+  doctorName: 'Dr. Vikram Patel',
+  allReports: false,
+  reportIds: ['r1'],
+  purpose: 'Second opinion',
+  startsAt: '2025-01-05T00:00:00Z',
+  expiresAt: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000).toISOString(),
+  revoked: true,
+  createdAt: '2025-01-05T00:00:00Z',
+}
+
 const mockGrantData: AccessGrantListResponse = {
-  items: [activeGrant, expiringGrant, expiredGrant],
+  items: [activeGrant, expiringGrant, expiredGrant, revokedGrant],
   page: 1,
   pageSize: 20,
-  totalCount: 3,
+  totalCount: 4,
   totalPages: 1,
 }
 
@@ -122,7 +151,7 @@ describe('AccessPage', () => {
     expect(screen.getByTestId('access-loading')).toBeInTheDocument()
   })
 
-  it('renders active and expired grant sections', async () => {
+  it('renders active and inactive grant sections', async () => {
     mockFetch.mockImplementation((url: string) => Promise.resolve(mockFetchHandler(url)))
     render(<AccessPage />)
 
@@ -131,9 +160,10 @@ describe('AccessPage', () => {
     })
 
     expect(screen.getByText('Active Grants')).toBeInTheDocument()
-    expect(screen.getByText('Expired Grants')).toBeInTheDocument()
+    expect(screen.getByText('Inactive Grants')).toBeInTheDocument()
     expect(screen.getByText('Dr. Rajesh Kumar')).toBeInTheDocument()
     expect(screen.getByText('Dr. Anita Desai')).toBeInTheDocument()
+    expect(screen.getByText('Dr. Vikram Patel')).toBeInTheDocument()
   })
 
   it('renders page heading and Grant Access button', async () => {
@@ -162,11 +192,11 @@ describe('AccessPage', () => {
     render(<AccessPage />)
 
     await waitFor(() => {
-      expect(screen.getAllByTestId('grant-card')).toHaveLength(3)
+      expect(screen.getAllByTestId('grant-card')).toHaveLength(4)
     })
   })
 
-  it('shows active/expiring/expired status badges', async () => {
+  it('shows active/expiring/expired/revoked status badges', async () => {
     mockFetch.mockImplementation((url: string) => Promise.resolve(mockFetchHandler(url)))
     render(<AccessPage />)
 
@@ -175,6 +205,17 @@ describe('AccessPage', () => {
     })
     expect(screen.getByText('Expiring Soon')).toBeInTheDocument()
     expect(screen.getByText('Expired')).toBeInTheDocument()
+    expect(screen.getByText('Revoked')).toBeInTheDocument()
+  })
+
+  it('shows "All reports" for grants with allReports flag', async () => {
+    mockFetch.mockImplementation((url: string) => Promise.resolve(mockFetchHandler(url)))
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Dr. Rajesh Kumar')).toBeInTheDocument()
+    })
+    expect(screen.getByText('All reports')).toBeInTheDocument()
   })
 
   it('opens revoke dialog when Revoke is clicked', async () => {
@@ -276,5 +317,18 @@ describe('AccessPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Grant Doctor Access')).toBeInTheDocument()
     })
+  })
+
+  it('does not show revoke button for revoked grants', async () => {
+    mockFetch.mockImplementation((url: string) => Promise.resolve(mockFetchHandler(url)))
+    render(<AccessPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Dr. Vikram Patel')).toBeInTheDocument()
+    })
+
+    expect(
+      screen.queryByRole('button', { name: /revoke access for dr\. vikram patel/i }),
+    ).not.toBeInTheDocument()
   })
 })

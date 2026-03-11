@@ -8,6 +8,7 @@ import { getGrantStatus } from '@/components/access/access-constants'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import type { AccessGrant } from '@/types/access'
+import type { GrantModalSubmitData } from '@/components/access/grant-modal'
 
 export default function AccessPage() {
   const { data, isLoading } = useAccessGrants()
@@ -20,18 +21,26 @@ export default function AccessPage() {
   const grants = useMemo(() => data?.items ?? [], [data])
 
   const activeGrants = useMemo(
-    () => grants.filter((g) => getGrantStatus(g.expiresAt).status !== 'expired'),
+    () =>
+      grants.filter((g) => {
+        const { status } = getGrantStatus(g.expiresAt, g.revoked)
+        return status !== 'expired' && status !== 'revoked'
+      }),
     [grants],
   )
 
-  const expiredGrants = useMemo(
-    () => grants.filter((g) => getGrantStatus(g.expiresAt).status === 'expired'),
+  const inactiveGrants = useMemo(
+    () =>
+      grants.filter((g) => {
+        const { status } = getGrantStatus(g.expiresAt, g.revoked)
+        return status === 'expired' || status === 'revoked'
+      }),
     [grants],
   )
 
   const handleRevokeClick = useCallback(
     (id: string) => {
-      const grant = grants.find((g) => g.id === id)
+      const grant = grants.find((g) => g.grantId === id)
       if (grant) setRevokeTarget(grant)
     },
     [grants],
@@ -39,21 +48,26 @@ export default function AccessPage() {
 
   const handleRevokeConfirm = useCallback(() => {
     if (!revokeTarget) return
-    revokeGrant.mutate(revokeTarget.id, {
+    revokeGrant.mutate(revokeTarget.grantId, {
       onSuccess: () => setRevokeTarget(null),
     })
   }, [revokeTarget, revokeGrant])
 
   const handleGrantSubmit = useCallback(
-    (formData: {
-      doctorId: string
-      doctorName: string
-      reportIds: string[]
-      expiresAt: string
-    }) => {
-      createGrant.mutate(formData, {
-        onSuccess: () => setModalOpen(false),
-      })
+    (formData: GrantModalSubmitData) => {
+      createGrant.mutate(
+        {
+          doctorSub: formData.doctorId,
+          doctorName: formData.doctorName,
+          allReports: formData.allReports,
+          reportIds: formData.reportIds,
+          purpose: formData.purpose,
+          expiresAt: formData.expiresAt,
+        },
+        {
+          onSuccess: () => setModalOpen(false),
+        },
+      )
     },
     [createGrant],
   )
@@ -122,7 +136,7 @@ export default function AccessPage() {
           <VStack gap="3" align="stretch">
             {activeGrants.map((grant) => (
               <GrantCard
-                key={grant.id}
+                key={grant.grantId}
                 grant={grant}
                 onRevoke={handleRevokeClick}
               />
@@ -131,8 +145,8 @@ export default function AccessPage() {
         </Box>
       )}
 
-      {/* Expired grants */}
-      {!isLoading && expiredGrants.length > 0 && (
+      {/* Inactive grants (expired + revoked) */}
+      {!isLoading && inactiveGrants.length > 0 && (
         <Box>
           <Heading
             as="h2"
@@ -141,12 +155,12 @@ export default function AccessPage() {
             color="text.primary"
             mb="4"
           >
-            Expired Grants
+            Inactive Grants
           </Heading>
           <VStack gap="3" align="stretch">
-            {expiredGrants.map((grant) => (
+            {inactiveGrants.map((grant) => (
               <GrantCard
-                key={grant.id}
+                key={grant.grantId}
                 grant={grant}
                 onRevoke={handleRevokeClick}
               />

@@ -14,22 +14,28 @@ import {
   Flex,
   Input,
   Skeleton,
+  Switch,
   Text,
+  Textarea,
 } from '@chakra-ui/react'
 import { useSearchDoctors } from '@/hooks/access'
 import { useReports } from '@/hooks/reports'
 import { DURATION_OPTIONS, getInitials } from './access-constants'
 import type { Doctor } from '@/types/access'
 
+export interface GrantModalSubmitData {
+  doctorId: string
+  doctorName: string
+  allReports: boolean
+  reportIds: string[]
+  purpose: string
+  expiresAt: string
+}
+
 export interface GrantModalProps {
   open: boolean
   onClose: () => void
-  onSubmit: (data: {
-    doctorId: string
-    doctorName: string
-    reportIds: string[]
-    expiresAt: string
-  }) => void
+  onSubmit: (data: GrantModalSubmitData) => void
   loading?: boolean
 }
 
@@ -38,24 +44,28 @@ type Step = 'search' | 'reports' | 'duration'
 export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantModalProps) {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null)
+  const [allReports, setAllReports] = useState(false)
   const [selectedReportIds, setSelectedReportIds] = useState<Set<string>>(new Set())
   const [selectedDuration, setSelectedDuration] = useState<number | null>(30)
   const [customDays, setCustomDays] = useState('')
+  const [purpose, setPurpose] = useState('')
 
   const doctorSearch = useSearchDoctors(searchQuery)
   const { data: reportsData, isLoading: reportsLoading } = useReports({ pageSize: 100 })
 
+  const hasReportSelection = allReports || selectedReportIds.size > 0
   const currentStep: Step = !selectedDoctor
     ? 'search'
-    : selectedReportIds.size === 0
+    : !hasReportSelection
       ? 'reports'
       : 'duration'
 
   const effectiveDays = selectedDuration ?? (customDays ? parseInt(customDays, 10) : 0)
   const canSubmit =
     selectedDoctor !== null &&
-    selectedReportIds.size > 0 &&
+    hasReportSelection &&
     effectiveDays > 0 &&
+    purpose.trim().length > 0 &&
     !loading
 
   const handleSelectDoctor = useCallback((doctor: Doctor) => {
@@ -71,6 +81,15 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
         next.add(reportId)
       }
       return next
+    })
+  }, [])
+
+  const handleAllReportsToggle = useCallback(() => {
+    setAllReports((prev) => {
+      if (!prev) {
+        setSelectedReportIds(new Set())
+      }
+      return !prev
     })
   }, [])
 
@@ -92,17 +111,21 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
     onSubmit({
       doctorId: selectedDoctor.id,
       doctorName: selectedDoctor.name,
-      reportIds: Array.from(selectedReportIds),
+      allReports,
+      reportIds: allReports ? [] : Array.from(selectedReportIds),
+      purpose: purpose.trim(),
       expiresAt,
     })
-  }, [selectedDoctor, selectedReportIds, effectiveDays, canSubmit, onSubmit])
+  }, [selectedDoctor, selectedReportIds, allReports, purpose, effectiveDays, canSubmit, onSubmit])
 
   const handleClose = useCallback(() => {
     setSearchQuery('')
     setSelectedDoctor(null)
+    setAllReports(false)
     setSelectedReportIds(new Set())
     setSelectedDuration(30)
     setCustomDays('')
+    setPurpose('')
     onClose()
   }, [onClose])
 
@@ -167,23 +190,81 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
                   label="Select Reports"
                   active={currentStep === 'reports'}
                 />
-                <ReportSelector
-                  reports={reports}
-                  selectedIds={selectedReportIds}
-                  onToggle={toggleReport}
-                  loading={reportsLoading}
-                />
+
+                {/* All Reports Toggle */}
+                <Flex
+                  align="center"
+                  justify="space-between"
+                  px="3"
+                  py="2.5"
+                  mb="3"
+                  borderWidth="1px"
+                  borderColor={allReports ? 'action.primary' : 'border.subtle'}
+                  borderRadius="lg"
+                  bg="bg.overlay"
+                >
+                  <Box>
+                    <Text fontSize="0.88rem" color="text.primary" fontWeight="medium">
+                      Grant access to all reports
+                    </Text>
+                    <Text fontSize="0.78rem" color="text.muted">
+                      Includes current and future reports
+                    </Text>
+                  </Box>
+                  <Switch.Root
+                    checked={allReports}
+                    onCheckedChange={handleAllReportsToggle}
+                    aria-label="Grant access to all reports"
+                  >
+                    <Switch.HiddenInput />
+                    <Switch.Control>
+                      <Switch.Thumb />
+                    </Switch.Control>
+                  </Switch.Root>
+                </Flex>
+
+                {!allReports && (
+                  <ReportSelector
+                    reports={reports}
+                    selectedIds={selectedReportIds}
+                    onToggle={toggleReport}
+                    loading={reportsLoading}
+                  />
+                )}
               </Box>
             )}
 
-            {/* Step 3: Set Duration */}
-            {selectedDoctor && selectedReportIds.size > 0 && (
+            {/* Step 3: Purpose & Duration */}
+            {selectedDoctor && hasReportSelection && (
               <Box role="group" aria-label="Step 3: Set Duration">
                 <StepLabel
                   step={3}
-                  label="Set Duration"
+                  label="Purpose & Duration"
                   active={currentStep === 'duration'}
                 />
+
+                {/* Purpose field */}
+                <Box mb="4">
+                  <Text fontSize="0.82rem" color="text.secondary" mb="1.5" fontWeight="medium">
+                    Purpose of access
+                  </Text>
+                  <Textarea
+                    placeholder="e.g., Follow-up consultation for blood work review"
+                    value={purpose}
+                    onChange={(e) => setPurpose(e.target.value)}
+                    bg="bg.glass"
+                    borderColor="border.default"
+                    borderRadius="lg"
+                    fontSize="0.88rem"
+                    rows={2}
+                    maxLength={500}
+                    aria-label="Purpose of access"
+                  />
+                  <Text fontSize="0.72rem" color="text.muted" mt="1" textAlign="right">
+                    {purpose.length}/500
+                  </Text>
+                </Box>
+
                 <DurationPicker
                   selected={selectedDuration}
                   customDays={customDays}
@@ -194,7 +275,7 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
             )}
 
             {/* Submit */}
-            {selectedDoctor && selectedReportIds.size > 0 && (
+            {selectedDoctor && hasReportSelection && (
               <Button
                 w="full"
                 borderRadius="full"
@@ -232,7 +313,7 @@ export function GrantModal({ open, onClose, onSubmit, loading = false }: GrantMo
   )
 }
 
-/* ── Sub-components ── */
+/* -- Sub-components -- */
 
 function StepLabel({ step, label, active }: { step: number; label: string; active: boolean }) {
   return (

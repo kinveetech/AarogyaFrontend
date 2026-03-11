@@ -34,20 +34,30 @@ function createWrapper(gcTime = 0) {
 }
 
 const grantOne = {
-  id: 'ag1',
-  doctorId: 'd1',
+  grantId: 'ag1',
+  patientSub: 'p1',
+  doctorSub: 'd1',
   doctorName: 'Dr. Smith',
+  allReports: false,
   reportIds: ['r1'],
+  purpose: 'Consultation',
+  startsAt: '2025-01-01T00:00:00Z',
   expiresAt: '2025-06-01T00:00:00Z',
+  revoked: false,
   createdAt: '2025-01-01T00:00:00Z',
 }
 
 const grantTwo = {
-  id: 'ag2',
-  doctorId: 'd2',
+  grantId: 'ag2',
+  patientSub: 'p1',
+  doctorSub: 'd2',
   doctorName: 'Dr. Jones',
-  reportIds: ['r2'],
+  allReports: true,
+  reportIds: [],
+  purpose: 'Ongoing treatment',
+  startsAt: '2025-01-02T00:00:00Z',
   expiresAt: '2025-07-01T00:00:00Z',
+  revoked: false,
   createdAt: '2025-01-02T00:00:00Z',
 }
 
@@ -74,7 +84,7 @@ describe('useRevokeGrant', () => {
     )
   })
 
-  it('optimistically removes grant from list cache', async () => {
+  it('optimistically marks grant as revoked in list cache', async () => {
     const wrapper = createWrapper(Infinity)
 
     const initialData: AccessGrantListResponse = {
@@ -105,9 +115,11 @@ describe('useRevokeGrant', () => {
       const cached = queryClient.getQueryData<AccessGrantListResponse>(
         queryKeys.accessGrants.list(),
       )
-      expect(cached?.items).toHaveLength(1)
-      expect(cached?.items[0].id).toBe('ag2')
-      expect(cached?.totalCount).toBe(1)
+      expect(cached?.items).toHaveLength(2)
+      expect(cached?.items[0].grantId).toBe('ag1')
+      expect(cached?.items[0].revoked).toBe(true)
+      expect(cached?.items[1].grantId).toBe('ag2')
+      expect(cached?.items[1].revoked).toBe(false)
     })
 
     await act(async () => {
@@ -145,7 +157,8 @@ describe('useRevokeGrant', () => {
         queryKeys.accessGrants.list(),
       )
       expect(cached?.items).toHaveLength(1)
-      expect(cached?.items[0].id).toBe('ag1')
+      expect(cached?.items[0].grantId).toBe('ag1')
+      expect(cached?.items[0].revoked).toBe(false)
     })
   })
 })
