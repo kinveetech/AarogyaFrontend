@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, userEvent, waitFor } from '@/test/render'
 import ReportDetailPage from './page'
-import type { ReportDetail } from '@/types/reports'
+import type { ReportDetail, ExtractionStatusResponse } from '@/types/reports'
 
 // Mock react-pdf
 vi.mock('react-pdf', () => {
@@ -96,6 +96,30 @@ const mockReport: ReportDetail = {
   fileSizeBytes: 204800,
 }
 
+const mockExtraction: ExtractionStatusResponse = {
+  status: 'completed',
+  extractionMethod: 'ocr',
+  structuringModel: 'gpt-4o',
+  extractedParameterCount: 2,
+  overallConfidence: 0.95,
+  pageCount: 1,
+  extractedAt: '2025-01-15T10:30:00Z',
+  errorMessage: null,
+  attemptCount: 1,
+}
+
+/** Helper to route fetch calls based on URL path */
+function mockFetchByUrl(routes: Record<string, Response | (() => Response | Promise<Response>)>) {
+  mockFetch.mockImplementation((url: string) => {
+    for (const [pattern, response] of Object.entries(routes)) {
+      if (url.includes(pattern)) {
+        return typeof response === 'function' ? response() : Promise.resolve(response)
+      }
+    }
+    return Promise.resolve(jsonResponse({ message: 'Not mocked' }, 500))
+  })
+}
+
 beforeEach(() => {
   mockFetch.mockReset()
   pushMock.mockReset()
@@ -116,7 +140,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('renders report header with correct metadata when loaded', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
     render(<ReportDetailPage />)
 
     await waitFor(() => {
@@ -129,7 +156,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('renders parameter table when loaded', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
     render(<ReportDetailPage />)
 
     // DataTable renders both desktop and mobile views, so elements appear twice
@@ -173,7 +203,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('navigates back when header back button clicked', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
     render(<ReportDetailPage />)
 
     await waitFor(() => {
@@ -185,7 +218,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('opens delete confirmation dialog', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
     render(<ReportDetailPage />)
 
     await waitFor(() => {
@@ -202,7 +238,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('confirms delete and navigates away', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
     render(<ReportDetailPage />)
 
     await waitFor(() => {
@@ -236,7 +275,10 @@ describe('ReportDetailPage', () => {
       checksumSha256: 'ABC123',
       isServerVerified: true,
     }
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
 
     render(<ReportDetailPage />)
 
@@ -261,7 +303,10 @@ describe('ReportDetailPage', () => {
   })
 
   it('shows error alert when checksum mismatch occurs on download', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
 
     render(<ReportDetailPage />)
 
@@ -293,14 +338,16 @@ describe('ReportDetailPage', () => {
   })
 
   it('renders PDF viewer when report loads', async () => {
-    // First call: report detail; second call: download URL for PDF viewer
+    // Route-based mock: report detail, extraction status, and PDF download URL
     const downloadData = {
       downloadUrl: 'https://cdn.example.com/report.pdf',
       expiresAt: new Date(Date.now() + 300_000).toISOString(),
     }
-    mockFetch
-      .mockResolvedValueOnce(jsonResponse(mockReport))
-      .mockResolvedValue(jsonResponse(downloadData))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/download-url': jsonResponse(downloadData),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
 
     render(<ReportDetailPage />)
 
@@ -314,9 +361,11 @@ describe('ReportDetailPage', () => {
       downloadUrl: 'https://cdn.example.com/report.pdf',
       expiresAt: new Date(Date.now() + 300_000).toISOString(),
     }
-    mockFetch
-      .mockResolvedValueOnce(jsonResponse(mockReport))
-      .mockResolvedValue(jsonResponse(downloadData))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/download-url': jsonResponse(downloadData),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
 
     render(<ReportDetailPage />)
 
@@ -332,9 +381,11 @@ describe('ReportDetailPage', () => {
       downloadUrl: 'https://cdn.example.com/report.pdf',
       expiresAt: new Date(Date.now() + 300_000).toISOString(),
     }
-    mockFetch
-      .mockResolvedValueOnce(jsonResponse(mockReport))
-      .mockResolvedValue(jsonResponse(downloadData))
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/download-url': jsonResponse(downloadData),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
 
     render(<ReportDetailPage />)
 
@@ -345,6 +396,29 @@ describe('ReportDetailPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'View PDF' }))
 
     // After expanding, button text changes
-    expect(screen.getByRole('button', { name: 'Hide PDF' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Hide PDF' }))
+  })
+
+  it('shows extraction status card when extraction data loads', async () => {
+    mockFetchByUrl({
+      '/v1/reports/r1/extraction': jsonResponse(mockExtraction),
+      '/v1/reports/r1': jsonResponse(mockReport),
+    })
+
+    render(<ReportDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('extraction-status-card')).toBeInTheDocument()
+    })
+    expect(screen.getByText('AI Extraction')).toBeInTheDocument()
+    expect(screen.getByText('Completed')).toBeInTheDocument()
+  })
+
+  it('shows extraction skeleton while loading extraction status', () => {
+    mockFetch.mockReturnValue(new Promise(() => {})) // never resolves
+    render(<ReportDetailPage />)
+
+    // Page shows loading skeleton for the report itself
+    expect(screen.getByTestId('report-detail-loading')).toBeInTheDocument()
   })
 })

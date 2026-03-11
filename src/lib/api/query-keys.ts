@@ -12,6 +12,8 @@ export const queryKeys = {
       [...queryKeys.reports.all, 'list', params] as const,
     detail: (id: string) =>
       [...queryKeys.reports.all, 'detail', id] as const,
+    extraction: (id: string) =>
+      [...queryKeys.reports.all, 'extraction', id] as const,
   },
   profile: {
     all: ['profile'] as const,
