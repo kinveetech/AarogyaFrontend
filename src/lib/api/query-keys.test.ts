@@ -111,6 +111,10 @@ describe('queryKeys', () => {
     it('produces prefs key', () => {
       expect(queryKeys.notifications.prefs()).toEqual(['notifications', 'prefs'])
     })
+
+    it('produces devices key', () => {
+      expect(queryKeys.notifications.devices()).toEqual(['notifications', 'devices'])
+    })
   })
 
   describe('registration', () => {

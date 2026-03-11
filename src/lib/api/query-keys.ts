@@ -46,6 +46,7 @@ export const queryKeys = {
   notifications: {
     all: ['notifications'] as const,
     prefs: () => [...queryKeys.notifications.all, 'prefs'] as const,
+    devices: () => [...queryKeys.notifications.all, 'devices'] as const,
   },
   registration: {
     all: ['registration'] as const,

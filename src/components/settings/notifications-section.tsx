@@ -6,6 +6,7 @@ import { useNotificationPrefs, useUpdateNotificationPrefs, useRegisterDeviceToke
 import { requestPushPermission } from '@/lib/fcm'
 import { SettingsSection } from './settings-section'
 import { NotificationChannelGroup } from './notification-channel-group'
+import { RegisteredDevicesSection } from './registered-devices-section'
 import { CHANNEL_ITEMS, CATEGORY_ITEMS } from './notification-constants'
 import type { NotificationChannel, NotificationCategory, ChannelPreferences } from '@/types/notification'
 
@@ -115,6 +116,7 @@ export function NotificationsSection() {
               Push notifications are blocked. Enable them in your browser settings.
             </Text>
           )}
+          <RegisteredDevicesSection />
         </>
       ) : null}
     </SettingsSection>

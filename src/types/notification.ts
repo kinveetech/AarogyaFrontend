@@ -25,3 +25,11 @@ export interface DeviceTokenRequest {
   deviceName?: string
   appVersion?: string
 }
+
+export interface RegisteredDevice {
+  deviceToken: string
+  platform: 'web' | 'ios' | 'android'
+  deviceName: string | null
+  appVersion: string | null
+  registeredAt: string
+}
