@@ -1,15 +1,25 @@
 import type { StatusBadgeProps } from '@/components/ui/status-badge'
+import type { AccessGrantStatus } from '@/types/access'
 
-export type GrantStatus = 'active' | 'expiring' | 'expired'
+export type GrantDisplayStatus = 'active' | 'expiring' | 'expired' | 'revoked'
 
 interface GrantStatusInfo {
-  status: GrantStatus
+  status: GrantDisplayStatus
   label: string
   badgeVariant: StatusBadgeProps['variant']
   daysRemaining: number
 }
 
-export function getGrantStatus(expiresAt: string): GrantStatusInfo {
+export function getGrantStatus(expiresAt: string, revoked = false): GrantStatusInfo {
+  if (revoked) {
+    return {
+      status: 'revoked',
+      label: 'Revoked',
+      badgeVariant: 'error',
+      daysRemaining: 0,
+    }
+  }
+
   const now = new Date()
   const expiry = new Date(expiresAt)
   const diffMs = expiry.getTime() - now.getTime()
@@ -39,6 +49,13 @@ export function getGrantStatus(expiresAt: string): GrantStatusInfo {
     badgeVariant: 'success',
     daysRemaining,
   }
+}
+
+export function deriveAccessGrantStatus(expiresAt: string, revoked: boolean): AccessGrantStatus {
+  if (revoked) return 'revoked'
+  const now = new Date()
+  const expiry = new Date(expiresAt)
+  return expiry.getTime() <= now.getTime() ? 'expired' : 'active'
 }
 
 export function formatExpiryText(daysRemaining: number): string {

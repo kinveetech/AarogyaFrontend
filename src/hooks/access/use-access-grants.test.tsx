@@ -36,11 +36,16 @@ describe('useAccessGrants', () => {
     const data = {
       items: [
         {
-          id: 'ag1',
-          doctorId: 'd1',
+          grantId: 'ag1',
+          patientSub: 'p1',
+          doctorSub: 'd1',
           doctorName: 'Dr. Smith',
+          allReports: false,
           reportIds: ['r1'],
+          purpose: 'Follow-up',
+          startsAt: '2025-01-01T00:00:00Z',
           expiresAt: '2025-06-01T00:00:00Z',
+          revoked: false,
           createdAt: '2025-01-01T00:00:00Z',
         },
       ],

@@ -74,6 +74,21 @@ beforeEach(() => {
   })
 })
 
+async function selectDoctor() {
+  await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
+  await waitFor(() => {
+    expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
+  })
+  await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+}
+
+async function selectReport() {
+  await waitFor(() => {
+    expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
+  })
+  await userEvent.click(screen.getAllByTestId('report-checkbox')[0])
+}
+
 describe('GrantModal', () => {
   it('renders modal title and subtitle when open', () => {
     render(
@@ -113,27 +128,43 @@ describe('GrantModal', () => {
     expect(screen.getAllByTestId('doctor-search-result')).toHaveLength(2)
   })
 
-  it('shows report selection after selecting a doctor', async () => {
+  it('shows report selection and all-reports toggle after selecting a doctor', async () => {
     render(
       <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
     )
 
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
+    await selectDoctor()
 
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-
-    // Select the doctor
-    const selectButtons = screen.getAllByRole('button', { name: 'Select' })
-    await userEvent.click(selectButtons[0])
-
-    // Should show report selection
+    // Should show report selection with all-reports toggle
     await waitFor(() => {
       expect(screen.getByText(/step 2/i)).toBeInTheDocument()
     })
+    expect(screen.getByText('Grant access to all reports')).toBeInTheDocument()
     expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     expect(screen.getByText('Chest X-Ray')).toBeInTheDocument()
+  })
+
+  it('hides individual report list when all-reports is toggled on', async () => {
+    render(
+      <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
+    )
+
+    await selectDoctor()
+
+    await waitFor(() => {
+      expect(screen.getByText('Grant access to all reports')).toBeInTheDocument()
+    })
+
+    // Toggle all reports on
+    await userEvent.click(screen.getByLabelText('Grant access to all reports'))
+
+    // Individual report checkboxes should be hidden
+    await waitFor(() => {
+      expect(screen.queryAllByTestId('report-checkbox')).toHaveLength(0)
+    })
+
+    // Duration step should now appear
+    expect(screen.getByText(/step 3/i)).toBeInTheDocument()
   })
 
   it('shows duration picker after selecting reports', async () => {
@@ -141,18 +172,8 @@ describe('GrantModal', () => {
       <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
     )
 
-    // Search and select doctor
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
-
-    // Select a report
-    await waitFor(() => {
-      expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
-    })
-    await userEvent.click(screen.getAllByTestId('report-checkbox')[0])
+    await selectDoctor()
+    await selectReport()
 
     // Duration picker should appear
     await waitFor(() => {
@@ -163,40 +184,49 @@ describe('GrantModal', () => {
     expect(screen.getByRole('button', { name: '90 days' })).toBeInTheDocument()
   })
 
+  it('shows purpose field in step 3', async () => {
+    render(
+      <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
+    )
+
+    await selectDoctor()
+    await selectReport()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Purpose of access')).toBeInTheDocument()
+    })
+    expect(screen.getByText('Purpose of access')).toBeInTheDocument()
+    expect(screen.getByText('0/500')).toBeInTheDocument()
+  })
+
   it('shows Change button after selecting a doctor', async () => {
     render(
       <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
     )
 
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
 
     expect(screen.getByRole('button', { name: /change doctor/i })).toBeInTheDocument()
   })
 
-  it('calls onSubmit with correct data on form completion', async () => {
+  it('calls onSubmit with correct data including new fields on form completion', async () => {
     const onSubmit = vi.fn()
     render(
       <GrantModal open onClose={vi.fn()} onSubmit={onSubmit} />,
     )
 
     // Step 1: Select doctor
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
 
     // Step 2: Select report
-    await waitFor(() => {
-      expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
-    })
-    await userEvent.click(screen.getAllByTestId('report-checkbox')[0])
+    await selectReport()
 
-    // Step 3: Duration (30 days is default)
+    // Step 3: Fill purpose and duration (30 days default)
+    await waitFor(() => {
+      expect(screen.getByLabelText('Purpose of access')).toBeInTheDocument()
+    })
+    await userEvent.type(screen.getByLabelText('Purpose of access'), 'Follow-up consultation')
+
     // Submit
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /grant access$/i })).toBeInTheDocument()
@@ -207,10 +237,59 @@ describe('GrantModal', () => {
       expect.objectContaining({
         doctorId: 'doc1',
         doctorName: 'Dr. Arun Mehta',
+        allReports: false,
         reportIds: ['r1'],
+        purpose: 'Follow-up consultation',
         expiresAt: expect.any(String),
       }),
     )
+  })
+
+  it('calls onSubmit with allReports true and empty reportIds', async () => {
+    const onSubmit = vi.fn()
+    render(
+      <GrantModal open onClose={vi.fn()} onSubmit={onSubmit} />,
+    )
+
+    await selectDoctor()
+
+    // Toggle all reports
+    await waitFor(() => {
+      expect(screen.getByText('Grant access to all reports')).toBeInTheDocument()
+    })
+    await userEvent.click(screen.getByLabelText('Grant access to all reports'))
+
+    // Fill purpose
+    await waitFor(() => {
+      expect(screen.getByLabelText('Purpose of access')).toBeInTheDocument()
+    })
+    await userEvent.type(screen.getByLabelText('Purpose of access'), 'Ongoing care')
+
+    // Submit
+    await userEvent.click(screen.getByRole('button', { name: /grant access$/i }))
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        allReports: true,
+        reportIds: [],
+        purpose: 'Ongoing care',
+      }),
+    )
+  })
+
+  it('disables submit when purpose is empty', async () => {
+    render(
+      <GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />,
+    )
+
+    await selectDoctor()
+    await selectReport()
+
+    // Do not fill purpose -- submit should be disabled
+    await waitFor(() => {
+      expect(screen.getByRole('button', { name: /grant access$/i })).toBeInTheDocument()
+    })
+    expect(screen.getByRole('button', { name: /grant access$/i })).toBeDisabled()
   })
 
   it('does not render modal content when closed', () => {
@@ -233,11 +312,7 @@ describe('GrantModal', () => {
 
     render(<GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />)
 
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
 
     await waitFor(() => {
       expect(screen.getByText('No reports available to share.')).toBeInTheDocument()
@@ -248,23 +323,16 @@ describe('GrantModal', () => {
     const onSubmit = vi.fn()
     render(<GrantModal open onClose={vi.fn()} onSubmit={onSubmit} />)
 
-    // Step 1: Select doctor
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
+    await selectReport()
 
-    // Step 2: Select report
+    // Fill purpose
     await waitFor(() => {
-      expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
+      expect(screen.getByLabelText('Purpose of access')).toBeInTheDocument()
     })
-    await userEvent.click(screen.getAllByTestId('report-checkbox')[0])
+    await userEvent.type(screen.getByLabelText('Purpose of access'), 'Review')
 
-    // Step 3: Enter custom duration
-    await waitFor(() => {
-      expect(screen.getByLabelText('Custom duration in days')).toBeInTheDocument()
-    })
+    // Enter custom duration
     await userEvent.type(screen.getByLabelText('Custom duration in days'), '45')
 
     // Submit
@@ -273,6 +341,8 @@ describe('GrantModal', () => {
       expect.objectContaining({
         doctorId: 'doc1',
         reportIds: ['r1'],
+        allReports: false,
+        purpose: 'Review',
       }),
     )
   })
@@ -280,20 +350,10 @@ describe('GrantModal', () => {
   it('allows selecting a different duration preset', async () => {
     render(<GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />)
 
-    // Step 1: Select doctor
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
+    await selectReport()
 
-    // Step 2: Select report
-    await waitFor(() => {
-      expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
-    })
-    await userEvent.click(screen.getAllByTestId('report-checkbox')[0])
-
-    // Step 3: Click 7 days
+    // Click 7 days
     await waitFor(() => {
       expect(screen.getByRole('button', { name: '7 days' })).toBeInTheDocument()
     })
@@ -306,14 +366,9 @@ describe('GrantModal', () => {
   it('can deselect a report to remove it', async () => {
     render(<GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />)
 
-    // Step 1: Select doctor
-    await userEvent.type(screen.getByPlaceholderText('Search by name or ID...'), 'Dr. Ar')
-    await waitFor(() => {
-      expect(screen.getByText('Dr. Arun Mehta')).toBeInTheDocument()
-    })
-    await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
+    await selectDoctor()
 
-    // Step 2: Select then deselect a report
+    // Select then deselect a report
     await waitFor(() => {
       expect(screen.getAllByTestId('report-checkbox')).toHaveLength(2)
     })
@@ -347,5 +402,19 @@ describe('GrantModal', () => {
     // Select doctor
     await userEvent.click(screen.getAllByRole('button', { name: 'Select' })[0])
     expect(screen.getByRole('button', { name: /change doctor/i })).toBeInTheDocument()
+  })
+
+  it('updates purpose character counter as user types', async () => {
+    render(<GrantModal open onClose={vi.fn()} onSubmit={vi.fn()} />)
+
+    await selectDoctor()
+    await selectReport()
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Purpose of access')).toBeInTheDocument()
+    })
+
+    await userEvent.type(screen.getByLabelText('Purpose of access'), 'Test')
+    expect(screen.getByText('4/500')).toBeInTheDocument()
   })
 })

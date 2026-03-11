@@ -22,8 +22,9 @@ export function useRevokeGrant() {
           if (!old?.items) return old
           return {
             ...old,
-            items: old.items.filter((g) => g.id !== id),
-            totalCount: old.totalCount - 1,
+            items: old.items.map((g) =>
+              g.grantId === id ? { ...g, revoked: true } : g,
+            ),
           }
         },
       )

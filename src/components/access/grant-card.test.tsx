@@ -5,11 +5,16 @@ import type { AccessGrant } from '@/types/access'
 
 function makeGrant(overrides: Partial<AccessGrant> = {}): AccessGrant {
   return {
-    id: 'g1',
-    doctorId: 'd1',
+    grantId: 'g1',
+    patientSub: 'p1',
+    doctorSub: 'd1',
     doctorName: 'Dr. Priya Sharma',
+    allReports: false,
     reportIds: ['r1', 'r2', 'r3'],
+    purpose: 'Follow-up consultation',
+    startsAt: '2025-01-01T00:00:00Z',
     expiresAt: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
+    revoked: false,
     createdAt: '2025-01-01T00:00:00Z',
     ...overrides,
   }
@@ -22,7 +27,7 @@ describe('GrantCard', () => {
     expect(screen.getByText('DP')).toBeInTheDocument()
   })
 
-  it('shows report count', () => {
+  it('shows report count for specific reports', () => {
     render(<GrantCard grant={makeGrant()} onRevoke={vi.fn()} />)
     expect(screen.getByText('3 reports shared')).toBeInTheDocument()
   })
@@ -32,6 +37,16 @@ describe('GrantCard', () => {
       <GrantCard grant={makeGrant({ reportIds: ['r1'] })} onRevoke={vi.fn()} />,
     )
     expect(screen.getByText('1 report shared')).toBeInTheDocument()
+  })
+
+  it('shows "All reports" when allReports is true', () => {
+    render(
+      <GrantCard
+        grant={makeGrant({ allReports: true, reportIds: [] })}
+        onRevoke={vi.fn()}
+      />,
+    )
+    expect(screen.getByText('All reports')).toBeInTheDocument()
   })
 
   it('shows Active badge for non-expiring grants', () => {
@@ -55,6 +70,12 @@ describe('GrantCard', () => {
     expect(screen.getByText('Expired')).toBeInTheDocument()
   })
 
+  it('shows Revoked badge for revoked grants', () => {
+    const revoked = makeGrant({ revoked: true })
+    render(<GrantCard grant={revoked} onRevoke={vi.fn()} />)
+    expect(screen.getByText('Revoked')).toBeInTheDocument()
+  })
+
   it('shows revoke button for active grants', () => {
     render(<GrantCard grant={makeGrant()} onRevoke={vi.fn()} />)
     expect(
@@ -70,7 +91,13 @@ describe('GrantCard', () => {
     expect(screen.queryByRole('button', { name: /revoke/i })).not.toBeInTheDocument()
   })
 
-  it('calls onRevoke with grant id when revoke is clicked', async () => {
+  it('hides revoke button for revoked grants', () => {
+    const revoked = makeGrant({ revoked: true })
+    render(<GrantCard grant={revoked} onRevoke={vi.fn()} />)
+    expect(screen.queryByRole('button', { name: /revoke/i })).not.toBeInTheDocument()
+  })
+
+  it('calls onRevoke with grantId when revoke is clicked', async () => {
     const onRevoke = vi.fn()
     const { userEvent } = await import('@/test/render')
     render(<GrantCard grant={makeGrant()} onRevoke={onRevoke} />)
@@ -78,5 +105,31 @@ describe('GrantCard', () => {
       screen.getByRole('button', { name: /revoke access for dr\. priya sharma/i }),
     )
     expect(onRevoke).toHaveBeenCalledWith('g1')
+  })
+
+  it('displays purpose text when present', () => {
+    render(<GrantCard grant={makeGrant({ purpose: 'Blood test review' })} onRevoke={vi.fn()} />)
+    expect(screen.getByTestId('grant-purpose')).toHaveTextContent('Blood test review')
+  })
+
+  it('does not display purpose when empty', () => {
+    render(<GrantCard grant={makeGrant({ purpose: '' })} onRevoke={vi.fn()} />)
+    expect(screen.queryByTestId('grant-purpose')).not.toBeInTheDocument()
+  })
+
+  it('shows reduced opacity for revoked grants', () => {
+    const revoked = makeGrant({ revoked: true })
+    render(<GrantCard grant={revoked} onRevoke={vi.fn()} />)
+    const card = screen.getByTestId('grant-card')
+    expect(card).toHaveStyle({ opacity: '0.6' })
+  })
+
+  it('shows reduced opacity for expired grants', () => {
+    const expired = makeGrant({
+      expiresAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    })
+    render(<GrantCard grant={expired} onRevoke={vi.fn()} />)
+    const card = screen.getByTestId('grant-card')
+    expect(card).toHaveStyle({ opacity: '0.6' })
   })
 })
