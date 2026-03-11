@@ -5,6 +5,10 @@ export {
 export { accessGrantSchema, type AccessGrant } from './accessGrant'
 export { consentSchema, type Consent } from './consent'
 export {
+  emergencyAccessRequestSchema,
+  type EmergencyAccessRequest,
+} from './emergencyAccess'
+export {
   emergencyContactSchema,
   type EmergencyContact,
 } from './emergencyContact'

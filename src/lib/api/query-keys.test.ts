@@ -83,6 +83,12 @@ describe('queryKeys', () => {
     })
   })
 
+  describe('emergencyAccess', () => {
+    it('has correct base key', () => {
+      expect(queryKeys.emergencyAccess.all).toEqual(['emergencyAccess'])
+    })
+  })
+
   describe('notifications', () => {
     it('has correct base key', () => {
       expect(queryKeys.notifications.all).toEqual(['notifications'])

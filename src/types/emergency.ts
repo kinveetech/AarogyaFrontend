@@ -27,3 +27,21 @@ export interface UpdateEmergencyContactRequest {
   relationship: Relationship
   isPrimary: boolean
 }
+
+export interface CreateEmergencyAccessRequest {
+  patientSub: string
+  emergencyContactPhone: string
+  doctorSub: string
+  reason: string
+  durationHours?: number | null
+}
+
+export interface EmergencyAccessResponse {
+  grantId: string
+  patientSub: string
+  doctorSub: string
+  emergencyContactId: string
+  startsAt: string
+  expiresAt: string
+  purpose: string
+}
