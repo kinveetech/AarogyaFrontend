@@ -1,4 +1,5 @@
 export { ContactCard } from './contact-card'
 export { ContactModal } from './contact-modal'
 export { EmergencyAccessForm } from './emergency-access-form'
+export { EmergencyAccessAudit } from './emergency-access-audit'
 export { MAX_CONTACTS, RELATIONSHIP_LABELS, getInitials, formatPhone } from './emergency-constants'

@@ -56,6 +56,22 @@ const emptyContacts: EmergencyContactListResponse = {
   items: [],
 }
 
+const emptyAuditResponse = {
+  page: 1,
+  pageSize: 20,
+  totalCount: 0,
+  items: [],
+}
+
+function mockFetchForPage(contactsData: EmergencyContactListResponse) {
+  mockFetch.mockImplementation((url: string) => {
+    if (url.includes('/v1/emergency-access/audit')) {
+      return Promise.resolve(jsonResponse(emptyAuditResponse))
+    }
+    return Promise.resolve(jsonResponse(contactsData))
+  })
+}
+
 beforeEach(() => {
   mockFetch.mockReset()
 })
@@ -68,7 +84,7 @@ describe('EmergencyPage', () => {
   })
 
   it('renders page heading and Add Contact button', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     expect(screen.getByRole('heading', { name: 'Emergency Contacts' })).toBeInTheDocument()
@@ -76,7 +92,7 @@ describe('EmergencyPage', () => {
   })
 
   it('renders contact cards after loading', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -87,7 +103,7 @@ describe('EmergencyPage', () => {
   })
 
   it('shows callout banner when contacts exist', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -98,7 +114,7 @@ describe('EmergencyPage', () => {
   })
 
   it('shows empty state when no contacts exist', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(emptyContacts))
+    mockFetchForPage(emptyContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -110,7 +126,7 @@ describe('EmergencyPage', () => {
   })
 
   it('shows dashed add-card with remaining count', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -120,7 +136,7 @@ describe('EmergencyPage', () => {
   })
 
   it('hides dashed add-card when at limit', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(fullContacts))
+    mockFetchForPage(fullContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -130,7 +146,7 @@ describe('EmergencyPage', () => {
   })
 
   it('shows maximum contacts hint', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -139,7 +155,7 @@ describe('EmergencyPage', () => {
   })
 
   it('opens add modal when Add Contact button is clicked', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -154,7 +170,7 @@ describe('EmergencyPage', () => {
   })
 
   it('opens add modal from empty state CTA', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(emptyContacts))
+    mockFetchForPage(emptyContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -170,7 +186,7 @@ describe('EmergencyPage', () => {
   })
 
   it('opens add modal from dashed card', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -185,7 +201,7 @@ describe('EmergencyPage', () => {
   })
 
   it('opens edit modal when Edit is clicked on a contact', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -201,7 +217,7 @@ describe('EmergencyPage', () => {
   })
 
   it('opens delete dialog when Remove is clicked', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -219,7 +235,7 @@ describe('EmergencyPage', () => {
   })
 
   it('confirms delete and sends DELETE request', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -245,7 +261,7 @@ describe('EmergencyPage', () => {
   })
 
   it('closes delete dialog when Cancel is clicked', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -264,7 +280,7 @@ describe('EmergencyPage', () => {
   })
 
   it('renders emergency access request form section', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {
@@ -277,8 +293,19 @@ describe('EmergencyPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('renders the Access History section', async () => {
+    mockFetchForPage(mockContacts)
+    render(<EmergencyPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Priya Sharma')).toBeInTheDocument()
+    })
+    expect(screen.getByTestId('emergency-access-audit')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Access History' })).toBeInTheDocument()
+  })
+
   it('submits add form with POST request', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
     await waitFor(() => {

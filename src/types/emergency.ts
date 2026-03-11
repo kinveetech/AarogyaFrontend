@@ -45,3 +45,22 @@ export interface EmergencyAccessResponse {
   expiresAt: string
   purpose: string
 }
+
+export interface EmergencyAccessAuditEvent {
+  auditLogId: string
+  occurredAt: string
+  action: string
+  grantId: string | null
+  actorUserId: string | null
+  actorRole: string | null
+  resourceType: string
+  resourceId: string | null
+  data: Record<string, string>
+}
+
+export interface EmergencyAccessAuditResponse {
+  page: number
+  pageSize: number
+  totalCount: number
+  items: EmergencyAccessAuditEvent[]
+}
