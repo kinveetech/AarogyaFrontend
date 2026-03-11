@@ -1,5 +1,4 @@
 export { AccessPageHeader } from './access-page-header'
 export { GrantCard } from './grant-card'
-export { ReceivedGrantCard } from './received-grant-card'
 export { GrantModal } from './grant-modal'
 export { getGrantStatus, deriveAccessGrantStatus, formatExpiryText, getInitials } from './access-constants'

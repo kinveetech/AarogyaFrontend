@@ -9,24 +9,34 @@ import {
 } from './access-constants'
 import type { AccessGrant } from '@/types/access'
 
+export type GrantCardVariant = 'granted' | 'received'
+
 export interface GrantCardProps {
   grant: AccessGrant
-  onRevoke: (id: string) => void
+  variant?: GrantCardVariant
+  onRevoke?: (id: string) => void
 }
 
-export function GrantCard({ grant, onRevoke }: GrantCardProps) {
+export function GrantCard({ grant, variant = 'granted', onRevoke }: GrantCardProps) {
   const { label, badgeVariant, daysRemaining, status } = getGrantStatus(
     grant.expiresAt,
     grant.revoked,
   )
   const isInactive = status === 'expired' || status === 'revoked'
-  const initials = getInitials(grant.doctorName)
+  const isReceived = variant === 'received'
+
+  const displayName = isReceived
+    ? `Patient: ${grant.patientSub}`
+    : grant.doctorName
+  const initials = getInitials(isReceived ? grant.patientSub : grant.doctorName)
   const expiryText = status === 'revoked' ? '' : formatExpiryText(daysRemaining)
   const isExpiryWarning = status === 'expiring'
 
   const reportSummary = grant.allReports
     ? 'All reports'
     : `${grant.reportIds.length} report${grant.reportIds.length === 1 ? '' : 's'} shared`
+
+  const showRevoke = !isReceived && !isInactive && onRevoke
 
   return (
     <Box
@@ -40,7 +50,7 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
       transition="transform 0.2s, box-shadow 0.2s"
       _hover={{ transform: 'translateY(-1px)', boxShadow: 'md' }}
       opacity={isInactive ? 0.6 : 1}
-      data-testid="grant-card"
+      data-testid={isReceived ? 'received-grant-card' : 'grant-card'}
     >
       <Flex align="center" gap="4" flexWrap={{ base: 'wrap', md: 'nowrap' }}>
         {/* Avatar */}
@@ -61,8 +71,14 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
 
         {/* Info */}
         <Box flex="1" minW="0">
-          <Text fontFamily="heading" fontSize="1.05rem" color="text.primary" lineHeight="1.3">
-            {grant.doctorName}
+          <Text
+            fontFamily="heading"
+            fontSize="1.05rem"
+            color="text.primary"
+            lineHeight="1.3"
+            {...(isReceived && { 'data-testid': 'received-grant-patient' })}
+          >
+            {displayName}
           </Text>
           <Flex align="center" gap="4" mt="1.5" flexWrap="wrap">
             <Text
@@ -106,7 +122,7 @@ export function GrantCard({ grant, onRevoke }: GrantCardProps) {
           mt={{ base: '1', md: '0' }}
         >
           <StatusBadge variant={badgeVariant}>{label}</StatusBadge>
-          {!isInactive && (
+          {showRevoke && (
             <Button
               variant="outline"
               size="sm"

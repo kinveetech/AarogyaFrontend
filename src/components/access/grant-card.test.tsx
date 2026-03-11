@@ -6,7 +6,7 @@ import type { AccessGrant } from '@/types/access'
 function makeGrant(overrides: Partial<AccessGrant> = {}): AccessGrant {
   return {
     grantId: 'g1',
-    patientSub: 'p1',
+    patientSub: 'patient-abc-123',
     doctorSub: 'd1',
     doctorName: 'Dr. Priya Sharma',
     allReports: false,
@@ -20,7 +20,7 @@ function makeGrant(overrides: Partial<AccessGrant> = {}): AccessGrant {
   }
 }
 
-describe('GrantCard', () => {
+describe('GrantCard — granted variant (default)', () => {
   it('renders doctor name and initials', () => {
     render(<GrantCard grant={makeGrant()} onRevoke={vi.fn()} />)
     expect(screen.getByText('Dr. Priya Sharma')).toBeInTheDocument()
@@ -130,6 +130,82 @@ describe('GrantCard', () => {
     })
     render(<GrantCard grant={expired} onRevoke={vi.fn()} />)
     const card = screen.getByTestId('grant-card')
+    expect(card).toHaveStyle({ opacity: '0.6' })
+  })
+
+  it('uses grant-card test id for default variant', () => {
+    render(<GrantCard grant={makeGrant()} onRevoke={vi.fn()} />)
+    expect(screen.getByTestId('grant-card')).toBeInTheDocument()
+  })
+})
+
+describe('GrantCard — received variant', () => {
+  it('renders patient sub identifier', () => {
+    render(<GrantCard grant={makeGrant()} variant="received" />)
+    expect(screen.getByTestId('received-grant-patient')).toHaveTextContent(
+      'Patient: patient-abc-123',
+    )
+  })
+
+  it('uses received-grant-card test id', () => {
+    render(<GrantCard grant={makeGrant()} variant="received" />)
+    expect(screen.getByTestId('received-grant-card')).toBeInTheDocument()
+  })
+
+  it('does not show a revoke button even for active grants', () => {
+    render(<GrantCard grant={makeGrant()} variant="received" />)
+    expect(screen.queryByRole('button', { name: /revoke/i })).not.toBeInTheDocument()
+  })
+
+  it('shows report count for specific reports', () => {
+    render(<GrantCard grant={makeGrant()} variant="received" />)
+    expect(screen.getByText('3 reports shared')).toBeInTheDocument()
+  })
+
+  it('shows "All reports" when allReports is true', () => {
+    render(
+      <GrantCard grant={makeGrant({ allReports: true, reportIds: [] })} variant="received" />,
+    )
+    expect(screen.getByText('All reports')).toBeInTheDocument()
+  })
+
+  it('shows Active badge for non-expiring grants', () => {
+    render(<GrantCard grant={makeGrant()} variant="received" />)
+    expect(screen.getByText('Active')).toBeInTheDocument()
+  })
+
+  it('shows Expired badge for past grants', () => {
+    const expired = makeGrant({
+      expiresAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    })
+    render(<GrantCard grant={expired} variant="received" />)
+    expect(screen.getByText('Expired')).toBeInTheDocument()
+  })
+
+  it('shows Revoked badge for revoked grants', () => {
+    const revoked = makeGrant({ revoked: true })
+    render(<GrantCard grant={revoked} variant="received" />)
+    expect(screen.getByText('Revoked')).toBeInTheDocument()
+  })
+
+  it('displays purpose text when present', () => {
+    render(<GrantCard grant={makeGrant({ purpose: 'Blood test review' })} variant="received" />)
+    expect(screen.getByTestId('grant-purpose')).toHaveTextContent('Blood test review')
+  })
+
+  it('shows reduced opacity for revoked grants', () => {
+    const revoked = makeGrant({ revoked: true })
+    render(<GrantCard grant={revoked} variant="received" />)
+    const card = screen.getByTestId('received-grant-card')
+    expect(card).toHaveStyle({ opacity: '0.6' })
+  })
+
+  it('shows reduced opacity for expired grants', () => {
+    const expired = makeGrant({
+      expiresAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+    })
+    render(<GrantCard grant={expired} variant="received" />)
+    const card = screen.getByTestId('received-grant-card')
     expect(card).toHaveStyle({ opacity: '0.6' })
   })
 })
