@@ -19,6 +19,7 @@ const contact1 = {
   name: 'Priya Sharma',
   phone: '9876543210',
   relationship: 'spouse' as const,
+  isPrimary: true,
   createdAt: '2025-01-01T00:00:00Z',
   updatedAt: '2025-01-01T00:00:00Z',
 }
@@ -28,6 +29,7 @@ const contact2 = {
   name: 'Rajesh Kumar',
   phone: '9123456789',
   relationship: 'parent' as const,
+  isPrimary: false,
   createdAt: '2025-01-05T00:00:00Z',
   updatedAt: '2025-01-05T00:00:00Z',
 }
@@ -37,6 +39,7 @@ const contact3 = {
   name: 'Anita Desai',
   phone: '8765432109',
   relationship: 'sibling' as const,
+  isPrimary: false,
   createdAt: '2025-01-10T00:00:00Z',
   updatedAt: '2025-01-10T00:00:00Z',
 }
@@ -282,6 +285,7 @@ describe('EmergencyPage', () => {
         name: 'New Person',
         phone: '9999988888',
         relationship: 'spouse',
+        isPrimary: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }),

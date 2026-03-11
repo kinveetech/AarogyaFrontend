@@ -5,6 +5,7 @@ export interface EmergencyContact {
   name: string
   phone: string
   relationship: Relationship
+  isPrimary: boolean
   createdAt: string
   updatedAt: string
 }
@@ -17,10 +18,12 @@ export interface CreateEmergencyContactRequest {
   name: string
   phone: string
   relationship: Relationship
+  isPrimary: boolean
 }
 
 export interface UpdateEmergencyContactRequest {
   name: string
   phone: string
   relationship: Relationship
+  isPrimary: boolean
 }

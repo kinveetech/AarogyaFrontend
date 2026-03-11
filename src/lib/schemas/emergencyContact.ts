@@ -13,6 +13,7 @@ export const emergencyContactSchema = z.object({
     'friend',
     'other',
   ]),
+  isPrimary: z.boolean(),
 })
 
 export type EmergencyContact = z.infer<typeof emergencyContactSchema>

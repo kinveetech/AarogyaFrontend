@@ -6,6 +6,7 @@ const validData = {
   name: 'Priya Sharma',
   phone: '9876543210',
   relationship: 'spouse' as const,
+  isPrimary: false,
 }
 
 describe('emergencyContactSchema', () => {
@@ -52,6 +53,42 @@ describe('emergencyContactSchema', () => {
     const result = emergencyContactSchema.safeParse({
       ...validData,
       relationship: 'colleague',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects missing isPrimary', () => {
+    const { isPrimary: _, ...withoutIsPrimary } = validData
+    const result = emergencyContactSchema.safeParse(withoutIsPrimary)
+    expect(result.success).toBe(false)
+  })
+
+  it('accepts isPrimary as true', () => {
+    const result = emergencyContactSchema.safeParse({
+      ...validData,
+      isPrimary: true,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.isPrimary).toBe(true)
+    }
+  })
+
+  it('accepts isPrimary as false', () => {
+    const result = emergencyContactSchema.safeParse({
+      ...validData,
+      isPrimary: false,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.isPrimary).toBe(false)
+    }
+  })
+
+  it('rejects non-boolean isPrimary', () => {
+    const result = emergencyContactSchema.safeParse({
+      ...validData,
+      isPrimary: 'yes',
     })
     expect(result.success).toBe(false)
   })

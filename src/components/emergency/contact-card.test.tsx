@@ -10,6 +10,7 @@ function makeContact(overrides: Partial<EmergencyContact> = {}): EmergencyContac
     name: 'Priya Sharma',
     phone: '9876543210',
     relationship: 'spouse',
+    isPrimary: false,
     createdAt: '2025-01-01T00:00:00Z',
     updatedAt: '2025-01-01T00:00:00Z',
     ...overrides,
@@ -62,6 +63,29 @@ describe('ContactCard', () => {
     render(<ContactCard contact={makeContact()} onEdit={vi.fn()} onDelete={onDelete} />)
     await userEvent.click(screen.getByRole('button', { name: /remove priya sharma/i }))
     expect(onDelete).toHaveBeenCalledWith('ec1')
+  })
+
+  it('shows Primary badge when isPrimary is true', () => {
+    render(
+      <ContactCard
+        contact={makeContact({ isPrimary: true })}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+    expect(screen.getByTestId('primary-badge')).toBeInTheDocument()
+    expect(screen.getByText('Primary')).toBeInTheDocument()
+  })
+
+  it('does not show Primary badge when isPrimary is false', () => {
+    render(
+      <ContactCard
+        contact={makeContact({ isPrimary: false })}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    )
+    expect(screen.queryByTestId('primary-badge')).not.toBeInTheDocument()
   })
 
   it('has no accessibility violations', async () => {

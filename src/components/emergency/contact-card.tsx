@@ -49,6 +49,22 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
             {contact.name}
           </Text>
           <Flex align="center" gap="2.5" flexWrap="wrap">
+            {contact.isPrimary && (
+              <Box
+                as="span"
+                px="2.5"
+                py="0.5"
+                borderRadius="full"
+                bg="action.primary"
+                fontSize="0.7rem"
+                fontWeight="semibold"
+                color="action.primary.text"
+                letterSpacing="0.02em"
+                data-testid="primary-badge"
+              >
+                Primary
+              </Box>
+            )}
             <Box
               as="span"
               px="2.5"
