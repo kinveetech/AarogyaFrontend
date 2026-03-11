@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useCallback } from 'react'
 import {
   Box,
   Button,
@@ -13,16 +13,19 @@ import {
   DialogFooter,
   DialogActionTrigger,
   DialogPositioner,
+  Flex,
   Field,
   Input,
   Text,
 } from '@chakra-ui/react'
-import { useForm } from 'react-hook-form'
+import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { aadhaarVerificationSchema } from '@/lib/schemas/aadhaarVerification'
 import { useVerifyAadhaar } from '@/hooks/profile'
+import { MaskedAadhaarInput } from './masked-aadhaar-input'
 import type { AadhaarVerification } from '@/lib/schemas/aadhaarVerification'
 import type { Profile } from '@/types/profile'
+import type { ApiError } from '@/lib/api/client'
 
 export interface AadhaarVerifyDialogProps {
   open: boolean
@@ -38,6 +41,21 @@ function formatDateForInput(dateStr: string): string {
   return `${year}-${month}-${day}`
 }
 
+function getErrorMessage(error: Error | null): string {
+  if (!error) return 'Verification failed. Please try again.'
+  const apiError = error as ApiError
+  if (apiError.code === 'already_verified') {
+    return 'Your Aadhaar is already verified.'
+  }
+  if (apiError.code === 'aadhaar_mismatch') {
+    return 'The details provided do not match the Aadhaar record. Please check and try again.'
+  }
+  if (apiError.code === 'invalid_aadhaar') {
+    return 'The Aadhaar number is invalid. Please check and try again.'
+  }
+  return apiError.message || 'Verification failed. Please try again.'
+}
+
 export function AadhaarVerifyDialog({
   open,
   onClose,
@@ -50,6 +68,7 @@ export function AadhaarVerifyDialog({
     register,
     handleSubmit,
     reset,
+    control,
     formState: { errors },
   } = useForm<AadhaarVerification>({
     resolver: zodResolver(aadhaarVerificationSchema),
@@ -69,26 +88,112 @@ export function AadhaarVerifyDialog({
     }
   }, [open, profile, reset, resetMutation])
 
-  const onSubmit = (data: AadhaarVerification) => {
-    verifyAadhaar.mutate(
-      {
+  const handleClose = useCallback(() => {
+    onClose()
+  }, [onClose])
+
+  const onSubmit = useCallback(
+    (data: AadhaarVerification) => {
+      verifyAadhaar.mutate({
         aadhaarNumber: data.aadhaarNumber,
         firstName: data.firstName,
         lastName: data.lastName,
         dateOfBirth: data.dateOfBirth,
-      },
-      {
-        onSuccess: () => {
-          onClose()
-        },
-      },
+      })
+    },
+    [verifyAadhaar],
+  )
+
+  // Success view
+  if (verifyAadhaar.isSuccess) {
+    return (
+      <DialogRoot
+        open={open}
+        onOpenChange={(details) => !details.open && handleClose()}
+      >
+        <DialogBackdrop />
+        <DialogPositioner>
+          <DialogContent
+            bg="bg.glass"
+            backdropFilter="blur(24px)"
+            borderColor="border.subtle"
+            borderWidth="1px"
+            boxShadow="glass"
+            borderRadius="2xl"
+            maxW="480px"
+            w="full"
+            mx="4"
+            aria-describedby="aadhaar-verify-success-body"
+          >
+            <DialogHeader>
+              <DialogTitle fontFamily="heading" fontSize="1.2rem" color="text.primary">
+                Aadhaar Verified
+              </DialogTitle>
+            </DialogHeader>
+
+            <DialogBody id="aadhaar-verify-success-body">
+              <Flex direction="column" align="center" gap="4" py="4">
+                {/* Success checkmark */}
+                <Flex
+                  align="center"
+                  justify="center"
+                  boxSize="64px"
+                  borderRadius="full"
+                  bg="rgba(127, 178, 133, 0.15)"
+                >
+                  <svg
+                    width="32"
+                    height="32"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="var(--chakra-colors-status-success)"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <polyline points="20 6 9 17 4 12" />
+                  </svg>
+                </Flex>
+                <Text
+                  color="text.primary"
+                  fontSize="1rem"
+                  fontWeight="medium"
+                  textAlign="center"
+                  data-testid="aadhaar-verify-success"
+                >
+                  Your identity has been successfully verified.
+                </Text>
+                <Text
+                  color="text.muted"
+                  fontSize="0.85rem"
+                  textAlign="center"
+                >
+                  Your Aadhaar verification status has been updated.
+                </Text>
+              </Flex>
+            </DialogBody>
+
+            <DialogFooter>
+              <Button
+                borderRadius="full"
+                bg="action.primary"
+                color="action.primary.text"
+                onClick={handleClose}
+                data-testid="aadhaar-verify-done"
+              >
+                Done
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </DialogPositioner>
+      </DialogRoot>
     )
   }
 
   return (
     <DialogRoot
       open={open}
-      onOpenChange={(details) => !details.open && onClose()}
+      onOpenChange={(details) => !details.open && handleClose()}
     >
       <DialogBackdrop />
       <DialogPositioner>
@@ -116,22 +221,23 @@ export function AadhaarVerifyDialog({
           <Box as="form" onSubmit={handleSubmit(onSubmit)} {...{ noValidate: true }}>
             <DialogBody id="aadhaar-verify-body">
               <Box display="flex" flexDirection="column" gap="4">
-                {/* Aadhaar Number */}
+                {/* Aadhaar Number — masked input */}
                 <Field.Root invalid={!!errors.aadhaarNumber} required>
                   <Field.Label color="text.secondary" fontSize="0.82rem" fontWeight="semibold">
                     Aadhaar Number
                   </Field.Label>
-                  <Input
-                    {...register('aadhaarNumber')}
-                    inputMode="numeric"
-                    maxLength={12}
-                    placeholder="Enter 12-digit Aadhaar number"
-                    bg="bg.glass"
-                    borderColor="border.default"
-                    borderRadius="xl"
-                    color="text.primary"
-                    fontFamily="mono"
-                    data-testid="aadhaar-number-input"
+                  <Controller
+                    name="aadhaarNumber"
+                    control={control}
+                    render={({ field }) => (
+                      <MaskedAadhaarInput
+                        value={field.value ?? ''}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        name={field.name}
+                        data-testid="aadhaar-number-input"
+                      />
+                    )}
                   />
                   {errors.aadhaarNumber && (
                     <Field.ErrorText>{errors.aadhaarNumber.message}</Field.ErrorText>
@@ -202,7 +308,7 @@ export function AadhaarVerifyDialog({
                     color="status.error"
                     data-testid="aadhaar-verify-error"
                   >
-                    {verifyAadhaar.error?.message ?? 'Verification failed. Please try again.'}
+                    {getErrorMessage(verifyAadhaar.error)}
                   </Text>
                 )}
               </Box>
