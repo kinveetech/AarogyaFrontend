@@ -9,7 +9,8 @@ import type {
 
 export interface VerifiedDownloadResult {
   downloadUrl: string
-  checksumVerified: boolean
+  checksumSha256: string | null
+  isServerVerified: boolean
   usedFallback: boolean
 }
 
@@ -26,7 +27,8 @@ async function fetchVerifiedDownloadUrl(
     )
     return {
       downloadUrl: response.downloadUrl,
-      checksumVerified: response.checksumVerified,
+      checksumSha256: response.checksumSha256,
+      isServerVerified: response.isServerVerified,
       usedFallback: false,
     }
   } catch (error) {
@@ -44,7 +46,8 @@ async function fetchVerifiedDownloadUrl(
     )
     return {
       downloadUrl: fallback.downloadUrl,
-      checksumVerified: false,
+      checksumSha256: null,
+      isServerVerified: false,
       usedFallback: true,
     }
   }

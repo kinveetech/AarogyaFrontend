@@ -9,6 +9,18 @@ vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: pushMock }),
 }))
 
+// Mock the download utility
+const mockDownloadAndVerify = vi.fn()
+const mockTriggerBrowserDownload = vi.fn()
+vi.mock('@/lib/download/verified-download', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@/lib/download/verified-download')>()
+  return {
+    ...original,
+    downloadAndVerify: (...args: unknown[]) => mockDownloadAndVerify(...args),
+    triggerBrowserDownload: (...args: unknown[]) => mockTriggerBrowserDownload(...args),
+  }
+})
+
 // Mock fetch
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
@@ -67,6 +79,13 @@ const emptyData: ReportListResponse = {
 beforeEach(() => {
   mockFetch.mockReset()
   pushMock.mockReset()
+  mockDownloadAndVerify.mockReset()
+  mockTriggerBrowserDownload.mockReset()
+  mockDownloadAndVerify.mockResolvedValue({
+    blobUrl: 'blob:http://localhost/mock',
+    blob: new Blob(['content']),
+    checksumValidated: true,
+  })
 })
 
 describe('ReportsPage', () => {
@@ -232,14 +251,16 @@ describe('ReportsPage', () => {
     })
   })
 
-  it('triggers download when download button is clicked', async () => {
-    const downloadData = {
+  it('triggers verified download when download button is clicked', async () => {
+    const verifiedData = {
+      reportId: 'r1',
+      objectKey: 'uploads/r1.pdf',
       downloadUrl: 'https://example.com/download',
       expiresAt: '2025-12-31T00:00:00Z',
+      checksumSha256: 'ABC123',
+      isServerVerified: true,
     }
     mockFetch.mockResolvedValue(jsonResponse(mockData))
-    const openMock = vi.fn()
-    vi.stubGlobal('open', openMock)
 
     render(<ReportsPage />)
 
@@ -247,18 +268,22 @@ describe('ReportsPage', () => {
       expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
 
-    mockFetch.mockResolvedValue(jsonResponse(downloadData))
+    mockFetch.mockResolvedValue(jsonResponse(verifiedData))
 
     // Click download button on first card
     await userEvent.click(screen.getAllByLabelText('Download report')[0])
 
-    // Should call window.open with the download URL
+    // Should call downloadAndVerify with the URL and checksum
     await waitFor(() => {
-      expect(openMock).toHaveBeenCalledWith('https://example.com/download', '_blank')
+      expect(mockDownloadAndVerify).toHaveBeenCalledWith({
+        downloadUrl: 'https://example.com/download',
+        checksumSha256: 'ABC123',
+      })
     })
-
-    vi.unstubAllGlobals()
-    vi.stubGlobal('fetch', mockFetch)
+    expect(mockTriggerBrowserDownload).toHaveBeenCalledWith(
+      'blob:http://localhost/mock',
+      'Complete Blood Count.pdf',
+    )
   })
 
   it('changes page size and resets page', async () => {

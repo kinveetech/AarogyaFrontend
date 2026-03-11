@@ -79,5 +79,6 @@ export interface VerifiedDownloadUrlResponse {
   objectKey: string
   downloadUrl: string
   expiresAt: string
-  checksumVerified: boolean
+  checksumSha256: string | null
+  isServerVerified: boolean
 }

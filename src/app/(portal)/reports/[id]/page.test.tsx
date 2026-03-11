@@ -39,6 +39,18 @@ vi.mock('next/navigation', () => ({
   useParams: () => ({ id: 'r1' }),
 }))
 
+// Mock the download utility
+const mockDownloadAndVerify = vi.fn()
+const mockTriggerBrowserDownload = vi.fn()
+vi.mock('@/lib/download/verified-download', async (importOriginal) => {
+  const original = await importOriginal<typeof import('@/lib/download/verified-download')>()
+  return {
+    ...original,
+    downloadAndVerify: (...args: unknown[]) => mockDownloadAndVerify(...args),
+    triggerBrowserDownload: (...args: unknown[]) => mockTriggerBrowserDownload(...args),
+  }
+})
+
 // Mock fetch
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
@@ -87,6 +99,13 @@ const mockReport: ReportDetail = {
 beforeEach(() => {
   mockFetch.mockReset()
   pushMock.mockReset()
+  mockDownloadAndVerify.mockReset()
+  mockTriggerBrowserDownload.mockReset()
+  mockDownloadAndVerify.mockResolvedValue({
+    blobUrl: 'blob:http://localhost/mock',
+    blob: new Blob(['content']),
+    checksumValidated: true,
+  })
 })
 
 describe('ReportDetailPage', () => {
@@ -208,10 +227,16 @@ describe('ReportDetailPage', () => {
     })
   })
 
-  it('triggers download and opens URL', async () => {
+  it('triggers verified download with checksum validation', async () => {
+    const verifiedData = {
+      reportId: 'r1',
+      objectKey: 'uploads/r1.pdf',
+      downloadUrl: 'https://example.com/download',
+      expiresAt: '2025-12-31T00:00:00Z',
+      checksumSha256: 'ABC123',
+      isServerVerified: true,
+    }
     mockFetch.mockResolvedValue(jsonResponse(mockReport))
-    const openMock = vi.fn()
-    vi.stubGlobal('open', openMock)
 
     render(<ReportDetailPage />)
 
@@ -219,20 +244,52 @@ describe('ReportDetailPage', () => {
       expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
 
-    const downloadData = {
-      downloadUrl: 'https://example.com/download',
-      expiresAt: '2025-12-31T00:00:00Z',
-    }
-    mockFetch.mockResolvedValue(jsonResponse(downloadData))
+    mockFetch.mockResolvedValue(jsonResponse(verifiedData))
 
     await userEvent.click(screen.getByRole('button', { name: /Download Report/i }))
 
     await waitFor(() => {
-      expect(openMock).toHaveBeenCalledWith('https://example.com/download', '_blank')
+      expect(mockDownloadAndVerify).toHaveBeenCalledWith({
+        downloadUrl: 'https://example.com/download',
+        checksumSha256: 'ABC123',
+      })
+    })
+    expect(mockTriggerBrowserDownload).toHaveBeenCalledWith(
+      'blob:http://localhost/mock',
+      'Complete Blood Count.pdf',
+    )
+  })
+
+  it('shows error alert when checksum mismatch occurs on download', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockReport))
+
+    render(<ReportDetailPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
 
-    vi.unstubAllGlobals()
-    vi.stubGlobal('fetch', mockFetch)
+    // Mock the verified URL response
+    const verifiedData = {
+      reportId: 'r1',
+      objectKey: 'uploads/r1.pdf',
+      downloadUrl: 'https://example.com/download',
+      expiresAt: '2025-12-31T00:00:00Z',
+      checksumSha256: 'ABC123',
+      isServerVerified: true,
+    }
+    mockFetch.mockResolvedValue(jsonResponse(verifiedData))
+
+    // Make downloadAndVerify throw ChecksumMismatchError
+    const { ChecksumMismatchError: CME } = await import('@/lib/download/verified-download')
+    mockDownloadAndVerify.mockRejectedValue(new CME('ABC123', 'DEF456'))
+
+    await userEvent.click(screen.getByRole('button', { name: /Download Report/i }))
+
+    await waitFor(() => {
+      expect(screen.getByRole('alert')).toBeInTheDocument()
+    })
+    expect(screen.getByText(/integrity check failed/i)).toBeInTheDocument()
   })
 
   it('renders PDF viewer when report loads', async () => {
