@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { Box } from '@chakra-ui/react'
-import { useReports, useDeleteReport, useDownloadUrl } from '@/hooks/reports'
+import { useReports, useDeleteReport, useVerifiedDownload } from '@/hooks/reports'
 import { useDebouncedValue } from '@/hooks/use-debounced-value'
 import {
   ReportsPageHeader,
@@ -72,7 +72,7 @@ export default function ReportsPage() {
 
   const { data, isLoading } = useReports(apiParams)
   const deleteReport = useDeleteReport()
-  const downloadUrl = useDownloadUrl()
+  const verifiedDownload = useVerifiedDownload()
 
   // Client-side filtering
   const filteredReports = useMemo(
@@ -90,16 +90,11 @@ export default function ReportsPage() {
 
   const handleDownload = useCallback(
     (id: string) => {
-      downloadUrl.mutate(
-        { reportId: id },
-        {
-          onSuccess: (res) => {
-            window.open(res.downloadUrl, '_blank')
-          },
-        },
-      )
+      const report = data?.items.find((r) => r.id === id)
+      const fileName = report ? `${report.title}.pdf` : `report-${id}.pdf`
+      verifiedDownload.download(id, fileName)
     },
-    [downloadUrl],
+    [verifiedDownload, data?.items],
   )
 
   const handleDeleteClick = useCallback(

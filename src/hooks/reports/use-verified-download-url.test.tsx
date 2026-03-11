@@ -32,13 +32,14 @@ beforeEach(() => {
 })
 
 describe('useVerifiedDownloadUrl', () => {
-  it('posts reportId and returns verified download result', async () => {
+  it('posts reportId and returns verified download result with checksum', async () => {
     const responseData = {
       reportId: 'r1',
       objectKey: 'uploads/r1.pdf',
       downloadUrl: 'https://cdn.example.com/reports/r1.pdf?token=xyz',
       expiresAt: '2025-01-15T12:00:00Z',
-      checksumVerified: true,
+      checksumSha256: 'B94D27B9934D3E08A52E52D7DA7DABFAC484EFE37A5380EE9088F7ACE2EFCDE9',
+      isServerVerified: true,
     }
     mockFetch.mockResolvedValue(jsonResponse(responseData))
 
@@ -53,7 +54,8 @@ describe('useVerifiedDownloadUrl', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual({
       downloadUrl: 'https://cdn.example.com/reports/r1.pdf?token=xyz',
-      checksumVerified: true,
+      checksumSha256: 'B94D27B9934D3E08A52E52D7DA7DABFAC484EFE37A5380EE9088F7ACE2EFCDE9',
+      isServerVerified: true,
       usedFallback: false,
     })
 
@@ -63,6 +65,34 @@ describe('useVerifiedDownloadUrl', () => {
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('POST')
     expect(JSON.parse(calledInit.body as string)).toEqual({ reportId: 'r1' })
+  })
+
+  it('returns null checksumSha256 when backend provides null', async () => {
+    const responseData = {
+      reportId: 'r1',
+      objectKey: 'uploads/r1.pdf',
+      downloadUrl: 'https://cdn.example.com/reports/r1.pdf?token=xyz',
+      expiresAt: '2025-01-15T12:00:00Z',
+      checksumSha256: null,
+      isServerVerified: false,
+    }
+    mockFetch.mockResolvedValue(jsonResponse(responseData))
+
+    const { result } = renderHook(() => useVerifiedDownloadUrl(), {
+      wrapper: createWrapper(),
+    })
+
+    await act(() =>
+      result.current.mutateAsync({ reportId: 'r1' }),
+    )
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+    expect(result.current.data).toEqual({
+      downloadUrl: 'https://cdn.example.com/reports/r1.pdf?token=xyz',
+      checksumSha256: null,
+      isServerVerified: false,
+      usedFallback: false,
+    })
   })
 
   it('returns error on 4xx client error without fallback', async () => {
@@ -109,7 +139,8 @@ describe('useVerifiedDownloadUrl', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
     expect(result.current.data).toEqual({
       downloadUrl: 'https://cdn.example.com/reports/r1.pdf?fallback=true',
-      checksumVerified: false,
+      checksumSha256: null,
+      isServerVerified: false,
       usedFallback: true,
     })
 
@@ -189,7 +220,8 @@ describe('useVerifiedDownloadUrl', () => {
       objectKey: 'uploads/r1.pdf',
       downloadUrl: 'https://cdn.example.com/reports/r1.pdf',
       expiresAt: '2025-01-15T12:00:00Z',
-      checksumVerified: true,
+      checksumSha256: 'ABC123',
+      isServerVerified: true,
     }
     mockFetch.mockResolvedValue(jsonResponse(responseData))
 

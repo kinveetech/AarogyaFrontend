@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import dynamic from 'next/dynamic'
 import { Box, Button, Grid, Text } from '@chakra-ui/react'
 import { useReport } from '@/hooks/reports/use-report'
 import { useDeleteReport } from '@/hooks/reports/use-delete-report'
-import { useVerifiedDownloadUrl } from '@/hooks/reports/use-verified-download-url'
+import { useVerifiedDownload } from '@/hooks/reports/use-verified-download'
 import { ReportDetailHeader } from '@/components/reports/report-detail-header'
 import { ReportDetailParameters } from '@/components/reports/report-detail-parameters'
 import { ReportDetailActions } from '@/components/reports/report-detail-actions'
@@ -46,40 +46,49 @@ export default function ReportDetailPage() {
 
   const { data: report, isLoading, error } = useReport(id)
   const deleteReport = useDeleteReport()
-  const verifiedDownload = useVerifiedDownloadUrl()
 
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [downloadError, setDownloadError] = useState<string | null>(null)
   const [pdfExpanded, setPdfExpanded] = useState(false)
 
-  const handleTogglePdfExpand = useCallback(() => {
+  const verifiedDownload = useVerifiedDownload({
+    onChecksumMismatch: () => {
+      setDownloadError(
+        'File integrity check failed. The downloaded file may be corrupted. Please try again.',
+      )
+    },
+    onError: () => {
+      setDownloadError('Failed to download the report. Please try again.')
+    },
+    onSuccess: () => {
+      setDownloadError(null)
+    },
+  })
+
+  const handleTogglePdfExpand = () => {
     setPdfExpanded((prev) => !prev)
-  }, [])
+  }
 
-  const handleBack = useCallback(() => router.push('/reports'), [router])
+  const handleBack = () => router.push('/reports')
 
-  const handleDownload = useCallback(() => {
-    verifiedDownload.mutate(
-      { reportId: id },
-      {
-        onSuccess: (res) => {
-          window.open(res.downloadUrl, '_blank')
-        },
-      },
-    )
-  }, [verifiedDownload, id])
+  const handleDownload = () => {
+    setDownloadError(null)
+    const fileName = report ? `${report.title}.pdf` : `report-${id}.pdf`
+    verifiedDownload.download(id, fileName)
+  }
 
-  const handleDeleteClick = useCallback(() => {
+  const handleDeleteClick = () => {
     setDeleteDialogOpen(true)
-  }, [])
+  }
 
-  const handleDeleteConfirm = useCallback(() => {
+  const handleDeleteConfirm = () => {
     deleteReport.mutate(id, {
       onSuccess: () => {
         setDeleteDialogOpen(false)
         router.push('/reports')
       },
     })
-  }, [deleteReport, id, router])
+  }
 
   // Loading state
   if (isLoading) {
@@ -176,6 +185,22 @@ export default function ReportDetailPage() {
           </Box>
         )}
       </Grid>
+
+      {downloadError && (
+        <Box
+          bg="red.50"
+          color="red.700"
+          border="1px solid"
+          borderColor="red.200"
+          borderRadius="lg"
+          p="4"
+          mt="4"
+          css={{ _dark: { bg: 'red.900/20', color: 'red.300', borderColor: 'red.800' } }}
+          role="alert"
+        >
+          <Text fontSize="sm">{downloadError}</Text>
+        </Box>
+      )}
 
       <ReportDetailActions
         onDownload={handleDownload}
