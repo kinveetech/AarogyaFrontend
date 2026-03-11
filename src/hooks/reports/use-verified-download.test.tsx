@@ -286,40 +286,47 @@ describe('useVerifiedDownload', () => {
     await waitFor(() => expect(result.current.error).toBeNull())
   })
 
-  it('falls back to standard download when verified endpoint returns server error', async () => {
-    const fallbackResponse = {
-      downloadUrl: 'https://cdn.example.com/reports/r1.pdf?fallback=true',
-      expiresAt: '2025-01-15T12:00:00Z',
-    }
+  it('wraps non-Error thrown values in Error', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(verifiedApiResponse))
+    // Reject with a string instead of an Error instance
+    mockDownloadAndVerify.mockRejectedValue('string error')
 
-    // First call returns 500 (verified endpoint), second returns fallback
-    mockFetch
-      .mockResolvedValueOnce(jsonResponse({ message: 'Internal Server Error' }, 500))
-      .mockResolvedValueOnce(jsonResponse(fallbackResponse))
-
-    mockDownloadAndVerify.mockResolvedValue({
-      blobUrl: 'blob:http://localhost/mock',
-      blob: new Blob(['content']),
-      checksumValidated: false,
-    })
-
-    const onSuccess = vi.fn()
+    const onError = vi.fn()
 
     const { result } = renderHook(
-      () => useVerifiedDownload({ onSuccess }),
+      () => useVerifiedDownload({ onError }),
       { wrapper: createWrapper() },
     )
 
-    await act(async () => {
+    act(() => {
       result.current.download('r1', 'report.pdf')
     })
 
-    await waitFor(() => expect(onSuccess).toHaveBeenCalled())
+    await waitFor(() => expect(result.current.error).not.toBeNull())
 
-    // downloadAndVerify should be called with null checksum (fallback has no checksum)
-    expect(mockDownloadAndVerify).toHaveBeenCalledWith({
-      downloadUrl: 'https://cdn.example.com/reports/r1.pdf?fallback=true',
-      checksumSha256: null,
+    expect(result.current.error).toBeInstanceOf(Error)
+    expect(result.current.error?.message).toBe('string error')
+    expect(onError).toHaveBeenCalledOnce()
+  })
+
+  it('wraps non-Error API failure in Error', async () => {
+    // Simulate fetch returning a non-standard error shape
+    mockFetch.mockRejectedValue('network failure')
+
+    const onError = vi.fn()
+
+    const { result } = renderHook(
+      () => useVerifiedDownload({ onError }),
+      { wrapper: createWrapper() },
+    )
+
+    act(() => {
+      result.current.download('r1', 'report.pdf')
     })
+
+    await waitFor(() => expect(result.current.error).not.toBeNull())
+
+    expect(onError).toHaveBeenCalledOnce()
+    expect(mockDownloadAndVerify).not.toHaveBeenCalled()
   })
 })
