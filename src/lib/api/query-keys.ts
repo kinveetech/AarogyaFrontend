@@ -36,6 +36,9 @@ export const queryKeys = {
     detail: (id: string) =>
       [...queryKeys.emergencyContacts.all, 'detail', id] as const,
   },
+  emergencyAccess: {
+    all: ['emergencyAccess'] as const,
+  },
   notifications: {
     all: ['notifications'] as const,
     prefs: () => [...queryKeys.notifications.all, 'prefs'] as const,

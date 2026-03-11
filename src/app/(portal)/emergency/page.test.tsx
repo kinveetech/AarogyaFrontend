@@ -263,6 +263,20 @@ describe('EmergencyPage', () => {
     })
   })
 
+  it('renders emergency access request form section', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockContacts))
+    render(<EmergencyPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Priya Sharma')).toBeInTheDocument()
+    })
+
+    expect(screen.getByTestId('emergency-access-form')).toBeInTheDocument()
+    expect(
+      screen.getByRole('heading', { name: 'Request Emergency Access' }),
+    ).toBeInTheDocument()
+  })
+
   it('submits add form with POST request', async () => {
     mockFetch.mockResolvedValue(jsonResponse(mockContacts))
     render(<EmergencyPage />)

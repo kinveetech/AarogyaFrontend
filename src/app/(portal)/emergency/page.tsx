@@ -8,7 +8,7 @@ import {
   useUpdateEmergencyContact,
   useDeleteEmergencyContact,
 } from '@/hooks/emergency'
-import { ContactCard, ContactModal, MAX_CONTACTS } from '@/components/emergency'
+import { ContactCard, ContactModal, EmergencyAccessForm, MAX_CONTACTS } from '@/components/emergency'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyStateView } from '@/components/ui/empty-state'
 import type { EmergencyContact } from '@/types/emergency'
@@ -258,6 +258,11 @@ export default function EmergencyPage() {
           </Text>
         </VStack>
       )}
+
+      {/* Emergency Access Request */}
+      <Box mt="10" mb="6">
+        <EmergencyAccessForm />
+      </Box>
 
       {/* Add/Edit modal */}
       <ContactModal
