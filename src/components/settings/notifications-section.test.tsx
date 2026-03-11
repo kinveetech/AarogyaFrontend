@@ -175,7 +175,7 @@ describe('NotificationsSection', () => {
     })
 
     mockFetch.mockImplementation((url: string, opts?: RequestInit) => {
-      if (opts?.method === 'POST' && (url as string).includes('device-token')) {
+      if (opts?.method === 'POST' && (url as string).includes('notifications/devices')) {
         return Promise.resolve(new Response(null, { status: 204, headers: { 'content-length': '0' } }))
       }
       return Promise.resolve(jsonResponse({ ...mockPrefs, push: { ...mockPrefs.push, enabled: true } }))
@@ -187,11 +187,11 @@ describe('NotificationsSection', () => {
       const postCalls = mockFetch.mock.calls.filter((call) => {
         const url = call[0] as string
         const opts = call[1] as RequestInit | undefined
-        return url.includes('device-token') && opts?.method === 'POST'
+        return url.includes('notifications/devices') && opts?.method === 'POST'
       })
       expect(postCalls).toHaveLength(1)
       const body = JSON.parse(postCalls[0][1].body as string)
-      expect(body.token).toBe('fcm-token-abc')
+      expect(body.deviceToken).toBe('fcm-token-abc')
     })
   })
 

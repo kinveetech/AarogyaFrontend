@@ -48,19 +48,29 @@ describe('useRegisterDeviceToken', () => {
     })
 
     await act(() =>
-      result.current.mutateAsync({ token: 'fcm-token-123', platform: 'web' }),
+      result.current.mutateAsync({
+        deviceToken: 'fcm-token-123',
+        platform: 'web',
+        deviceName: 'Chrome 120',
+        appVersion: '1.0.0',
+      }),
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/notification-preferences/device-token')
+    expect(calledUrl).toContain('/v1/notifications/devices')
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('POST')
 
     const body = JSON.parse(calledInit.body as string)
-    expect(body).toEqual({ token: 'fcm-token-123', platform: 'web' })
+    expect(body).toEqual({
+      deviceToken: 'fcm-token-123',
+      platform: 'web',
+      deviceName: 'Chrome 120',
+      appVersion: '1.0.0',
+    })
   })
 
   it('returns error state on failure', async () => {
@@ -73,7 +83,7 @@ describe('useRegisterDeviceToken', () => {
     })
 
     await act(async () => {
-      result.current.mutate({ token: 'bad-token', platform: 'web' })
+      result.current.mutate({ deviceToken: 'bad-token', platform: 'web' })
     })
 
     await waitFor(() => expect(result.current.isError).toBe(true))

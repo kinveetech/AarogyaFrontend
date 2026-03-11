@@ -20,6 +20,8 @@ export interface UpdateNotificationPrefsRequest {
 }
 
 export interface DeviceTokenRequest {
-  token: string
+  deviceToken: string
   platform: 'web'
+  deviceName?: string
+  appVersion?: string
 }

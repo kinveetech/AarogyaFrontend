@@ -44,7 +44,7 @@ export function NotificationsSection() {
       if (channel === 'push' && enabled) {
         const result = await requestPushPermission()
         if (result.status !== 'granted') return
-        registerToken.mutate({ token: result.token, platform: 'web' })
+        registerToken.mutate({ deviceToken: result.token, platform: 'web' })
       }
 
       const currentChannel = prefs[channel]
