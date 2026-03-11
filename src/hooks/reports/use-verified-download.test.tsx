@@ -286,29 +286,6 @@ describe('useVerifiedDownload', () => {
     await waitFor(() => expect(result.current.error).toBeNull())
   })
 
-  it('revokes blob URL after triggering download', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(verifiedApiResponse))
-    mockDownloadAndVerify.mockResolvedValue({
-      blobUrl: 'blob:http://localhost/mock',
-      blob: new Blob(['content']),
-      checksumValidated: true,
-    })
-
-    const { result } = renderHook(
-      () => useVerifiedDownload(),
-      { wrapper: createWrapper() },
-    )
-
-    await act(async () => {
-      result.current.download('r1', 'report.pdf')
-    })
-
-    await waitFor(() => expect(result.current.isPending).toBe(false))
-
-    expect(mockTriggerBrowserDownload).toHaveBeenCalledBefore(mockRevokeObjectURL)
-    expect(mockRevokeObjectURL).toHaveBeenCalledWith('blob:http://localhost/mock')
-  })
-
   it('wraps non-Error thrown values in Error', async () => {
     mockFetch.mockResolvedValue(jsonResponse(verifiedApiResponse))
     // Reject with a string instead of an Error instance

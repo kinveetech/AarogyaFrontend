@@ -58,7 +58,8 @@ export function useVerifiedDownload(
 
               const downloadName = fileName ?? `report-${reportId}`
               triggerBrowserDownload(result.blobUrl, downloadName)
-              URL.revokeObjectURL(result.blobUrl)
+              // Delay revocation to ensure download starts
+              setTimeout(() => URL.revokeObjectURL(result.blobUrl), 100)
 
               setIsPending(false)
               onSuccess?.()

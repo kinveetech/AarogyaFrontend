@@ -50,12 +50,9 @@ export async function downloadAndVerify(
 ): Promise<VerifiedDownloadResult> {
   const { downloadUrl, checksumSha256 } = options
 
-  let response: Response
-  try {
-    response = await fetch(downloadUrl)
-  } catch {
+  const response = await fetch(downloadUrl).catch(() => {
     throw new DownloadFetchError(0, 'Network error during file download')
-  }
+  })
 
   if (!response.ok) {
     throw new DownloadFetchError(
@@ -66,7 +63,7 @@ export async function downloadAndVerify(
 
   const blob = await response.blob()
 
-  if (checksumSha256) {
+  if (checksumSha256 != null) {
     const actualChecksum = await computeSha256(blob)
     if (!checksumsMatch(checksumSha256, actualChecksum)) {
       throw new ChecksumMismatchError(checksumSha256, actualChecksum)
@@ -78,7 +75,7 @@ export async function downloadAndVerify(
   return {
     blobUrl,
     blob,
-    checksumValidated: checksumSha256 !== null,
+    checksumValidated: checksumSha256 != null,
   }
 }
 
