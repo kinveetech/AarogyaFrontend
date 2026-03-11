@@ -51,4 +51,7 @@ export const queryKeys = {
     all: ['registration'] as const,
     status: () => [...queryKeys.registration.all, 'status'] as const,
   },
+  dataExport: {
+    all: ['dataExport'] as const,
+  },
 }
