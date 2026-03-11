@@ -1,6 +1,6 @@
 'use client'
 
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
+import { Box, Button, Flex, IconButton, Text } from '@chakra-ui/react'
 import { RELATIONSHIP_LABELS, getInitials, formatPhone } from './emergency-constants'
 import type { EmergencyContact } from '@/types/emergency'
 
@@ -102,7 +102,7 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
           >
             Edit
           </Button>
-          <Button
+          <IconButton
             variant="outline"
             size="sm"
             borderRadius="full"
@@ -112,8 +112,22 @@ export function ContactCard({ contact, onEdit, onDelete }: ContactCardProps) {
             onClick={() => onDelete(contact.id)}
             aria-label={`Remove ${contact.name}`}
           >
-            Remove
-          </Button>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              <line x1="10" y1="11" x2="10" y2="17" />
+              <line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
+          </IconButton>
         </Flex>
       </Flex>
     </Box>

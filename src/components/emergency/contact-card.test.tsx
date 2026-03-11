@@ -45,10 +45,12 @@ describe('ContactCard', () => {
     expect(screen.getByText('Friend')).toBeInTheDocument()
   })
 
-  it('renders Edit and Remove buttons', () => {
+  it('renders Edit button and trash icon delete button', () => {
     render(<ContactCard contact={makeContact()} onEdit={vi.fn()} onDelete={vi.fn()} />)
     expect(screen.getByRole('button', { name: /edit priya sharma/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /remove priya sharma/i })).toBeInTheDocument()
+    const deleteBtn = screen.getByRole('button', { name: /remove priya sharma/i })
+    expect(deleteBtn).toBeInTheDocument()
+    expect(deleteBtn.querySelector('svg')).toBeInTheDocument()
   })
 
   it('calls onEdit with contact id when Edit is clicked', async () => {
