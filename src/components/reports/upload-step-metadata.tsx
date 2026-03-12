@@ -10,7 +10,7 @@ import type { ReportType } from '@/types/reports'
 
 const metadataSchema = z.object({
   title: nonEmptyString.max(200, 'Title must be 200 characters or fewer'),
-  reportType: z.enum(['lab', 'prescription', 'imaging', 'discharge', 'other']),
+  reportType: z.enum(['blood_test', 'urine_test', 'radiology', 'cardiology', 'other']),
   reportDate: nonEmptyString.refine((v) => !isNaN(Date.parse(v)), 'Must be a valid date'),
   notes: z.string().max(500, 'Notes must be 500 characters or fewer').optional(),
 })
@@ -42,7 +42,7 @@ export function UploadStepMetadata({
     resolver: zodResolver(metadataSchema),
     defaultValues: {
       title: defaultTitle,
-      reportType: 'lab',
+      reportType: 'blood_test',
       reportDate: getTodayString(),
       notes: '',
     },

@@ -33,8 +33,8 @@ function createWrapper(gcTime = 0) {
   }
 }
 
-const reportOne = { id: 'r1', title: 'Report 1', reportType: 'lab' as const, status: 'verified' as const, reportDate: '2025-01-01', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-01T00:00:00Z', updatedAt: '2025-01-01T00:00:00Z' }
-const reportTwo = { id: 'r2', title: 'Report 2', reportType: 'imaging' as const, status: 'pending' as const, reportDate: '2025-01-02', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-02T00:00:00Z', updatedAt: '2025-01-02T00:00:00Z' }
+const reportOne = { id: 'r1', title: 'Report 1', reportType: 'blood_test' as const, status: 'verified' as const, reportDate: '2025-01-01', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-01T00:00:00Z', updatedAt: '2025-01-01T00:00:00Z' }
+const reportTwo = { id: 'r2', title: 'Report 2', reportType: 'radiology' as const, status: 'pending' as const, reportDate: '2025-01-02', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-02T00:00:00Z', updatedAt: '2025-01-02T00:00:00Z' }
 
 beforeEach(() => {
   mockFetch.mockReset()

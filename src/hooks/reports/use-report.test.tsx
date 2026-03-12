@@ -36,7 +36,7 @@ describe('useReport', () => {
     const detail = {
       id: 'r1',
       title: 'Blood Test',
-      reportType: 'lab',
+      reportType: 'blood_test',
       status: 'verified',
       reportDate: '2025-01-15',
       labName: 'PathLab',

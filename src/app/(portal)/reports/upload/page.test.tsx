@@ -194,7 +194,7 @@ describe('ReportUploadPage', () => {
         jsonResponse({
           id: 'report-1',
           title: 'blood-report',
-          reportType: 'lab',
+          reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
           labName: null,
@@ -241,7 +241,7 @@ describe('ReportUploadPage', () => {
         jsonResponse({
           id: 'report-42',
           title: 'blood-report',
-          reportType: 'lab',
+          reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
           labName: null,
@@ -377,7 +377,7 @@ describe('ReportUploadPage', () => {
         jsonResponse({
           id: 'report-1',
           title: 'blood-report',
-          reportType: 'lab',
+          reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
           labName: null,

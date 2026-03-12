@@ -6,8 +6,8 @@ import type { Report } from '@/types/reports'
 const mockReports: Report[] = [
   {
     id: 'r1',
-    title: 'Blood Test',
-    reportType: 'lab',
+    title: 'Complete Blood Count',
+    reportType: 'blood_test',
     status: 'verified',
     reportDate: '2025-01-15T00:00:00Z',
     labName: 'Lab A',
@@ -20,7 +20,7 @@ const mockReports: Report[] = [
   {
     id: 'r2',
     title: 'X-Ray Report',
-    reportType: 'imaging',
+    reportType: 'radiology',
     status: 'pending',
     reportDate: '2025-02-10T00:00:00Z',
     labName: null,
@@ -65,7 +65,7 @@ describe('ReportCardGrid', () => {
     render(<ReportCardGrid {...defaultProps} />)
     expect(screen.getByTestId('report-grid')).toBeInTheDocument()
     expect(screen.getAllByTestId('report-card')).toHaveLength(2)
-    expect(screen.getByText('Blood Test')).toBeInTheDocument()
+    expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     expect(screen.getByText('X-Ray Report')).toBeInTheDocument()
   })
 })

@@ -14,7 +14,7 @@ export const reportUploadSchema = z.object({
       'Only PDF, JPEG, and PNG files are allowed',
     ),
   title: nonEmptyString.max(200, 'Title must be 200 characters or fewer'),
-  reportType: z.enum(['lab', 'prescription', 'imaging', 'discharge', 'other']),
+  reportType: z.enum(['blood_test', 'urine_test', 'radiology', 'cardiology', 'other']),
   reportDate: z.coerce.date(),
   notes: z.string().max(500, 'Notes must be 500 characters or fewer').optional(),
 })

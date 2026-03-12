@@ -52,7 +52,7 @@ vi.mock('framer-motion', () => ({
 function createReport(overrides: Partial<Report> & { id: string; reportDate: string }): Report {
   return {
     title: `Report ${overrides.id}`,
-    reportType: 'lab',
+    reportType: 'blood_test',
     status: 'verified',
     labName: null,
     doctorName: null,
@@ -68,26 +68,26 @@ const sampleReports: Report[] = [
   createReport({
     id: '1',
     title: 'Complete Blood Count',
-    reportType: 'lab',
+    reportType: 'blood_test',
     reportDate: '2025-01-20',
     highlightParameter: 'Hb: 14.2 g/dL',
   }),
   createReport({
     id: '2',
     title: 'Chest X-Ray',
-    reportType: 'imaging',
+    reportType: 'radiology',
     reportDate: '2025-01-15',
   }),
   createReport({
     id: '3',
     title: 'Discharge Summary',
-    reportType: 'discharge',
+    reportType: 'cardiology',
     reportDate: '2024-12-28',
   }),
   createReport({
     id: '4',
     title: 'Daily Medication',
-    reportType: 'prescription',
+    reportType: 'urine_test',
     reportDate: '2025-01-18',
   }),
   createReport({
@@ -133,10 +133,10 @@ describe('ReportTimeline', () => {
 
   it('renders report type labels for all types', () => {
     render(<ReportTimeline reports={sampleReports} onReportClick={vi.fn()} />)
-    expect(screen.getByText('Lab Test')).toBeInTheDocument()
-    expect(screen.getByText('Imaging')).toBeInTheDocument()
-    expect(screen.getByText('Discharge')).toBeInTheDocument()
-    expect(screen.getByText('Prescription')).toBeInTheDocument()
+    expect(screen.getByText('Blood Test')).toBeInTheDocument()
+    expect(screen.getByText('Radiology')).toBeInTheDocument()
+    expect(screen.getByText('Cardiology')).toBeInTheDocument()
+    expect(screen.getByText('Urine Test')).toBeInTheDocument()
     expect(screen.getByText('Other')).toBeInTheDocument()
   })
 

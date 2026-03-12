@@ -56,7 +56,7 @@ describe('useReports', () => {
     )
 
     const { result } = renderHook(
-      () => useReports({ page: 2, pageSize: 5, search: 'blood', category: 'lab' }),
+      () => useReports({ page: 2, pageSize: 5, search: 'blood', category: 'blood_test' }),
       { wrapper: createWrapper() },
     )
 
@@ -66,7 +66,7 @@ describe('useReports', () => {
     expect(calledUrl).toContain('page=2')
     expect(calledUrl).toContain('pageSize=5')
     expect(calledUrl).toContain('search=blood')
-    expect(calledUrl).toContain('category=lab')
+    expect(calledUrl).toContain('category=blood_test')
   })
 
   it('returns error state on failure', async () => {

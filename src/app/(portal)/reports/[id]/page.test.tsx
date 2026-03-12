@@ -66,7 +66,7 @@ function jsonResponse(data: unknown, status = 200) {
 const mockReport: ReportDetail = {
   id: 'r1',
   title: 'Complete Blood Count',
-  reportType: 'lab',
+  reportType: 'blood_test',
   status: 'verified',
   reportDate: '2025-01-15T00:00:00Z',
   labName: 'Thyrocare Labs',
@@ -150,7 +150,7 @@ describe('ReportDetailPage', () => {
       expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
     expect(screen.getByText('Verified')).toBeInTheDocument()
-    expect(screen.getByText('Lab Test')).toBeInTheDocument()
+    expect(screen.getByText('Blood Test')).toBeInTheDocument()
     expect(screen.getByText('Thyrocare Labs')).toBeInTheDocument()
     expect(screen.getByText('Dr. Patel')).toBeInTheDocument()
   })

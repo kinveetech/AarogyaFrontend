@@ -14,10 +14,10 @@ describe('ReportFilterBar', () => {
   it('renders all type filter options', () => {
     render(<ReportFilterBar {...defaultProps} />)
     expect(screen.getByRole('button', { name: 'All Types' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Lab Test' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Prescription' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Imaging' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Discharge' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Blood Test' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Urine Test' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Radiology' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Cardiology' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Other' })).toBeInTheDocument()
   })
 
@@ -32,8 +32,8 @@ describe('ReportFilterBar', () => {
   it('calls onTypeChange when a type filter is clicked', async () => {
     const onTypeChange = vi.fn()
     render(<ReportFilterBar {...defaultProps} onTypeChange={onTypeChange} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Lab Test' }))
-    expect(onTypeChange).toHaveBeenCalledWith('lab')
+    await userEvent.click(screen.getByRole('button', { name: 'Blood Test' }))
+    expect(onTypeChange).toHaveBeenCalledWith('blood_test')
   })
 
   it('calls onStatusChange when a status filter is clicked', async () => {

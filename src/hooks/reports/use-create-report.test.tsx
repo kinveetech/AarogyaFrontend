@@ -42,7 +42,7 @@ describe('useCreateReport', () => {
     const created = {
       id: 'r1',
       title: 'Blood Test',
-      reportType: 'lab',
+      reportType: 'blood_test',
       status: 'pending',
       reportDate: '2025-01-15',
       labName: null,
@@ -61,7 +61,7 @@ describe('useCreateReport', () => {
     await act(() =>
       result.current.mutateAsync({
         title: 'Blood Test',
-        reportType: 'lab',
+        reportType: 'blood_test',
         reportDate: '2025-01-15',
         fileKey: 'uploads/abc123.pdf',
       }),
@@ -77,7 +77,7 @@ describe('useCreateReport', () => {
     expect(calledInit.method).toBe('POST')
     expect(JSON.parse(calledInit.body as string)).toEqual({
       title: 'Blood Test',
-      reportType: 'lab',
+      reportType: 'blood_test',
       reportDate: '2025-01-15',
       fileKey: 'uploads/abc123.pdf',
     })
@@ -88,7 +88,7 @@ describe('useCreateReport', () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ id: 'r1', title: 'Test', reportType: 'lab', status: 'pending', reportDate: '2025-01-15', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-15T10:00:00Z', updatedAt: '2025-01-15T10:00:00Z' }),
+      jsonResponse({ id: 'r1', title: 'Test', reportType: 'blood_test', status: 'pending', reportDate: '2025-01-15', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-15T10:00:00Z', updatedAt: '2025-01-15T10:00:00Z' }),
     )
 
     const { result } = renderHook(() => useCreateReport(), { wrapper })
@@ -96,7 +96,7 @@ describe('useCreateReport', () => {
     await act(() =>
       result.current.mutateAsync({
         title: 'Test',
-        reportType: 'lab',
+        reportType: 'blood_test',
         reportDate: '2025-01-15',
         fileKey: 'uploads/key.pdf',
       }),
