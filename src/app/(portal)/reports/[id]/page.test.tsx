@@ -67,7 +67,7 @@ const mockReport: ReportDetail = {
   id: 'r1',
   title: 'Complete Blood Count',
   reportType: 'blood_test',
-  status: 'verified',
+  status: 'validated',
   labName: 'Thyrocare Labs',
   highlightParameter: null,
   createdAt: '2025-01-15T10:00:00Z',
@@ -145,7 +145,7 @@ describe('ReportDetailPage', () => {
     await waitFor(() => {
       expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
-    expect(screen.getByText('Verified')).toBeInTheDocument()
+    expect(screen.getByText('Validated')).toBeInTheDocument()
     expect(screen.getByText('Blood Test')).toBeInTheDocument()
     expect(screen.getByText('Thyrocare Labs')).toBeInTheDocument()
   })

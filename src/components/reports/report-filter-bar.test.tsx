@@ -24,9 +24,12 @@ describe('ReportFilterBar', () => {
   it('renders all status filter options', () => {
     render(<ReportFilterBar {...defaultProps} />)
     expect(screen.getByRole('button', { name: 'All Status' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Pending' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Uploaded' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Processing' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Verified' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Clean' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Validated' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Published' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Archived' })).toBeInTheDocument()
   })
 
   it('calls onTypeChange when a type filter is clicked', async () => {
@@ -39,8 +42,8 @@ describe('ReportFilterBar', () => {
   it('calls onStatusChange when a status filter is clicked', async () => {
     const onStatusChange = vi.fn()
     render(<ReportFilterBar {...defaultProps} onStatusChange={onStatusChange} />)
-    await userEvent.click(screen.getByRole('button', { name: 'Verified' }))
-    expect(onStatusChange).toHaveBeenCalledWith('verified')
+    await userEvent.click(screen.getByRole('button', { name: 'Validated' }))
+    expect(onStatusChange).toHaveBeenCalledWith('validated')
   })
 
   it('renders the date range picker', () => {

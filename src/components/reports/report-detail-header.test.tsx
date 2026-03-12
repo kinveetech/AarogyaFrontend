@@ -7,7 +7,7 @@ const mockReport: ReportDetail = {
   id: 'r1',
   title: 'Complete Blood Count',
   reportType: 'blood_test',
-  status: 'verified',
+  status: 'validated',
   labName: 'Thyrocare Labs',
   highlightParameter: null,
   createdAt: '2025-01-15T10:00:00Z',
@@ -35,7 +35,7 @@ describe('ReportDetailHeader', () => {
 
   it('renders status badge', () => {
     render(<ReportDetailHeader {...defaultProps} />)
-    expect(screen.getByText('Verified')).toBeInTheDocument()
+    expect(screen.getByText('Validated')).toBeInTheDocument()
   })
 
   it('renders formatted date', () => {

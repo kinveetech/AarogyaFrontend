@@ -39,7 +39,7 @@ const mockData: ReportListResponse = {
       id: 'r1',
       title: 'Complete Blood Count',
       reportType: 'blood_test',
-      status: 'verified',
+      status: 'validated',
       labName: 'Thyrocare Labs',
       highlightParameter: 'Hemoglobin: 14.2 g/dL',
       createdAt: '2025-01-15T10:00:00Z',
@@ -48,7 +48,7 @@ const mockData: ReportListResponse = {
       id: 'r2',
       title: 'Chest X-Ray',
       reportType: 'radiology',
-      status: 'pending',
+      status: 'uploaded',
       labName: null,
       highlightParameter: null,
       createdAt: '2025-02-10T10:00:00Z',
@@ -168,10 +168,10 @@ describe('ReportsPage', () => {
       expect(screen.getAllByTestId('report-card')).toHaveLength(2)
     })
 
-    // Click "Verified" status filter — client-side only
-    await userEvent.click(screen.getByRole('button', { name: 'Verified' }))
+    // Click "Validated" status filter — client-side only
+    await userEvent.click(screen.getByRole('button', { name: 'Validated' }))
 
-    // Only the verified report should show
+    // Only the validated report should show
     await waitFor(() => {
       expect(screen.getAllByTestId('report-card')).toHaveLength(1)
     })

@@ -8,7 +8,7 @@ const mockReport: Report = {
   id: 'r1',
   title: 'Complete Blood Count',
   reportType: 'blood_test',
-  status: 'verified',
+  status: 'validated',
   labName: 'Thyrocare Labs',
   highlightParameter: 'Hemoglobin: 14.2 g/dL',
   createdAt: '2025-01-15T10:00:00Z',
@@ -34,7 +34,7 @@ describe('ReportCard', () => {
 
   it('renders status badge', () => {
     render(<ReportCard {...defaultProps} />)
-    expect(screen.getByText('Verified')).toBeInTheDocument()
+    expect(screen.getByText('Validated')).toBeInTheDocument()
   })
 
   it('renders formatted date', () => {
@@ -89,10 +89,10 @@ describe('ReportCard', () => {
     expect(onDelete).toHaveBeenCalledWith('r1')
   })
 
-  it('renders pending status correctly', () => {
-    const report = { ...mockReport, status: 'pending' as const }
+  it('renders uploaded status correctly', () => {
+    const report = { ...mockReport, status: 'uploaded' as const }
     render(<ReportCard {...defaultProps} report={report} />)
-    expect(screen.getByText('Pending')).toBeInTheDocument()
+    expect(screen.getByText('Uploaded')).toBeInTheDocument()
   })
 
   it('has no accessibility violations', async () => {
