@@ -28,9 +28,9 @@ export function useUpdateNotificationPrefs() {
           if (!old) return old
           return {
             ...old,
-            push: request.push,
-            email: request.email,
-            sms: request.sms,
+            reportUploaded: request.reportUploaded,
+            accessGranted: request.accessGranted,
+            emergencyAccess: request.emergencyAccess,
             updatedAt: new Date().toISOString(),
           }
         },

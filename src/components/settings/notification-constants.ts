@@ -1,4 +1,4 @@
-import type { NotificationChannel, NotificationCategory } from '@/types/notification'
+import type { NotificationChannel, NotificationEventType } from '@/types/notification'
 
 export interface ChannelMeta {
   channel: NotificationChannel
@@ -6,8 +6,8 @@ export interface ChannelMeta {
   description: string
 }
 
-export interface CategoryMeta {
-  category: NotificationCategory
+export interface EventMeta {
+  eventType: NotificationEventType
   label: string
   description: string
 }
@@ -30,25 +30,20 @@ export const CHANNEL_ITEMS: ChannelMeta[] = [
   },
 ]
 
-export const CATEGORY_ITEMS: CategoryMeta[] = [
+export const EVENT_ITEMS: EventMeta[] = [
   {
-    category: 'report-processed',
-    label: 'Report Processed',
-    description: 'When an uploaded report has been processed and is ready to view',
+    eventType: 'reportUploaded',
+    label: 'Report Uploaded',
+    description: 'When a new medical report has been uploaded and processed',
   },
   {
-    category: 'access-activity',
-    label: 'Access Activity',
+    eventType: 'accessGranted',
+    label: 'Access Granted',
     description: 'When a doctor views or accesses your health records',
   },
   {
-    category: 'emergency-alerts',
-    label: 'Emergency Alerts',
-    description: 'Critical alerts related to your emergency contacts or health data',
-  },
-  {
-    category: 'system-updates',
-    label: 'System Updates',
-    description: 'Platform updates, maintenance notices, and new features',
+    eventType: 'emergencyAccess',
+    label: 'Emergency Access',
+    description: 'Critical alerts related to emergency access to your health data',
   },
 ]

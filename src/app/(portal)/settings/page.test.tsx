@@ -45,32 +45,20 @@ const mockConsents: ConsentListResponse = {
 }
 
 const mockNotificationPrefs: NotificationPreferences = {
-  push: {
-    enabled: false,
-    categories: {
-      'report-processed': false,
-      'access-activity': false,
-      'emergency-alerts': false,
-      'system-updates': false,
-    },
+  reportUploaded: {
+    push: false,
+    email: true,
+    sms: false,
   },
-  email: {
-    enabled: true,
-    categories: {
-      'report-processed': true,
-      'access-activity': true,
-      'emergency-alerts': true,
-      'system-updates': false,
-    },
+  accessGranted: {
+    push: false,
+    email: true,
+    sms: false,
   },
-  sms: {
-    enabled: false,
-    categories: {
-      'report-processed': false,
-      'access-activity': false,
-      'emergency-alerts': false,
-      'system-updates': false,
-    },
+  emergencyAccess: {
+    push: false,
+    email: true,
+    sms: false,
   },
   updatedAt: '2025-06-01T00:00:00Z',
 }
