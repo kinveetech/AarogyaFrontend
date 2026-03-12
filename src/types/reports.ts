@@ -142,11 +142,12 @@ export interface VerifiedDownloadUrlResponse {
   isServerVerified: boolean
 }
 
-export type ExtractionStatus = 'pending' | 'processing' | 'completed' | 'failed'
+export type ExtractionStatus = 'extracting' | 'extracted' | 'extraction_failed' | string
 
-export type ExtractionMethod = 'ocr' | 'native_text' | 'hybrid'
+export type ExtractionMethod = 'pdfpig' | 'textract' | 'pdfpig+textract' | string
 
 export interface ExtractionStatusResponse {
+  reportId: string
   status: ExtractionStatus
   extractionMethod: ExtractionMethod | null
   structuringModel: string | null

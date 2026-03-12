@@ -19,24 +19,25 @@ export interface ExtractionStatusCardProps {
   isTriggerPending: boolean
 }
 
-const STATUS_BADGE_VARIANT: Record<ExtractionStatus, StatusBadgeProps['variant']> = {
-  pending: 'pending',
-  processing: 'warning',
-  completed: 'success',
-  failed: 'error',
+function getStatusBadgeVariant(status: ExtractionStatus): StatusBadgeProps['variant'] {
+  if (status === 'extracted') return 'success'
+  if (status === 'extraction_failed') return 'error'
+  if (status === 'extracting') return 'warning'
+  return 'pending'
 }
 
-const STATUS_LABELS: Record<ExtractionStatus, string> = {
-  pending: 'Pending',
-  processing: 'Processing',
-  completed: 'Completed',
-  failed: 'Failed',
+function getStatusLabel(status: ExtractionStatus): string {
+  if (status === 'extracted') return 'Completed'
+  if (status === 'extraction_failed') return 'Failed'
+  if (status === 'extracting') return 'Extracting'
+  return 'Pending'
 }
 
-const METHOD_LABELS: Record<ExtractionMethod, string> = {
-  ocr: 'OCR',
-  native_text: 'Native Text',
-  hybrid: 'Hybrid',
+function getMethodLabel(method: ExtractionMethod): string {
+  if (method === 'pdfpig') return 'PDF Text'
+  if (method === 'textract') return 'Textract'
+  if (method === 'pdfpig+textract') return 'PDF Text + Textract'
+  return method
 }
 
 function RefreshIcon() {
@@ -94,8 +95,8 @@ export function ExtractionStatusCard({
   onTriggerExtraction,
   isTriggerPending,
 }: ExtractionStatusCardProps) {
-  const canRetrigger = status === 'failed' || status === 'completed'
-  const isActive = status === 'pending' || status === 'processing'
+  const canRetrigger = status === 'extraction_failed' || status === 'extracted'
+  const isActive = status === 'extracting'
 
   return (
     <Box
@@ -111,8 +112,8 @@ export function ExtractionStatusCard({
         <Text fontSize="md" fontWeight="semibold" color="text.primary">
           AI Extraction
         </Text>
-        <StatusBadge variant={STATUS_BADGE_VARIANT[status]}>
-          {STATUS_LABELS[status]}
+        <StatusBadge variant={getStatusBadgeVariant(status)}>
+          {getStatusLabel(status)}
         </StatusBadge>
       </Flex>
 
@@ -135,15 +136,13 @@ export function ExtractionStatusCard({
               animation="pulse 1.5s ease-in-out infinite"
             />
             <Text fontSize="sm" color="text.secondary">
-              {status === 'pending'
-                ? 'Extraction queued, waiting to start...'
-                : 'Extracting parameters from your report...'}
+              Extracting parameters from your report...
             </Text>
           </Flex>
         </Box>
       )}
 
-      {status === 'failed' && errorMessage && (
+      {status === 'extraction_failed' && errorMessage && (
         <Box
           bg="red.50"
           color="red.700"
@@ -161,7 +160,7 @@ export function ExtractionStatusCard({
       )}
 
       {extractionMethod && (
-        <DetailRow label="Method" value={METHOD_LABELS[extractionMethod]} />
+        <DetailRow label="Method" value={getMethodLabel(extractionMethod)} />
       )}
       {structuringModel && (
         <DetailRow label="Model" value={structuringModel} />

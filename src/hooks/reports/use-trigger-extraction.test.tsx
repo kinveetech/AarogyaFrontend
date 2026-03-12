@@ -34,7 +34,8 @@ function createWrapper() {
 }
 
 const triggerResponse: ExtractionStatusResponse = {
-  status: 'processing',
+  reportId: 'r1',
+  status: 'extracting',
   extractionMethod: null,
   structuringModel: null,
   extractedParameterCount: 0,

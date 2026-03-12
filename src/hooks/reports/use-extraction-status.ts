@@ -15,7 +15,7 @@ export function useExtractionStatus(reportId: string) {
     enabled: !!reportId,
     refetchInterval: (query) => {
       const status = query.state.data?.status
-      if (status === 'pending' || status === 'processing') {
+      if (status === 'extracting') {
         return 3000
       }
       return false
