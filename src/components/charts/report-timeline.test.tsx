@@ -53,7 +53,7 @@ function createReport(overrides: Partial<Report> & { id: string; reportDate: str
   return {
     title: `Report ${overrides.id}`,
     reportType: 'blood_test',
-    status: 'verified',
+    status: 'validated',
     labName: null,
     highlightParameter: null,
     createdAt: overrides.reportDate,

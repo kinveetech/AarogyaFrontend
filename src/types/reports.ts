@@ -1,6 +1,17 @@
 export type ReportType = 'blood_test' | 'urine_test' | 'radiology' | 'cardiology' | 'other'
 
-export type ReportStatus = 'pending' | 'processing' | 'verified'
+export type ReportStatus =
+  | 'draft'
+  | 'uploaded'
+  | 'processing'
+  | 'clean'
+  | 'infected'
+  | 'validated'
+  | 'published'
+  | 'archived'
+  | 'extracting'
+  | 'extracted'
+  | 'extraction_failed'
 
 export type ParameterStatus = 'normal' | 'high' | 'low'
 

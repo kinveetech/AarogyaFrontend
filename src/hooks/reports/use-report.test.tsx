@@ -37,7 +37,7 @@ describe('useReport', () => {
       id: 'r1',
       title: 'Blood Test',
       reportType: 'blood_test',
-      status: 'verified',
+      status: 'validated',
       labName: 'PathLab',
       highlightParameter: 'Hemoglobin: 14.2 g/dL',
       createdAt: '2025-01-15T10:00:00Z',

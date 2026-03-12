@@ -74,7 +74,7 @@ function StatusIcon({ variant }: { variant: StatusBadgeProps['variant'] }) {
 }
 
 export function StatusBadge({ variant, children, showDot }: StatusBadgeProps) {
-  const style = VARIANT_STYLES[variant]
+  const style = VARIANT_STYLES[variant] ?? VARIANT_STYLES.pending
   const isIconVisible = showDot ?? variant !== 'pending'
 
   return (

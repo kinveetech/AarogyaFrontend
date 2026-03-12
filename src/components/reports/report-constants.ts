@@ -10,15 +10,31 @@ export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
 }
 
 export const REPORT_STATUS_LABELS: Record<ReportStatus, string> = {
-  pending: 'Pending',
+  draft: 'Draft',
+  uploaded: 'Uploaded',
   processing: 'Processing',
-  verified: 'Verified',
+  clean: 'Clean',
+  infected: 'Quarantined',
+  validated: 'Validated',
+  published: 'Published',
+  archived: 'Archived',
+  extracting: 'Extracting',
+  extracted: 'Extracted',
+  extraction_failed: 'Extraction Failed',
 }
 
 export const STATUS_VARIANT_MAP: Record<ReportStatus, StatusBadgeProps['variant']> = {
-  pending: 'pending',
+  draft: 'pending',
+  uploaded: 'info',
   processing: 'warning',
-  verified: 'success',
+  clean: 'info',
+  infected: 'error',
+  validated: 'success',
+  published: 'success',
+  archived: 'pending',
+  extracting: 'warning',
+  extracted: 'info',
+  extraction_failed: 'error',
 }
 
 export interface FilterOption<T extends string> {
@@ -37,9 +53,12 @@ export const TYPE_FILTER_OPTIONS: FilterOption<ReportType>[] = [
 
 export const STATUS_FILTER_OPTIONS: FilterOption<ReportStatus>[] = [
   { value: 'all', label: 'All Status' },
-  { value: 'pending', label: 'Pending' },
+  { value: 'uploaded', label: 'Uploaded' },
   { value: 'processing', label: 'Processing' },
-  { value: 'verified', label: 'Verified' },
+  { value: 'clean', label: 'Clean' },
+  { value: 'validated', label: 'Validated' },
+  { value: 'published', label: 'Published' },
+  { value: 'archived', label: 'Archived' },
 ]
 
 export const PARAMETER_STATUS_LABELS: Record<ParameterStatus, string> = {

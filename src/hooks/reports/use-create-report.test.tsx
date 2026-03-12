@@ -43,7 +43,7 @@ describe('useCreateReport', () => {
       id: 'r1',
       title: 'Blood Test',
       reportType: 'blood_test',
-      status: 'pending',
+      status: 'uploaded',
       labName: 'City Medical Lab',
       highlightParameter: null,
       createdAt: '2025-01-15T10:00:00Z',
@@ -86,7 +86,7 @@ describe('useCreateReport', () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ id: 'r1', title: 'Test', reportType: 'blood_test', status: 'pending', labName: 'City Medical Lab', highlightParameter: null, createdAt: '2025-01-15T10:00:00Z' }),
+      jsonResponse({ id: 'r1', title: 'Test', reportType: 'blood_test', status: 'uploaded', labName: 'City Medical Lab', highlightParameter: null, createdAt: '2025-01-15T10:00:00Z' }),
     )
 
     const { result } = renderHook(() => useCreateReport(), { wrapper })
