@@ -14,7 +14,7 @@ function makeFile(
 const validData = {
   file: makeFile('report.pdf', 'application/pdf', 1024),
   title: 'Blood Test Results',
-  reportType: 'lab' as const,
+  reportType: 'blood_test' as const,
   reportDate: new Date('2024-01-15'),
 }
 

@@ -39,7 +39,7 @@ function ReportTypeIcon({ type }: { type: ReportType }) {
   }
 
   switch (type) {
-    case 'lab':
+    case 'blood_test':
       return (
         <svg {...iconProps}>
           <path
@@ -51,14 +51,14 @@ function ReportTypeIcon({ type }: { type: ReportType }) {
           />
         </svg>
       )
-    case 'prescription':
+    case 'urine_test':
       return (
         <svg {...iconProps}>
           <rect x="3" y="2" width="10" height="12" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
           <path d="M6 5h4M6 7.5h4M6 10h2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
       )
-    case 'imaging':
+    case 'radiology':
       return (
         <svg {...iconProps}>
           <rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
@@ -66,7 +66,7 @@ function ReportTypeIcon({ type }: { type: ReportType }) {
           <path d="M5 3V2M11 3V2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
         </svg>
       )
-    case 'discharge':
+    case 'cardiology':
       return (
         <svg {...iconProps}>
           <path

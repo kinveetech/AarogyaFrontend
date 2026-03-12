@@ -2,10 +2,10 @@ import type { ReportType, ReportStatus, ParameterStatus } from '@/types/reports'
 import type { StatusBadgeProps } from '@/components/ui/status-badge'
 
 export const REPORT_TYPE_LABELS: Record<ReportType, string> = {
-  lab: 'Lab Test',
-  prescription: 'Prescription',
-  imaging: 'Imaging',
-  discharge: 'Discharge',
+  blood_test: 'Blood Test',
+  urine_test: 'Urine Test',
+  radiology: 'Radiology',
+  cardiology: 'Cardiology',
   other: 'Other',
 }
 
@@ -28,10 +28,10 @@ export interface FilterOption<T extends string> {
 
 export const TYPE_FILTER_OPTIONS: FilterOption<ReportType>[] = [
   { value: 'all', label: 'All Types' },
-  { value: 'lab', label: 'Lab Test' },
-  { value: 'prescription', label: 'Prescription' },
-  { value: 'imaging', label: 'Imaging' },
-  { value: 'discharge', label: 'Discharge' },
+  { value: 'blood_test', label: 'Blood Test' },
+  { value: 'urine_test', label: 'Urine Test' },
+  { value: 'radiology', label: 'Radiology' },
+  { value: 'cardiology', label: 'Cardiology' },
   { value: 'other', label: 'Other' },
 ]
 

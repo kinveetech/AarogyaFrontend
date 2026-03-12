@@ -33,10 +33,10 @@ describe('UploadStepMetadata', () => {
     render(<UploadStepMetadata {...defaultProps} />)
     const select = screen.getByLabelText('Report Type')
 
-    expect(select).toContainHTML('Lab Test')
-    expect(select).toContainHTML('Prescription')
-    expect(select).toContainHTML('Imaging')
-    expect(select).toContainHTML('Discharge')
+    expect(select).toContainHTML('Blood Test')
+    expect(select).toContainHTML('Urine Test')
+    expect(select).toContainHTML('Radiology')
+    expect(select).toContainHTML('Cardiology')
     expect(select).toContainHTML('Other')
   })
 
@@ -52,7 +52,7 @@ describe('UploadStepMetadata', () => {
 
     const submittedData = onSubmit.mock.calls[0][0]
     expect(submittedData.title).toBe('blood-report')
-    expect(submittedData.reportType).toBe('lab')
+    expect(submittedData.reportType).toBe('blood_test')
     expect(submittedData.reportDate).toBeTruthy()
   })
 

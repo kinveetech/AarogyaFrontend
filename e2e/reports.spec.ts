@@ -44,7 +44,7 @@ test.describe('Reports page', () => {
     test('type filter pills are visible', async ({ authenticatedPage: page }) => {
       await navigateAndWait(page, '/reports')
       await expect(page.getByRole('button', { name: 'All Types' })).toBeVisible()
-      await expect(page.getByRole('button', { name: 'Lab Test' })).toBeVisible()
+      await expect(page.getByRole('button', { name: 'Blood Test' })).toBeVisible()
     })
 
     test('pagination controls are visible with data', async ({ authenticatedPage: page }) => {

@@ -35,7 +35,7 @@ const mockReports = {
     {
       id: 'r1',
       title: 'Complete Blood Count',
-      reportType: 'lab',
+      reportType: 'blood_test',
       status: 'verified',
       reportDate: '2025-01-15T00:00:00Z',
       labName: 'Thyrocare',
@@ -48,7 +48,7 @@ const mockReports = {
     {
       id: 'r2',
       title: 'Chest X-Ray',
-      reportType: 'imaging',
+      reportType: 'radiology',
       status: 'verified',
       reportDate: '2025-02-10T00:00:00Z',
       labName: null,

@@ -1,4 +1,4 @@
-export type ReportType = 'lab' | 'prescription' | 'imaging' | 'discharge' | 'other'
+export type ReportType = 'blood_test' | 'urine_test' | 'radiology' | 'cardiology' | 'other'
 
 export type ReportStatus = 'pending' | 'processing' | 'verified'
 

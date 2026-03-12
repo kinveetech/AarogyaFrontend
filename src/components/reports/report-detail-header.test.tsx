@@ -6,7 +6,7 @@ import type { ReportDetail } from '@/types/reports'
 const mockReport: ReportDetail = {
   id: 'r1',
   title: 'Complete Blood Count',
-  reportType: 'lab',
+  reportType: 'blood_test',
   status: 'verified',
   reportDate: '2025-01-15T00:00:00Z',
   labName: 'Thyrocare Labs',
@@ -34,7 +34,7 @@ describe('ReportDetailHeader', () => {
 
   it('renders report type label', () => {
     render(<ReportDetailHeader {...defaultProps} />)
-    expect(screen.getByText('Lab Test')).toBeInTheDocument()
+    expect(screen.getByText('Blood Test')).toBeInTheDocument()
   })
 
   it('renders status badge', () => {

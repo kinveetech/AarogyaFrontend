@@ -38,7 +38,7 @@ const mockData: ReportListResponse = {
     {
       id: 'r1',
       title: 'Complete Blood Count',
-      reportType: 'lab',
+      reportType: 'blood_test',
       status: 'verified',
       reportDate: '2025-01-15T00:00:00Z',
       labName: 'Thyrocare Labs',
@@ -51,7 +51,7 @@ const mockData: ReportListResponse = {
     {
       id: 'r2',
       title: 'Chest X-Ray',
-      reportType: 'imaging',
+      reportType: 'radiology',
       status: 'pending',
       reportDate: '2025-02-10T00:00:00Z',
       labName: null,
@@ -157,14 +157,14 @@ describe('ReportsPage', () => {
       expect(screen.getByText('Complete Blood Count')).toBeInTheDocument()
     })
 
-    // Click "Lab Test" type filter — this triggers a new API call with category
-    await userEvent.click(screen.getByRole('button', { name: 'Lab Test' }))
+    // Click "Blood Test" type filter — this triggers a new API call with category
+    await userEvent.click(screen.getByRole('button', { name: 'Blood Test' }))
 
-    // The fetch should be called again with category=lab
+    // The fetch should be called again with category=blood_test
     await waitFor(() => {
       const calls = mockFetch.mock.calls
       const lastCallUrl = calls[calls.length - 1][0] as string
-      expect(lastCallUrl).toContain('category=lab')
+      expect(lastCallUrl).toContain('category=blood_test')
     })
   })
 
