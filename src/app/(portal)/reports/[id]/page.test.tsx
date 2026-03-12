@@ -68,13 +68,9 @@ const mockReport: ReportDetail = {
   title: 'Complete Blood Count',
   reportType: 'blood_test',
   status: 'verified',
-  reportDate: '2025-01-15T00:00:00Z',
   labName: 'Thyrocare Labs',
-  doctorName: 'Dr. Patel',
-  notes: null,
   highlightParameter: null,
   createdAt: '2025-01-15T10:00:00Z',
-  updatedAt: '2025-01-15T10:00:00Z',
   parameters: [
     {
       name: 'Hemoglobin',
@@ -152,7 +148,6 @@ describe('ReportDetailPage', () => {
     expect(screen.getByText('Verified')).toBeInTheDocument()
     expect(screen.getByText('Blood Test')).toBeInTheDocument()
     expect(screen.getByText('Thyrocare Labs')).toBeInTheDocument()
-    expect(screen.getByText('Dr. Patel')).toBeInTheDocument()
   })
 
   it('renders parameter table when loaded', async () => {

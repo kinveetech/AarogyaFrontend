@@ -502,7 +502,7 @@ function ReportSelector({
   onToggle,
   loading,
 }: {
-  reports: { id: string; title: string; reportDate: string }[]
+  reports: { id: string; title: string; createdAt: string }[]
   selectedIds: Set<string>
   onToggle: (id: string) => void
   loading: boolean
@@ -555,7 +555,7 @@ function ReportSelector({
             {report.title}
           </Text>
           <Text fontFamily="mono" fontSize="0.75rem" color="text.muted" flexShrink={0}>
-            {new Date(report.reportDate).toLocaleDateString('en-IN', {
+            {new Date(report.createdAt).toLocaleDateString('en-IN', {
               day: 'numeric',
               month: 'short',
               year: 'numeric',

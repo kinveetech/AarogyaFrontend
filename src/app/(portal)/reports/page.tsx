@@ -34,7 +34,7 @@ function filterReportsClientSide(
 ): Report[] {
   return items.filter((report) => {
     if (status !== 'all' && report.status !== status) return false
-    if (dateRange && dateRange.length >= 2 && !isDateInRange(report.reportDate, dateRange)) {
+    if (dateRange && dateRange.length >= 2 && !isDateInRange(report.createdAt, dateRange)) {
       return false
     }
     return true

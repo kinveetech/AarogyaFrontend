@@ -104,7 +104,7 @@ function groupByMonth(reports: Report[]): MonthGroup[] {
   const groups = new Map<string, Report[]>()
 
   for (const report of reports) {
-    const key = formatMonthYear(report.reportDate)
+    const key = formatMonthYear(report.createdAt)
     const existing = groups.get(key) ?? []
     existing.push(report)
     groups.set(key, existing)
@@ -154,7 +154,7 @@ export function ReportTimeline({
   }
 
   const sorted = [...reports].sort(
-    (a, b) => new Date(b.reportDate).getTime() - new Date(a.reportDate).getTime(),
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
   )
   const visibleReports = showAll ? sorted : sorted.slice(0, maxVisible)
   const groups = groupByMonth(visibleReports)
@@ -231,7 +231,7 @@ export function ReportTimeline({
                             <Text>{REPORT_TYPE_LABELS[report.reportType]}</Text>
                           </HStack>
                           <Text fontSize="xs" color="text.muted">
-                            {formatDay(report.reportDate)}
+                            {formatDay(report.createdAt)}
                           </Text>
                         </HStack>
 

@@ -195,13 +195,9 @@ describe('ReportUploadPage', () => {
           title: 'Report #1',
           reportType: 'blood_test',
           status: 'pending',
-          reportDate: '2026-02-22',
           labName: 'City Medical Lab',
-          doctorName: null,
-          notes: null,
           highlightParameter: null,
           createdAt: '2026-02-22T10:00:00Z',
-          updatedAt: '2026-02-22T10:00:00Z',
         }),
       )
 
@@ -242,13 +238,9 @@ describe('ReportUploadPage', () => {
           title: 'Report #42',
           reportType: 'blood_test',
           status: 'pending',
-          reportDate: '2026-02-22',
           labName: 'City Medical Lab',
-          doctorName: null,
-          notes: null,
           highlightParameter: null,
           createdAt: '2026-02-22T10:00:00Z',
-          updatedAt: '2026-02-22T10:00:00Z',
         }),
       )
 
@@ -378,13 +370,9 @@ describe('ReportUploadPage', () => {
           title: 'Report #1',
           reportType: 'blood_test',
           status: 'pending',
-          reportDate: '2026-02-22',
           labName: 'City Medical Lab',
-          doctorName: null,
-          notes: null,
           highlightParameter: null,
           createdAt: '2026-02-22T10:00:00Z',
-          updatedAt: '2026-02-22T10:00:00Z',
         }),
       )
 

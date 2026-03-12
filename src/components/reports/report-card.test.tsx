@@ -9,13 +9,9 @@ const mockReport: Report = {
   title: 'Complete Blood Count',
   reportType: 'blood_test',
   status: 'verified',
-  reportDate: '2025-01-15T00:00:00Z',
   labName: 'Thyrocare Labs',
-  doctorName: null,
-  notes: null,
   highlightParameter: 'Hemoglobin: 14.2 g/dL',
   createdAt: '2025-01-15T10:00:00Z',
-  updatedAt: '2025-01-15T10:00:00Z',
 }
 
 describe('ReportCard', () => {
@@ -58,7 +54,7 @@ describe('ReportCard', () => {
   })
 
   it('does not render lab name when null', () => {
-    const report = { ...mockReport, labName: null, doctorName: null }
+    const report = { ...mockReport, labName: null }
     render(<ReportCard {...defaultProps} report={report} />)
     expect(screen.queryByText('Thyrocare Labs')).not.toBeInTheDocument()
   })
@@ -97,12 +93,6 @@ describe('ReportCard', () => {
     const report = { ...mockReport, status: 'pending' as const }
     render(<ReportCard {...defaultProps} report={report} />)
     expect(screen.getByText('Pending')).toBeInTheDocument()
-  })
-
-  it('shows doctor name when lab name is absent', () => {
-    const report = { ...mockReport, labName: null, doctorName: 'Dr. Smith' }
-    render(<ReportCard {...defaultProps} report={report} />)
-    expect(screen.getByText('Dr. Smith')).toBeInTheDocument()
   })
 
   it('has no accessibility violations', async () => {

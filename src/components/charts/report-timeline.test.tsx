@@ -55,11 +55,8 @@ function createReport(overrides: Partial<Report> & { id: string; reportDate: str
     reportType: 'blood_test',
     status: 'verified',
     labName: null,
-    doctorName: null,
-    notes: null,
     highlightParameter: null,
     createdAt: overrides.reportDate,
-    updatedAt: overrides.reportDate,
     ...overrides,
   }
 }

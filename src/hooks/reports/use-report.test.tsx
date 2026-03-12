@@ -38,17 +38,13 @@ describe('useReport', () => {
       title: 'Blood Test',
       reportType: 'blood_test',
       status: 'verified',
-      reportDate: '2025-01-15',
       labName: 'PathLab',
-      doctorName: 'Dr. Smith',
-      notes: null,
       highlightParameter: 'Hemoglobin: 14.2 g/dL',
+      createdAt: '2025-01-15T10:00:00Z',
       parameters: [{ name: 'Hemoglobin', value: '14.2', unit: 'g/dL', referenceRange: '12-16', status: 'normal' }],
       objectKey: 'abc123',
       fileType: 'application/pdf',
       fileSizeBytes: 102400,
-      createdAt: '2025-01-15T10:00:00Z',
-      updatedAt: '2025-01-15T10:00:00Z',
     }
     mockFetch.mockResolvedValue(jsonResponse(detail))
 
