@@ -7,15 +7,8 @@ import { requestPushPermission } from '@/lib/fcm'
 import { SettingsSection } from './settings-section'
 import { NotificationChannelGroup } from './notification-channel-group'
 import { RegisteredDevicesSection } from './registered-devices-section'
-import { CHANNEL_ITEMS, CATEGORY_ITEMS } from './notification-constants'
-import type { NotificationChannel, NotificationCategory, ChannelPreferences } from '@/types/notification'
-
-const ALL_CATEGORIES_OFF: Record<NotificationCategory, boolean> = {
-  'report-processed': false,
-  'access-activity': false,
-  'emergency-alerts': false,
-  'system-updates': false,
-}
+import { CHANNEL_ITEMS, EVENT_ITEMS } from './notification-constants'
+import type { NotificationChannel, NotificationEventType } from '@/types/notification'
 
 function isPushBlocked(): boolean {
   return typeof window !== 'undefined' && 'Notification' in window && Notification.permission === 'denied'
@@ -26,48 +19,31 @@ export function NotificationsSection() {
   const updatePrefs = useUpdateNotificationPrefs()
   const registerToken = useRegisterDeviceToken()
 
-  const mutatePrefs = useCallback(
-    (channel: NotificationChannel, updated: ChannelPreferences) => {
-      if (!prefs) return
-      updatePrefs.mutate({
-        push: channel === 'push' ? updated : prefs.push,
-        email: channel === 'email' ? updated : prefs.email,
-        sms: channel === 'sms' ? updated : prefs.sms,
-      })
-    },
-    [prefs, updatePrefs],
-  )
-
-  const handleChannelToggle = useCallback(
-    async (channel: NotificationChannel, enabled: boolean) => {
+  const handleEventToggle = useCallback(
+    async (eventType: NotificationEventType, channel: NotificationChannel, enabled: boolean) => {
       if (!prefs) return
 
-      if (channel === 'push' && enabled) {
+      // Request push permission when enabling push for any event
+      if (channel === 'push' && enabled && !prefs[eventType].push) {
         const result = await requestPushPermission()
         if (result.status !== 'granted') return
         registerToken.mutate({ deviceToken: result.token, platform: 'web' })
       }
 
-      const currentChannel = prefs[channel]
-      const updatedChannel: ChannelPreferences = enabled
-        ? { enabled: true, categories: currentChannel.categories }
-        : { enabled: false, categories: ALL_CATEGORIES_OFF }
-
-      mutatePrefs(channel, updatedChannel)
-    },
-    [prefs, mutatePrefs, registerToken],
-  )
-
-  const handleCategoryToggle = useCallback(
-    (channel: NotificationChannel, category: NotificationCategory, enabled: boolean) => {
-      if (!prefs) return
-      const currentChannel = prefs[channel]
-      mutatePrefs(channel, {
-        ...currentChannel,
-        categories: { ...currentChannel.categories, [category]: enabled },
+      // Update the specific event's channel preference
+      updatePrefs.mutate({
+        reportUploaded: eventType === 'reportUploaded'
+          ? { ...prefs.reportUploaded, [channel]: enabled }
+          : prefs.reportUploaded,
+        accessGranted: eventType === 'accessGranted'
+          ? { ...prefs.accessGranted, [channel]: enabled }
+          : prefs.accessGranted,
+        emergencyAccess: eventType === 'emergencyAccess'
+          ? { ...prefs.emergencyAccess, [channel]: enabled }
+          : prefs.emergencyAccess,
       })
     },
-    [prefs, mutatePrefs],
+    [prefs, updatePrefs, registerToken],
   )
 
   return (
@@ -97,13 +73,10 @@ export function NotificationsSection() {
             <NotificationChannelGroup
               key={meta.channel}
               channelMeta={meta}
-              categoryItems={CATEGORY_ITEMS}
-              prefs={prefs[meta.channel]}
+              eventItems={EVENT_ITEMS}
+              prefs={prefs}
               showBorder={i > 0}
-              onChannelToggle={(enabled) => handleChannelToggle(meta.channel, enabled)}
-              onCategoryToggle={(category, enabled) =>
-                handleCategoryToggle(meta.channel, category, enabled)
-              }
+              onEventToggle={handleEventToggle}
             />
           ))}
           {isPushBlocked() && (

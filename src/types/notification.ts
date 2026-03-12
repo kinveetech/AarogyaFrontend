@@ -1,22 +1,23 @@
 export type NotificationChannel = 'push' | 'email' | 'sms'
-export type NotificationCategory = 'report-processed' | 'access-activity' | 'emergency-alerts' | 'system-updates'
+export type NotificationEventType = 'reportUploaded' | 'accessGranted' | 'emergencyAccess'
 
-export interface ChannelPreferences {
-  enabled: boolean
-  categories: Record<NotificationCategory, boolean>
+export interface EventChannelPreferences {
+  push: boolean
+  email: boolean
+  sms: boolean
 }
 
 export interface NotificationPreferences {
-  push: ChannelPreferences
-  email: ChannelPreferences
-  sms: ChannelPreferences
+  reportUploaded: EventChannelPreferences
+  accessGranted: EventChannelPreferences
+  emergencyAccess: EventChannelPreferences
   updatedAt: string
 }
 
 export interface UpdateNotificationPrefsRequest {
-  push: ChannelPreferences
-  email: ChannelPreferences
-  sms: ChannelPreferences
+  reportUploaded: EventChannelPreferences
+  accessGranted: EventChannelPreferences
+  emergencyAccess: EventChannelPreferences
 }
 
 export interface DeviceTokenRequest {

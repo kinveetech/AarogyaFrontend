@@ -28,32 +28,20 @@ function createWrapper() {
 }
 
 const mockPrefs: NotificationPreferences = {
-  push: {
-    enabled: true,
-    categories: {
-      'report-processed': true,
-      'access-activity': true,
-      'emergency-alerts': true,
-      'system-updates': false,
-    },
+  reportUploaded: {
+    push: true,
+    email: true,
+    sms: false,
   },
-  email: {
-    enabled: true,
-    categories: {
-      'report-processed': true,
-      'access-activity': false,
-      'emergency-alerts': true,
-      'system-updates': true,
-    },
+  accessGranted: {
+    push: true,
+    email: false,
+    sms: false,
   },
-  sms: {
-    enabled: false,
-    categories: {
-      'report-processed': false,
-      'access-activity': false,
-      'emergency-alerts': false,
-      'system-updates': false,
-    },
+  emergencyAccess: {
+    push: true,
+    email: true,
+    sms: true,
   },
   updatedAt: '2025-06-01T00:00:00Z',
 }

@@ -34,32 +34,20 @@ function createWrapper(gcTime = 0) {
 }
 
 const allEnabled: UpdateNotificationPrefsRequest = {
-  push: {
-    enabled: true,
-    categories: {
-      'report-processed': true,
-      'access-activity': true,
-      'emergency-alerts': true,
-      'system-updates': true,
-    },
+  reportUploaded: {
+    push: true,
+    email: true,
+    sms: false,
   },
-  email: {
-    enabled: true,
-    categories: {
-      'report-processed': true,
-      'access-activity': true,
-      'emergency-alerts': true,
-      'system-updates': true,
-    },
+  accessGranted: {
+    push: true,
+    email: true,
+    sms: false,
   },
-  sms: {
-    enabled: false,
-    categories: {
-      'report-processed': false,
-      'access-activity': false,
-      'emergency-alerts': false,
-      'system-updates': false,
-    },
+  emergencyAccess: {
+    push: true,
+    email: true,
+    sms: false,
   },
 }
 
@@ -88,40 +76,28 @@ describe('useUpdateNotificationPrefs', () => {
     expect(calledInit.method).toBe('PUT')
 
     const body = JSON.parse(calledInit.body as string)
-    expect(body.push.enabled).toBe(true)
-    expect(body.sms.enabled).toBe(false)
+    expect(body.reportUploaded.push).toBe(true)
+    expect(body.reportUploaded.sms).toBe(false)
   })
 
   it('optimistically updates prefs in cache', async () => {
     const wrapper = createWrapper(Infinity)
 
     const initialData: NotificationPreferences = {
-      push: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      reportUploaded: {
+        push: false,
+        email: false,
+        sms: false,
       },
-      email: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      accessGranted: {
+        push: false,
+        email: false,
+        sms: false,
       },
-      sms: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      emergencyAccess: {
+        push: false,
+        email: false,
+        sms: false,
       },
       updatedAt: '2025-06-01T00:00:00Z',
     }
@@ -146,7 +122,7 @@ describe('useUpdateNotificationPrefs', () => {
       const cached = queryClient.getQueryData<NotificationPreferences>(
         queryKeys.notifications.prefs(),
       )
-      expect(cached?.push.enabled).toBe(true)
+      expect(cached?.reportUploaded.push).toBe(true)
     })
 
     await act(async () => {
@@ -158,32 +134,20 @@ describe('useUpdateNotificationPrefs', () => {
     const wrapper = createWrapper(Infinity)
 
     const initialData: NotificationPreferences = {
-      push: {
-        enabled: true,
-        categories: {
-          'report-processed': true,
-          'access-activity': true,
-          'emergency-alerts': true,
-          'system-updates': true,
-        },
+      reportUploaded: {
+        push: true,
+        email: true,
+        sms: false,
       },
-      email: {
-        enabled: true,
-        categories: {
-          'report-processed': true,
-          'access-activity': true,
-          'emergency-alerts': true,
-          'system-updates': true,
-        },
+      accessGranted: {
+        push: true,
+        email: true,
+        sms: false,
       },
-      sms: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      emergencyAccess: {
+        push: true,
+        email: true,
+        sms: false,
       },
       updatedAt: '2025-06-01T00:00:00Z',
     }
@@ -193,32 +157,20 @@ describe('useUpdateNotificationPrefs', () => {
     mockFetch.mockResolvedValue(jsonResponse({ message: 'Server error' }, 500))
 
     const disabledAll: UpdateNotificationPrefsRequest = {
-      push: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      reportUploaded: {
+        push: false,
+        email: false,
+        sms: false,
       },
-      email: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      accessGranted: {
+        push: false,
+        email: false,
+        sms: false,
       },
-      sms: {
-        enabled: false,
-        categories: {
-          'report-processed': false,
-          'access-activity': false,
-          'emergency-alerts': false,
-          'system-updates': false,
-        },
+      emergencyAccess: {
+        push: false,
+        email: false,
+        sms: false,
       },
     }
 
@@ -234,7 +186,7 @@ describe('useUpdateNotificationPrefs', () => {
       const cached = queryClient.getQueryData<NotificationPreferences>(
         queryKeys.notifications.prefs(),
       )
-      expect(cached?.push.enabled).toBe(true)
+      expect(cached?.reportUploaded.push).toBe(true)
     })
   })
 })

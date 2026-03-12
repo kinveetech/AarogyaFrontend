@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { CHANNEL_ITEMS, CATEGORY_ITEMS } from './notification-constants'
+import { CHANNEL_ITEMS, EVENT_ITEMS } from './notification-constants'
 
 describe('notification constants', () => {
   describe('CHANNEL_ITEMS', () => {
@@ -20,23 +20,22 @@ describe('notification constants', () => {
     })
   })
 
-  describe('CATEGORY_ITEMS', () => {
-    it('has 4 categories', () => {
-      expect(CATEGORY_ITEMS).toHaveLength(4)
+  describe('EVENT_ITEMS', () => {
+    it('has 3 event types', () => {
+      expect(EVENT_ITEMS).toHaveLength(3)
     })
 
-    it('includes all notification categories', () => {
-      const categories = CATEGORY_ITEMS.map((c) => c.category)
-      expect(categories).toEqual([
-        'report-processed',
-        'access-activity',
-        'emergency-alerts',
-        'system-updates',
+    it('includes all notification event types', () => {
+      const eventTypes = EVENT_ITEMS.map((e) => e.eventType)
+      expect(eventTypes).toEqual([
+        'reportUploaded',
+        'accessGranted',
+        'emergencyAccess',
       ])
     })
 
     it('each item has label and description', () => {
-      for (const item of CATEGORY_ITEMS) {
+      for (const item of EVENT_ITEMS) {
         expect(item.label).toBeTruthy()
         expect(item.description).toBeTruthy()
       }
