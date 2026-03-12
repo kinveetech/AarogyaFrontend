@@ -41,10 +41,20 @@ describe('useReport', () => {
       labName: 'PathLab',
       highlightParameter: 'Hemoglobin: 14.2 g/dL',
       createdAt: '2025-01-15T10:00:00Z',
-      parameters: [{ name: 'Hemoglobin', value: '14.2', unit: 'g/dL', referenceRange: '12-16', status: 'normal' }],
-      objectKey: 'abc123',
-      fileType: 'application/pdf',
-      fileSizeBytes: 102400,
+      reportNumber: 'RPT-001',
+      uploadedAt: '2025-01-15T10:00:00Z',
+      labCode: null,
+      collectedAt: null,
+      reportedAt: null,
+      notes: null,
+      parameters: [{ code: 'HGB', name: 'Hemoglobin', numericValue: 14.2, textValue: null, unit: 'g/dL', referenceRange: '12-16', isAbnormal: false }],
+      download: {
+        objectKey: 'abc123',
+        downloadUrl: 'https://example.com/download',
+        expiresAt: '2025-12-31T00:00:00Z',
+        provider: 's3',
+      },
+      extraction: null,
     }
     mockFetch.mockResolvedValue(jsonResponse(detail))
 

@@ -8,13 +8,10 @@ import {
   PARAMETER_STATUS_VARIANT_MAP,
 } from './report-constants'
 import type { ReportParameter } from '@/types/reports'
+import { getParameterDisplayValue, getParameterStatus } from '@/types/reports'
 
 export interface ReportDetailParametersProps {
   parameters: ReportParameter[]
-}
-
-function isAbnormal(status: ReportParameter['status']): boolean {
-  return status === 'high' || status === 'low'
 }
 
 const columns: DataTableColumn<ReportParameter>[] = [
@@ -29,27 +26,31 @@ const columns: DataTableColumn<ReportParameter>[] = [
     ),
   },
   {
-    key: 'value',
+    key: 'numericValue',
     header: 'Value',
-    render: (row) => (
-      <Box
-        as="span"
-        fontFamily="mono"
-        fontSize="sm"
-        color={isAbnormal(row.status) ? 'coral.400' : 'text.primary'}
-        css={isAbnormal(row.status) ? { _dark: { color: 'coral.300' } } : undefined}
-        fontWeight={isAbnormal(row.status) ? 'semibold' : 'normal'}
-      >
-        {row.value}
-      </Box>
-    ),
+    render: (row) => {
+      const status = getParameterStatus(row)
+      const abnormal = status === 'high' || status === 'low'
+      return (
+        <Box
+          as="span"
+          fontFamily="mono"
+          fontSize="sm"
+          color={abnormal ? 'coral.400' : 'text.primary'}
+          css={abnormal ? { _dark: { color: 'coral.300' } } : undefined}
+          fontWeight={abnormal ? 'semibold' : 'normal'}
+        >
+          {getParameterDisplayValue(row)}
+        </Box>
+      )
+    },
   },
   {
     key: 'unit',
     header: 'Unit',
     render: (row) => (
       <Box as="span" fontFamily="mono" fontSize="sm" color="text.secondary">
-        {row.unit}
+        {row.unit ?? '-'}
       </Box>
     ),
   },
@@ -58,19 +59,22 @@ const columns: DataTableColumn<ReportParameter>[] = [
     header: 'Ref Range',
     render: (row) => (
       <Box as="span" fontFamily="mono" fontSize="sm" color="text.secondary">
-        {row.referenceRange}
+        {row.referenceRange ?? '-'}
       </Box>
     ),
   },
   {
-    key: 'status',
+    key: 'isAbnormal',
     header: 'Status',
     sortable: true,
-    render: (row) => (
-      <StatusBadge variant={PARAMETER_STATUS_VARIANT_MAP[row.status]}>
-        {PARAMETER_STATUS_LABELS[row.status]}
-      </StatusBadge>
-    ),
+    render: (row) => {
+      const status = getParameterStatus(row)
+      return (
+        <StatusBadge variant={PARAMETER_STATUS_VARIANT_MAP[status]}>
+          {PARAMETER_STATUS_LABELS[status]}
+        </StatusBadge>
+      )
+    },
   },
 ]
 
