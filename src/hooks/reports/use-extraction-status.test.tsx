@@ -28,9 +28,10 @@ function createWrapper() {
 }
 
 const completedExtraction: ExtractionStatusResponse = {
-  status: 'completed',
-  extractionMethod: 'ocr',
-  structuringModel: 'gpt-4o',
+  reportId: 'r1',
+  status: 'extracted',
+  extractionMethod: 'pdfpig',
+  structuringModel: 'qwen2.5:14b-instruct',
   extractedParameterCount: 12,
   overallConfidence: 0.95,
   pageCount: 3,
@@ -40,7 +41,8 @@ const completedExtraction: ExtractionStatusResponse = {
 }
 
 const processingExtraction: ExtractionStatusResponse = {
-  status: 'processing',
+  reportId: 'r1',
+  status: 'extracting',
   extractionMethod: null,
   structuringModel: null,
   extractedParameterCount: 0,
@@ -114,7 +116,7 @@ describe('useExtractionStatus', () => {
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.status).toBe('processing')
+    expect(result.current.data?.status).toBe('extracting')
   })
 
   it('does not poll for completed status', async () => {
@@ -125,15 +127,16 @@ describe('useExtractionStatus', () => {
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.status).toBe('completed')
+    expect(result.current.data?.status).toBe('extracted')
     // Completed status should not trigger polling — only 1 call
     expect(mockFetch).toHaveBeenCalledTimes(1)
   })
 
   it('returns failed extraction with error message', async () => {
     const failedExtraction: ExtractionStatusResponse = {
-      status: 'failed',
-      extractionMethod: 'ocr',
+      reportId: 'r1',
+      status: 'extraction_failed',
+      extractionMethod: 'pdfpig',
       structuringModel: null,
       extractedParameterCount: 0,
       overallConfidence: null,
@@ -149,7 +152,7 @@ describe('useExtractionStatus', () => {
     })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.status).toBe('failed')
+    expect(result.current.data?.status).toBe('extraction_failed')
     expect(result.current.data?.errorMessage).toBe('Unable to parse document')
   })
 })

@@ -107,9 +107,10 @@ const mockReport: ReportDetail = {
 }
 
 const mockExtraction: ExtractionStatusResponse = {
-  status: 'completed',
-  extractionMethod: 'ocr',
-  structuringModel: 'gpt-4o',
+  reportId: 'r1',
+  status: 'extracted',
+  extractionMethod: 'pdfpig',
+  structuringModel: 'qwen2.5:14b-instruct',
   extractedParameterCount: 2,
   overallConfidence: 0.95,
   pageCount: 1,

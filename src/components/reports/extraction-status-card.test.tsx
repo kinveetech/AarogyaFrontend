@@ -7,8 +7,8 @@ import {
 } from './extraction-status-card'
 
 const defaultProps: ExtractionStatusCardProps = {
-  status: 'completed',
-  extractionMethod: 'ocr',
+  status: 'extracted',
+  extractionMethod: 'pdfpig',
   structuringModel: 'gpt-4o',
   extractedParameterCount: 12,
   overallConfidence: 0.95,
@@ -37,7 +37,7 @@ describe('ExtractionStatusCard', () => {
   it('displays extraction method', () => {
     renderCard()
     expect(screen.getByText('Method')).toBeInTheDocument()
-    expect(screen.getByText('OCR')).toBeInTheDocument()
+    expect(screen.getByText('PDF Text')).toBeInTheDocument()
   })
 
   it('displays structuring model', () => {
@@ -75,59 +75,48 @@ describe('ExtractionStatusCard', () => {
     expect(screen.getByText('1')).toBeInTheDocument()
   })
 
-  it('shows Re-extract button for completed status', () => {
-    renderCard({ status: 'completed' })
+  it('shows Re-extract button for extracted status', () => {
+    renderCard({ status: 'extracted' })
     expect(screen.getByRole('button', { name: /Re-extract/i })).toBeInTheDocument()
   })
 
-  it('shows Re-extract button for failed status', () => {
-    renderCard({ status: 'failed', errorMessage: 'Parse error' })
+  it('shows Re-extract button for extraction_failed status', () => {
+    renderCard({ status: 'extraction_failed', errorMessage: 'Parse error' })
     expect(screen.getByRole('button', { name: /Re-extract/i })).toBeInTheDocument()
   })
 
-  it('does not show Re-extract button for pending status', () => {
-    renderCard({ status: 'pending' })
-    expect(screen.queryByRole('button', { name: /Re-extract/i })).not.toBeInTheDocument()
-  })
-
-  it('does not show Re-extract button for processing status', () => {
-    renderCard({ status: 'processing' })
+  it('does not show Re-extract button for extracting status', () => {
+    renderCard({ status: 'extracting' })
     expect(screen.queryByRole('button', { name: /Re-extract/i })).not.toBeInTheDocument()
   })
 
   it('calls onTriggerExtraction when Re-extract is clicked', async () => {
     const onTrigger = vi.fn()
-    renderCard({ status: 'failed', errorMessage: 'Error', onTriggerExtraction: onTrigger })
+    renderCard({ status: 'extraction_failed', errorMessage: 'Error', onTriggerExtraction: onTrigger })
 
     await userEvent.click(screen.getByRole('button', { name: /Re-extract/i }))
     expect(onTrigger).toHaveBeenCalledTimes(1)
   })
 
-  it('shows progress indicator for pending status', () => {
-    renderCard({ status: 'pending' })
-    expect(screen.getByTestId('extraction-progress')).toBeInTheDocument()
-    expect(screen.getByText(/queued/i)).toBeInTheDocument()
-  })
-
-  it('shows progress indicator for processing status', () => {
-    renderCard({ status: 'processing' })
+  it('shows progress indicator for extracting status', () => {
+    renderCard({ status: 'extracting' })
     expect(screen.getByTestId('extraction-progress')).toBeInTheDocument()
     expect(screen.getByText(/Extracting parameters/i)).toBeInTheDocument()
   })
 
-  it('does not show progress indicator for completed status', () => {
-    renderCard({ status: 'completed' })
+  it('does not show progress indicator for extracted status', () => {
+    renderCard({ status: 'extracted' })
     expect(screen.queryByTestId('extraction-progress')).not.toBeInTheDocument()
   })
 
-  it('shows error message for failed status', () => {
-    renderCard({ status: 'failed', errorMessage: 'Unable to parse document' })
+  it('shows error message for extraction_failed status', () => {
+    renderCard({ status: 'extraction_failed', errorMessage: 'Unable to parse document' })
     expect(screen.getByTestId('extraction-error')).toBeInTheDocument()
     expect(screen.getByText('Unable to parse document')).toBeInTheDocument()
   })
 
   it('does not show error alert when no error message', () => {
-    renderCard({ status: 'failed', errorMessage: null })
+    renderCard({ status: 'extraction_failed', errorMessage: null })
     expect(screen.queryByTestId('extraction-error')).not.toBeInTheDocument()
   })
 
@@ -166,14 +155,14 @@ describe('ExtractionStatusCard', () => {
     expect(screen.queryByText('Attempts')).not.toBeInTheDocument()
   })
 
-  it('displays native_text method label correctly', () => {
-    renderCard({ extractionMethod: 'native_text' })
-    expect(screen.getByText('Native Text')).toBeInTheDocument()
+  it('displays textract method label correctly', () => {
+    renderCard({ extractionMethod: 'textract' })
+    expect(screen.getByText('Textract')).toBeInTheDocument()
   })
 
-  it('displays hybrid method label correctly', () => {
-    renderCard({ extractionMethod: 'hybrid' })
-    expect(screen.getByText('Hybrid')).toBeInTheDocument()
+  it('displays pdfpig+textract method label correctly', () => {
+    renderCard({ extractionMethod: 'pdfpig+textract' })
+    expect(screen.getByText('PDF Text + Textract')).toBeInTheDocument()
   })
 
   it('formats low confidence correctly', () => {
