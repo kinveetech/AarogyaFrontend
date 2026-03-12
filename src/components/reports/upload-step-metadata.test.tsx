@@ -3,7 +3,7 @@ import { render, screen, userEvent, waitFor } from '@/test/render'
 import { UploadStepMetadata } from './upload-step-metadata'
 
 const defaultProps = {
-  defaultTitle: 'blood-report',
+  defaultLabName: 'City Medical Lab',
   onSubmit: vi.fn(),
   onBack: vi.fn(),
 }
@@ -12,21 +12,21 @@ describe('UploadStepMetadata', () => {
   it('renders all form fields', () => {
     render(<UploadStepMetadata {...defaultProps} />)
 
-    expect(screen.getByLabelText('Title')).toBeInTheDocument()
     expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
-    expect(screen.getByLabelText('Report Date')).toBeInTheDocument()
+    expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+    expect(screen.getByLabelText('Collection Date')).toBeInTheDocument()
     expect(screen.getByLabelText('Notes')).toBeInTheDocument()
   })
 
-  it('pre-fills title with defaultTitle', () => {
+  it('pre-fills lab name with defaultLabName', () => {
     render(<UploadStepMetadata {...defaultProps} />)
-    expect(screen.getByLabelText('Title')).toHaveValue('blood-report')
+    expect(screen.getByLabelText('Lab Name')).toHaveValue('City Medical Lab')
   })
 
-  it('pre-fills report date with today', () => {
+  it('pre-fills collection date with today', () => {
     render(<UploadStepMetadata {...defaultProps} />)
     const today = new Date().toISOString().split('T')[0]
-    expect(screen.getByLabelText('Report Date')).toHaveValue(today)
+    expect(screen.getByLabelText('Collection Date')).toHaveValue(today)
   })
 
   it('renders all report type options', () => {
@@ -51,14 +51,14 @@ describe('UploadStepMetadata', () => {
     })
 
     const submittedData = onSubmit.mock.calls[0][0]
-    expect(submittedData.title).toBe('blood-report')
     expect(submittedData.reportType).toBe('blood_test')
-    expect(submittedData.reportDate).toBeTruthy()
+    expect(submittedData.labName).toBe('City Medical Lab')
+    expect(submittedData.collectedAt).toBeTruthy()
   })
 
-  it('shows validation error for empty title', async () => {
+  it('shows validation error for empty lab name', async () => {
     const onSubmit = vi.fn()
-    render(<UploadStepMetadata {...defaultProps} defaultTitle="" onSubmit={onSubmit} />)
+    render(<UploadStepMetadata {...defaultProps} defaultLabName="" onSubmit={onSubmit} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Upload' }))
 

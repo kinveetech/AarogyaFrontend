@@ -16,7 +16,7 @@ const mockReport: ReportDetail = {
   createdAt: '2025-01-15T10:00:00Z',
   updatedAt: '2025-01-15T10:00:00Z',
   parameters: [],
-  fileKey: 'uploads/abc123.pdf',
+  objectKey: 'uploads/abc123.pdf',
   fileType: 'application/pdf',
   fileSizeBytes: 204800,
 }

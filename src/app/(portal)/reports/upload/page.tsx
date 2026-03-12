@@ -13,9 +13,9 @@ type Step = 1 | 2 | 3
 
 const STEP_LABELS = ['Select File', 'Details', 'Upload']
 
-function removeExtension(fileName: string): string {
-  const lastDot = fileName.lastIndexOf('.')
-  return lastDot > 0 ? fileName.slice(0, lastDot) : fileName
+function toIsoDateTimeOffset(dateString: string): string {
+  const date = new Date(dateString)
+  return date.toISOString()
 }
 
 export default function ReportUploadPage() {
@@ -58,7 +58,7 @@ export default function ReportUploadPage() {
   const runUploadFlow = useCallback(
     async (uploadFile: File, meta: ReportMetadata) => {
       try {
-        const { uploadUrl, fileKey } = await getUploadUrl.mutateAsync({
+        const { uploadUrl, objectKey } = await getUploadUrl.mutateAsync({
           fileName: uploadFile.name,
           contentType: uploadFile.type,
         })
@@ -66,11 +66,12 @@ export default function ReportUploadPage() {
         await s3Upload.upload(uploadUrl, uploadFile)
 
         const report = await createReport.mutateAsync({
-          title: meta.title,
           reportType: meta.reportType,
-          reportDate: meta.reportDate,
-          fileKey,
+          objectKey,
+          labName: meta.labName,
+          collectedAt: toIsoDateTimeOffset(meta.collectedAt),
           notes: meta.notes || undefined,
+          parameters: [],
         })
 
         setCreatedReportId(report.id)
@@ -210,7 +211,6 @@ export default function ReportUploadPage() {
 
         {step === 2 && file && (
           <UploadStepMetadata
-            defaultTitle={removeExtension(file.name)}
             onSubmit={handleMetadataSubmit}
             onBack={handleMetadataBack}
           />

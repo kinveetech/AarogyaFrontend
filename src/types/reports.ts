@@ -28,7 +28,7 @@ export interface Report {
 
 export interface ReportDetail extends Report {
   parameters: ReportParameter[]
-  fileKey: string
+  objectKey: string
   fileType: string
   fileSizeBytes: number
 }
@@ -43,7 +43,7 @@ export interface ReportListResponse {
 
 export interface UploadUrlResponse {
   uploadUrl: string
-  fileKey: string
+  objectKey: string
   expiresAt: string
 }
 
@@ -52,12 +52,25 @@ export interface DownloadUrlResponse {
   expiresAt: string
 }
 
+export interface CreateReportParameterRequest {
+  code: string
+  name: string
+  value?: number
+  valueText?: string
+  unit?: string
+  referenceRange?: string
+  isAbnormal?: boolean
+}
+
 export interface CreateReportRequest {
-  title: string
   reportType: ReportType
-  reportDate: string
-  fileKey: string
+  objectKey: string
+  labName: string
+  labCode?: string
+  collectedAt?: string
+  reportedAt?: string
   notes?: string
+  parameters: CreateReportParameterRequest[]
 }
 
 export interface UploadUrlRequest {

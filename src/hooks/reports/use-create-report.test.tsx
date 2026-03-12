@@ -45,7 +45,7 @@ describe('useCreateReport', () => {
       reportType: 'blood_test',
       status: 'pending',
       reportDate: '2025-01-15',
-      labName: null,
+      labName: 'City Medical Lab',
       doctorName: null,
       notes: null,
       highlightParameter: null,
@@ -60,10 +60,11 @@ describe('useCreateReport', () => {
 
     await act(() =>
       result.current.mutateAsync({
-        title: 'Blood Test',
         reportType: 'blood_test',
-        reportDate: '2025-01-15',
-        fileKey: 'uploads/abc123.pdf',
+        objectKey: 'uploads/abc123.pdf',
+        labName: 'City Medical Lab',
+        collectedAt: '2025-01-15T00:00:00Z',
+        parameters: [],
       }),
     )
 
@@ -76,10 +77,11 @@ describe('useCreateReport', () => {
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('POST')
     expect(JSON.parse(calledInit.body as string)).toEqual({
-      title: 'Blood Test',
       reportType: 'blood_test',
-      reportDate: '2025-01-15',
-      fileKey: 'uploads/abc123.pdf',
+      objectKey: 'uploads/abc123.pdf',
+      labName: 'City Medical Lab',
+      collectedAt: '2025-01-15T00:00:00Z',
+      parameters: [],
     })
   })
 
@@ -88,17 +90,18 @@ describe('useCreateReport', () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries')
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ id: 'r1', title: 'Test', reportType: 'blood_test', status: 'pending', reportDate: '2025-01-15', labName: null, doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-15T10:00:00Z', updatedAt: '2025-01-15T10:00:00Z' }),
+      jsonResponse({ id: 'r1', title: 'Test', reportType: 'blood_test', status: 'pending', reportDate: '2025-01-15', labName: 'City Medical Lab', doctorName: null, notes: null, highlightParameter: null, createdAt: '2025-01-15T10:00:00Z', updatedAt: '2025-01-15T10:00:00Z' }),
     )
 
     const { result } = renderHook(() => useCreateReport(), { wrapper })
 
     await act(() =>
       result.current.mutateAsync({
-        title: 'Test',
         reportType: 'blood_test',
-        reportDate: '2025-01-15',
-        fileKey: 'uploads/key.pdf',
+        objectKey: 'uploads/key.pdf',
+        labName: 'City Medical Lab',
+        collectedAt: '2025-01-15T00:00:00Z',
+        parameters: [],
       }),
     )
 

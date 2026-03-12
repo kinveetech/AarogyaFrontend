@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aarogya — Reports Page Mockup</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Outfit:wght@200;300;400;500;600;700&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════════════════════════════════════════
+   DESIGN TOKENS
+   ═══════════════════════════════════════════ */
+:root {
+  --teal-deep: #0A4D4A;
+  --teal-mid: #0E6B66;
+  --teal-light: #1A9E97;
+  --sage: #7FB285;
+  --sage-light: #A8D5AE;
+  --cream: #FFF8F0;
+  --coral: #FF6B6B;
+  --amber: #FFB347;
+  --amber-glow: #FFD693;
+
+  --bg-canvas: #FFF8F0;
+  --bg-surface: #F0FAF0;
+  --bg-card: rgba(255, 255, 255, 0.75);
+  --bg-glass: rgba(255, 255, 255, 0.45);
+  --bg-overlay: rgba(10, 77, 74, 0.06);
+  --text-primary: #0A4D4A;
+  --text-secondary: #0E6B66;
+  --text-muted: #619065;
+  --text-inverse: #FFFFFF;
+  --border-subtle: rgba(10, 77, 74, 0.10);
+  --border-default: rgba(10, 77, 74, 0.18);
+  --action-primary: #0E6B66;
+  --action-primary-hover: #0A4D4A;
+  --action-primary-text: #FFFFFF;
+  --orb-primary: #A8D5AE;
+  --orb-secondary: #FFD693;
+  --orb-tertiary: #FF8A8A;
+  --status-success: #619065;
+  --status-warning: #FFB347;
+  --status-error: #FF6B6B;
+  --status-info: #0E6B66;
+  --page-gradient: linear-gradient(165deg, #FFF8F0 0%, #F0FAF0 40%, #E0F5F0 70%, #D5F0EA 100%);
+  --shadow-glass: 0 8px 32px rgba(10,77,74,0.08), 0 2px 8px rgba(10,77,74,0.04), inset 0 1px 0 rgba(255,255,255,0.6);
+  --shadow-md: 0 4px 16px rgba(10,77,74,0.08), 0 2px 6px rgba(10,77,74,0.06);
+  --progress-gradient: linear-gradient(90deg, #0E6B66, #7FB285, #FFB347);
+}
+
+[data-mode="dark"] {
+  --bg-canvas: #0B1A1A;
+  --bg-surface: #112626;
+  --bg-card: #1A3535;
+  --bg-glass: rgba(26, 53, 53, 0.55);
+  --bg-overlay: rgba(168, 213, 174, 0.06);
+  --text-primary: #E8F5F0;
+  --text-secondary: #9DC5A1;
+  --text-muted: #7FB285;
+  --text-inverse: #0A4D4A;
+  --border-subtle: rgba(168, 213, 174, 0.10);
+  --border-default: rgba(168, 213, 174, 0.18);
+  --action-primary: #1A9E97;
+  --action-primary-hover: #4FB4B0;
+  --action-primary-text: #FFFFFF;
+  --orb-primary: rgba(10, 77, 74, 0.7);
+  --orb-secondary: rgba(26, 158, 151, 0.4);
+  --orb-tertiary: rgba(255, 107, 107, 0.15);
+  --status-success: #9DC5A1;
+  --status-warning: #FFB347;
+  --status-error: #FF8A8A;
+  --status-info: #1A9E97;
+  --page-gradient: linear-gradient(165deg, #0B1A1A 0%, #0F2020 40%, #112626 70%, #142B2B 100%);
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.2), 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 rgba(255,255,255,0.05);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.15), 0 2px 6px rgba(0,0,0,0.1);
+}
+
+/* ═══════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  font-family: 'Outfit', sans-serif;
+  background: var(--page-gradient);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   AMBIENT ORBS
+   ═══════════════════════════════════════════ */
+.ambient-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+
+.orb {
+  position: absolute;
+  border-radius: 50%;
+}
+
+.orb-1 {
+  width: 500px; height: 500px;
+  background: var(--orb-primary);
+  filter: blur(120px);
+  opacity: 0.35;
+  top: -10%; right: -5%;
+  animation: float-1 25s ease-in-out infinite;
+}
+
+.orb-2 {
+  width: 400px; height: 400px;
+  background: var(--orb-secondary);
+  filter: blur(100px);
+  opacity: 0.3;
+  bottom: 10%; left: -8%;
+  animation: float-2 30s ease-in-out infinite;
+}
+
+.orb-3 {
+  width: 300px; height: 300px;
+  background: var(--orb-tertiary);
+  filter: blur(80px);
+  opacity: 0.25;
+  top: 40%; left: 50%;
+  animation: float-3 22s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-40px, 30px); }
+  66% { transform: translate(20px, -20px); }
+}
+@keyframes float-2 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -40px); }
+  66% { transform: translate(-20px, 25px); }
+}
+@keyframes float-3 {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(-25px, -30px); }
+  66% { transform: translate(35px, 15px); }
+}
+
+/* ═══════════════════════════════════════════
+   TOP BAR
+   ═══════════════════════════════════════════ */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.brand-text {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon-btn {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, color 0.2s;
+}
+.icon-btn:hover {
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+}
+
+.avatar {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ═══════════════════════════════════════════
+   SIDEBAR
+   ═══════════════════════════════════════════ */
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  bottom: 0;
+  width: 240px;
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-right: 1px solid var(--border-subtle);
+  z-index: 90;
+  padding-top: 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  margin: 4px 8px;
+  border-radius: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-item:hover {
+  background: var(--bg-overlay);
+  color: var(--text-secondary);
+}
+.nav-item.active {
+  background: var(--bg-card);
+  color: var(--action-primary);
+}
+.nav-item svg { flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════
+   BOTTOM NAV (mobile)
+   ═══════════════════════════════════════════ */
+.bottom-nav {
+  display: none;
+  position: fixed;
+  bottom: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 100;
+  background: var(--bg-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 6px 0;
+  box-shadow: var(--shadow-glass);
+}
+
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 12px;
+  text-decoration: none;
+  color: var(--text-muted);
+  border-radius: 12px;
+  transition: color 0.2s;
+}
+.bottom-nav-item.active { color: var(--action-primary); }
+.bottom-nav-item span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════
+   MAIN CONTENT
+   ═══════════════════════════════════════════ */
+.main-content {
+  margin-left: 240px;
+  padding: 80px 24px 40px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ═══════════════════════════════════════════
+   FRAME LABELS (design asset convention)
+   ═══════════════════════════════════════════ */
+.frame-section {
+  max-width: 960px;
+  margin: 0 auto 80px;
+}
+
+.concept-label {
+  font-weight: 600;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--coral);
+  margin-bottom: 6px;
+  text-align: center;
+}
+.concept-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  text-align: center;
+}
+.concept-desc {
+  font-weight: 300;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  margin-bottom: 32px;
+  text-align: center;
+  max-width: 540px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.frame-box {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: var(--shadow-glass);
+}
+
+/* ═══════════════════════════════════════════
+   SHARED COMPONENTS
+   ═══════════════════════════════════════════ */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 2px 8px rgba(14,107,102,0.2);
+}
+.btn-primary:hover {
+  background: var(--action-primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(14,107,102,0.25);
+}
+
+.btn-primary-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: none;
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+}
+.btn-primary-sm:hover {
+  background: var(--action-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-outline-sm {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+.btn-outline-sm:hover {
+  background: var(--bg-overlay);
+  border-color: var(--action-primary);
+}
+
+.btn-danger-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  border: 1px solid var(--status-error);
+  background: transparent;
+  color: var(--status-error);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-danger-outline:hover {
+  background: rgba(255, 107, 107, 0.08);
+}
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 9999px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+.badge-verified { background: var(--sage); color: #fff; }
+.badge-processing { background: var(--status-info); color: #fff; }
+.badge-pending { background: var(--amber); color: #fff; }
+.badge-normal { background: rgba(127, 178, 133, 0.15); color: var(--status-success); }
+.badge-high { background: rgba(255, 107, 107, 0.15); color: var(--status-error); }
+
+.glass-input {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-primary);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.glass-input:focus { border-color: var(--action-primary); }
+.glass-input::placeholder { color: var(--text-muted); }
+
+select.glass-input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23619065' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+textarea.glass-input { resize: vertical; min-height: 80px; }
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-overlay);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.6s ease;
+}
+.progress-gradient { background: var(--progress-gradient); }
+.progress-sage { background: var(--sage); }
+.progress-amber { background: var(--amber); }
+
+/* ═══════════════════════════════════════════
+   FRAME 1: LISTING VIEW
+   ═══════════════════════════════════════════ */
+.listing-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.listing-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--text-primary);
+}
+
+.filter-bar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.filter-bar .glass-input { max-width: 260px; }
+.filter-bar select.glass-input { max-width: 180px; }
+
+.report-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.report-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+}
+
+.report-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.report-card h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--text-primary);
+}
+
+.report-card .subtitle {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.report-card .date {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.metric-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.report-card-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ═══════════════════════════════════════════
+   FRAME 2: DETAIL VIEW
+   ═══════════════════════════════════════════ */
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-glass);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.detail-header h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+}
+
+.detail-header .date {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-left: auto;
+}
+
+.detail-split {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.pdf-preview {
+  aspect-ratio: 3/4;
+  background: var(--bg-overlay);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+.pdf-preview svg { opacity: 0.5; }
+
+.param-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+.param-table th {
+  text-align: left;
+  padding: 10px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-default);
+}
+.param-table td {
+  padding: 10px 12px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.param-table td:first-child {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 500;
+}
+.param-table tr:last-child td { border-bottom: none; }
+
+.detail-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* ═══════════════════════════════════════════
+   FRAME 3: UPLOAD FLOW
+   ═══════════════════════════════════════════ */
+.steps-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 32px;
+}
+
+.step-circle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.step-circle.active {
+  background: var(--action-primary);
+  color: var(--action-primary-text);
+}
+.step-circle.inactive {
+  border: 2px solid var(--border-default);
+  background: transparent;
+  color: var(--text-muted);
+}
+
+.step-label {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 4px;
+}
+.step-label.active-label { color: var(--action-primary); }
+
+.step-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-line {
+  width: 80px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--bg-overlay);
+  position: relative;
+  margin: 0 4px;
+  align-self: center;
+  margin-bottom: 18px;
+}
+.step-line::after {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  border-radius: 2px;
+}
+.step-line.half::after {
+  width: 50%;
+  background: var(--action-primary);
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--border-default);
+  border-radius: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  transition: border-color 0.2s, background 0.2s;
+}
+.upload-dropzone:hover {
+  border-color: var(--action-primary);
+  background: var(--bg-overlay);
+}
+
+.upload-dropzone .drop-text {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.upload-dropzone .drop-hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.upload-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.upload-progress-row .file-name {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.greyed-section {
+  opacity: 0.45;
+  pointer-events: none;
+  margin-top: 28px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.greyed-section h3 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1rem;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.form-grid .full-width { grid-column: 1 / -1; }
+
+.form-field label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.review-summary {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 8px 16px;
+  font-size: 0.85rem;
+}
+.review-summary dt {
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.review-summary dd {
+  color: var(--text-primary);
+}
+
+/* ═══════════════════════════════════════════
+   FRAME 4: LOADING/SKELETON
+   ═══════════════════════════════════════════ */
+.skeleton-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.skeleton-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: var(--shadow-glass);
+}
+
+.skeleton-bar {
+  height: 14px;
+  border-radius: 7px;
+  background: var(--bg-overlay);
+  position: relative;
+  overflow: hidden;
+}
+.skeleton-bar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.8s infinite;
+}
+[data-mode="dark"] .skeleton-bar::after {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+
+.skeleton-bar.w60 { width: 60%; }
+.skeleton-bar.w40 { width: 40%; }
+.skeleton-bar.w80 { width: 80%; }
+.skeleton-bar.w30 { width: 30%; }
+.skeleton-bar.h8 { height: 8px; }
+.skeleton-bar.h6 { height: 6px; }
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .sidebar { display: none; }
+  .hamburger { display: flex; }
+  .bottom-nav { display: block; }
+  .main-content { margin-left: 0; padding-bottom: 100px; }
+  .report-grid, .skeleton-grid { grid-template-columns: 1fr; }
+  .detail-split { grid-template-columns: 1fr; }
+  .detail-split .pdf-preview { max-width: 280px; margin: 0 auto; }
+  .filter-bar .glass-input,
+  .filter-bar select.glass-input { max-width: 100%; flex: 1; min-width: 0; }
+  .form-grid { grid-template-columns: 1fr; }
+  .detail-header .date { margin-left: 0; }
+  .frame-box { padding: 20px 16px; }
+}
+</style>
+</head>
+
+<body>
+<div class="ambient-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- ═══ TOP BAR ═══ -->
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="hamburger" aria-label="Menu">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <!-- Shield Tree logo (simplified shield) -->
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <path d="M16 2L4 7v9c0 7.5 5.1 14.2 12 16 6.9-1.8 12-8.5 12-16V7L16 2z" fill="var(--action-primary)" opacity="0.15" stroke="var(--action-primary)" stroke-width="1.5"/>
+      <path d="M16 10c0 0-2 1-2 4 0 2 1 3 2 3s2-1 2-3c0-3-2-4-2-4z" fill="var(--sage)"/>
+      <line x1="16" y1="17" x2="16" y2="22" stroke="var(--sage)" stroke-width="1.5" stroke-linecap="round"/>
+      <path d="M13 19c1.5-1 2-2 3-2m0 0c1 0 1.5 1 3 2" stroke="var(--sage)" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    </svg>
+    <span class="brand-text">Aarogya</span>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" aria-label="Notifications">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <div class="avatar">AK</div>
+    <button class="icon-btn" id="themeToggle" aria-label="Toggle dark mode">
+      <svg class="icon-moon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      <svg class="icon-sun" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</header>
+
+<!-- ═══ SIDEBAR ═══ -->
+<nav class="sidebar" aria-label="Main navigation">
+  <a href="/reports" class="nav-item active">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    Reports
+  </a>
+  <a href="/access" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Access
+  </a>
+  <a href="/emergency" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    Emergency
+  </a>
+  <a href="/settings" class="nav-item">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+  </a>
+</nav>
+
+<!-- ═══ BOTTOM NAV (mobile) ═══ -->
+<nav class="bottom-nav" aria-label="Mobile navigation">
+  <div class="bottom-nav-inner">
+    <a href="/reports" class="bottom-nav-item active">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      <span>Reports</span>
+    </a>
+    <a href="/access" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      <span>Access</span>
+    </a>
+    <a href="/emergency" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3"/></svg>
+      <span>Emergency</span>
+    </a>
+    <a href="/settings" class="bottom-nav-item">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33"/></svg>
+      <span>Settings</span>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══ MAIN CONTENT ═══ -->
+<main class="main-content">
+
+  <!-- ═══════════════════════════════════════
+       FRAME 1: LISTING VIEW
+       ═══════════════════════════════════════ -->
+  <section class="frame-section">
+    <div class="concept-label">Frame 1</div>
+    <div class="concept-title">Reports — Listing View</div>
+    <div class="concept-desc">Browse, search, and filter all uploaded health reports</div>
+    <div class="frame-box">
+      <div class="listing-header">
+        <h1>My Reports</h1>
+        <button class="btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Upload Report
+        </button>
+      </div>
+
+      <div class="filter-bar">
+        <input type="text" class="glass-input" placeholder="Search reports..." aria-label="Search reports">
+        <select class="glass-input" aria-label="Filter by type">
+          <option>All Types</option>
+          <option>Blood Work</option>
+          <option>Scan</option>
+          <option>Prescription</option>
+          <option>Other</option>
+        </select>
+        <select class="glass-input" aria-label="Filter by status">
+          <option>All Status</option>
+          <option>Verified</option>
+          <option>Processing</option>
+          <option>Pending</option>
+        </select>
+      </div>
+
+      <div class="report-grid">
+        <!-- Card 1 -->
+        <article class="report-card">
+          <div class="report-card-top">
+            <h3>Complete Blood Count</h3>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <p class="subtitle">PathLabs &bull; Dr. Mehta</p>
+          <time class="date">15 Jan 2026</time>
+          <div>
+            <div class="metric-label">HbA1c 5.4%</div>
+            <div class="progress-bar"><div class="progress-fill progress-gradient" style="width:54%"></div></div>
+          </div>
+          <div class="report-card-actions">
+            <button class="btn-primary-sm">View</button>
+            <button class="btn-outline-sm">Download</button>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="report-card">
+          <div class="report-card-top">
+            <h3>Chest X-Ray</h3>
+            <span class="badge badge-processing">Processing</span>
+          </div>
+          <p class="subtitle">City Scan Centre &bull; Dr. Rao</p>
+          <time class="date">10 Jan 2026</time>
+          <div class="report-card-actions">
+            <button class="btn-primary-sm">View</button>
+            <button class="btn-outline-sm">Download</button>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="report-card">
+          <div class="report-card-top">
+            <h3>Lipid Panel</h3>
+            <span class="badge badge-pending">Pending</span>
+          </div>
+          <p class="subtitle">HealthFirst Labs &bull; Dr. Sharma</p>
+          <time class="date">5 Jan 2026</time>
+          <div>
+            <div class="metric-label">LDL 142 mg/dL</div>
+            <div class="progress-bar"><div class="progress-fill progress-amber" style="width:71%"></div></div>
+          </div>
+          <div class="report-card-actions">
+            <button class="btn-primary-sm">View</button>
+            <button class="btn-outline-sm">Download</button>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="report-card">
+          <div class="report-card-top">
+            <h3>Thyroid Function</h3>
+            <span class="badge badge-verified">Verified</span>
+          </div>
+          <p class="subtitle">Apollo Diagnostics &bull; Dr. Gupta</p>
+          <time class="date">28 Dec 2025</time>
+          <div>
+            <div class="metric-label">TSH 3.2 mIU/L</div>
+            <div class="progress-bar"><div class="progress-fill progress-sage" style="width:64%"></div></div>
+          </div>
+          <div class="report-card-actions">
+            <button class="btn-primary-sm">View</button>
+            <button class="btn-outline-sm">Download</button>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FRAME 2: DETAIL VIEW
+       ═══════════════════════════════════════ -->
+  <section class="frame-section">
+    <div class="concept-label">Frame 2</div>
+    <div class="concept-title">Reports — Detail View</div>
+    <div class="concept-desc">View report PDF, parameters, and actions</div>
+    <div class="frame-box">
+      <div class="detail-header">
+        <button class="back-btn" aria-label="Go back">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        </button>
+        <h1>Complete Blood Count</h1>
+        <span class="badge badge-verified">Verified</span>
+        <time class="date">15 Jan 2026</time>
+      </div>
+
+      <div class="detail-split">
+        <div class="pdf-preview">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span>CBC_Report.pdf</span>
+        </div>
+
+        <div>
+          <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-glass);">
+            <table class="param-table">
+              <thead>
+                <tr>
+                  <th>Test</th>
+                  <th>Value</th>
+                  <th>Unit</th>
+                  <th>Ref Range</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hemoglobin</td>
+                  <td>14.2</td>
+                  <td>g/dL</td>
+                  <td>12.0 &ndash; 17.5</td>
+                  <td><span class="badge badge-normal">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>WBC</td>
+                  <td>8,200</td>
+                  <td>/&mu;L</td>
+                  <td>4,000 &ndash; 11,000</td>
+                  <td><span class="badge badge-normal">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>Platelets</td>
+                  <td>245,000</td>
+                  <td>/&mu;L</td>
+                  <td>150,000 &ndash; 400,000</td>
+                  <td><span class="badge badge-normal">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>HbA1c</td>
+                  <td>5.4</td>
+                  <td>%</td>
+                  <td>4.0 &ndash; 5.6</td>
+                  <td><span class="badge badge-normal">Normal</span></td>
+                </tr>
+                <tr>
+                  <td>LDL</td>
+                  <td>142</td>
+                  <td>mg/dL</td>
+                  <td>&lt; 100</td>
+                  <td><span class="badge badge-high">High</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="detail-actions">
+            <button class="btn-primary">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Download Report
+            </button>
+            <button class="btn-danger-outline">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Delete Report
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FRAME 3: UPLOAD FLOW
+       ═══════════════════════════════════════ -->
+  <section class="frame-section">
+    <div class="concept-label">Frame 3</div>
+    <div class="concept-title">Reports — Upload Flow</div>
+    <div class="concept-desc">Three-step guided upload: File, Details, Review</div>
+    <div class="frame-box">
+
+      <!-- Step indicator -->
+      <div class="steps-indicator">
+        <div class="step-group">
+          <div class="step-circle active">1</div>
+          <div class="step-label active-label">File</div>
+        </div>
+        <div class="step-line half"></div>
+        <div class="step-group">
+          <div class="step-circle inactive">2</div>
+          <div class="step-label">Details</div>
+        </div>
+        <div class="step-line"></div>
+        <div class="step-group">
+          <div class="step-circle inactive">3</div>
+          <div class="step-label">Review</div>
+        </div>
+      </div>
+
+      <!-- Step 1: File (active) -->
+      <div class="upload-dropzone">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--action-primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 16l-4-4-4 4"/><path d="M12 12v9"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/><path d="M16 16l-4-4-4 4"/></svg>
+        <p class="drop-text">Drag &amp; drop or browse</p>
+        <p class="drop-hint">PDF, JPEG, PNG &mdash; max 50 MB</p>
+      </div>
+
+      <div class="upload-progress-row">
+        <span class="file-name">report_scan.pdf &mdash; 45%</span>
+        <div class="progress-bar" style="flex:1">
+          <div class="progress-fill progress-gradient" style="width:45%"></div>
+        </div>
+      </div>
+
+      <!-- Step 2: Details (greyed preview) -->
+      <div class="greyed-section">
+        <h3>Step 2 &mdash; Details</h3>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>Report Type</label>
+            <select class="glass-input">
+              <option>Blood Work</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label>Title</label>
+            <input type="text" class="glass-input" value="Complete Blood Count">
+          </div>
+          <div class="form-field">
+            <label>Lab Name</label>
+            <input type="text" class="glass-input" value="PathLabs">
+          </div>
+          <div class="form-field">
+            <label>Doctor</label>
+            <input type="text" class="glass-input" value="Dr. Mehta">
+          </div>
+          <div class="form-field">
+            <label>Date</label>
+            <input type="date" class="glass-input" value="2026-01-15">
+          </div>
+          <div class="form-field full-width">
+            <label>Notes</label>
+            <textarea class="glass-input">Annual check-up blood work</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 3: Review (greyed preview) -->
+      <div class="greyed-section">
+        <h3>Step 3 &mdash; Review</h3>
+        <div style="background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 20px; margin-bottom: 16px;">
+          <dl class="review-summary">
+            <dt>Type</dt><dd>Blood Work</dd>
+            <dt>Title</dt><dd>Complete Blood Count</dd>
+            <dt>Lab</dt><dd>PathLabs</dd>
+            <dt>Doctor</dt><dd>Dr. Mehta</dd>
+            <dt>Date</dt><dd>15 Jan 2026</dd>
+            <dt>File</dt><dd style="font-family:'DM Mono',monospace; font-size:0.82rem;">report_scan.pdf</dd>
+            <dt>Notes</dt><dd>Annual check-up blood work</dd>
+          </dl>
+        </div>
+        <button class="btn-primary">Submit Report</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FRAME 4: LOADING STATE
+       ═══════════════════════════════════════ -->
+  <section class="frame-section">
+    <div class="concept-label">Frame 4</div>
+    <div class="concept-title">Reports — Loading State</div>
+    <div class="concept-desc">Shimmer skeleton cards while data loads</div>
+    <div class="frame-box">
+      <div style="margin-bottom:20px;">
+        <div class="skeleton-bar w40" style="height:24px; margin-bottom:16px;"></div>
+        <div style="display:flex; gap:12px; margin-bottom:24px;">
+          <div class="skeleton-bar" style="height:40px; flex:1; max-width:260px;"></div>
+          <div class="skeleton-bar" style="height:40px; flex:1; max-width:180px;"></div>
+          <div class="skeleton-bar" style="height:40px; flex:1; max-width:180px;"></div>
+        </div>
+      </div>
+      <div class="skeleton-grid">
+        <div class="skeleton-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <div class="skeleton-bar w60" style="height:18px;"></div>
+            <div class="skeleton-bar w30" style="height:18px; max-width:70px;"></div>
+          </div>
+          <div class="skeleton-bar w80 h8" style="margin-bottom:8px;"></div>
+          <div class="skeleton-bar w40 h8" style="margin-bottom:16px;"></div>
+          <div class="skeleton-bar h6" style="margin-bottom:14px;"></div>
+          <div style="display:flex; gap:8px;">
+            <div class="skeleton-bar" style="width:60px; height:28px;"></div>
+            <div class="skeleton-bar" style="width:80px; height:28px;"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div style="display:flex; justify-content:space-between; margin-bottom:12px;">
+            <div class="skeleton-bar w60" style="height:18px;"></div>
+            <div class="skeleton-bar w30" style="height:18px; max-width:70px;"></div>
+          </div>
+          <div class="skeleton-bar w80 h8" style="margin-bottom:8px;"></div>
+          <div class="skeleton-bar w40 h8" style="margin-bottom:16px;"></div>
+          <div class="skeleton-bar h6" style="margin-bottom:14px;"></div>
+          <div style="display:flex; gap:8px;">
+            <div class="skeleton-bar" style="width:60px; height:28px;"></div>
+            <div class="skeleton-bar" style="width:80px; height:28px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══ DARK MODE TOGGLE SCRIPT ═══ -->
+<script>
+(function() {
+  var toggle = document.getElementById('themeToggle');
+  var moon = toggle.querySelector('.icon-moon');
+  var sun = toggle.querySelector('.icon-sun');
+
+  function setMode(dark) {
+    if (dark) {
+      document.documentElement.setAttribute('data-mode', 'dark');
+      moon.style.display = 'none';
+      sun.style.display = 'block';
+    } else {
+      document.documentElement.removeAttribute('data-mode');
+      moon.style.display = 'block';
+      sun.style.display = 'none';
+    }
+  }
+
+  toggle.addEventListener('click', function() {
+    var isDark = document.documentElement.getAttribute('data-mode') === 'dark';
+    setMode(!isDark);
+  });
+})();
+</script>
+</body>
+</html>
