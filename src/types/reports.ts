@@ -17,13 +17,9 @@ export interface Report {
   title: string
   reportType: ReportType
   status: ReportStatus
-  reportDate: string
   labName: string | null
-  doctorName: string | null
-  notes: string | null
   highlightParameter: string | null
   createdAt: string
-  updatedAt: string
 }
 
 export interface ReportDetail extends Report {

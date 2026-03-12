@@ -64,12 +64,12 @@ export function ReportCard({ report, onView, onDownload, onDelete }: ReportCardP
         </Text>
 
         <Text fontSize="xs" color="text.muted" mb="3">
-          {formatDate(report.reportDate)}
+          {formatDate(report.createdAt)}
         </Text>
 
-        {(report.labName ?? report.doctorName) && (
+        {report.labName && (
           <Text fontSize="xs" color="text.secondary" mb="1" lineClamp={1}>
-            {report.labName ?? report.doctorName}
+            {report.labName}
           </Text>
         )}
 

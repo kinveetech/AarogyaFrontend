@@ -8,13 +8,9 @@ const mockReport: ReportDetail = {
   title: 'Complete Blood Count',
   reportType: 'blood_test',
   status: 'verified',
-  reportDate: '2025-01-15T00:00:00Z',
   labName: 'Thyrocare Labs',
-  doctorName: 'Dr. Patel',
-  notes: null,
   highlightParameter: null,
   createdAt: '2025-01-15T10:00:00Z',
-  updatedAt: '2025-01-15T10:00:00Z',
   parameters: [],
   objectKey: 'uploads/abc123.pdf',
   fileType: 'application/pdf',
@@ -52,21 +48,10 @@ describe('ReportDetailHeader', () => {
     expect(screen.getByText('Thyrocare Labs')).toBeInTheDocument()
   })
 
-  it('renders doctor name when present', () => {
-    render(<ReportDetailHeader {...defaultProps} />)
-    expect(screen.getByText('Dr. Patel')).toBeInTheDocument()
-  })
-
   it('hides lab name when null', () => {
     const report = { ...mockReport, labName: null }
     render(<ReportDetailHeader {...defaultProps} report={report} />)
     expect(screen.queryByText('Thyrocare Labs')).not.toBeInTheDocument()
-  })
-
-  it('hides doctor name when null', () => {
-    const report = { ...mockReport, doctorName: null }
-    render(<ReportDetailHeader {...defaultProps} report={report} />)
-    expect(screen.queryByText('Dr. Patel')).not.toBeInTheDocument()
   })
 
   it('calls onBack when back button clicked', async () => {

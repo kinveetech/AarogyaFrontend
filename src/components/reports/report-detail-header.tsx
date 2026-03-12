@@ -74,7 +74,7 @@ export function ReportDetailHeader({ report, onBack }: ReportDetailHeaderProps) 
             {REPORT_STATUS_LABELS[report.status]}
           </StatusBadge>
           <Text fontFamily="mono" fontSize="sm" color="text.muted">
-            {formatDate(report.reportDate)}
+            {formatDate(report.createdAt)}
           </Text>
         </HStack>
       </Flex>
@@ -86,11 +86,6 @@ export function ReportDetailHeader({ report, onBack }: ReportDetailHeaderProps) 
         {report.labName && (
           <Text fontSize="sm" color="text.secondary">
             {report.labName}
-          </Text>
-        )}
-        {report.doctorName && (
-          <Text fontSize="sm" color="text.secondary">
-            {report.doctorName}
           </Text>
         )}
       </HStack>
