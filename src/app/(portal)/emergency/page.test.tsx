@@ -3,6 +3,18 @@ import { render, screen, userEvent, waitFor } from '@/test/render'
 import EmergencyPage from './page'
 import type { EmergencyContactListResponse } from '@/types/emergency'
 
+let mockRole: 'patient' | 'doctor' | 'admin' = 'patient'
+
+vi.mock('@/hooks/use-auth', () => ({
+  useAuth: () => ({
+    user: { id: 'user-1', name: 'Test User', email: 'test@example.com', role: mockRole },
+    isLoading: false,
+    isAuthenticated: true,
+    login: vi.fn(),
+    logout: vi.fn(),
+  }),
+}))
+
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
 
@@ -74,6 +86,7 @@ function mockFetchForPage(contactsData: EmergencyContactListResponse) {
 
 beforeEach(() => {
   mockFetch.mockReset()
+  mockRole = 'patient'
 })
 
 describe('EmergencyPage', () => {
@@ -293,7 +306,8 @@ describe('EmergencyPage', () => {
     ).toBeInTheDocument()
   })
 
-  it('renders the Access History section', async () => {
+  it('renders the Access History section for admin users', async () => {
+    mockRole = 'admin'
     mockFetchForPage(mockContacts)
     render(<EmergencyPage />)
 
@@ -302,6 +316,16 @@ describe('EmergencyPage', () => {
     })
     expect(screen.getByTestId('emergency-access-audit')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Access History' })).toBeInTheDocument()
+  })
+
+  it('hides Access History section for non-admin users', async () => {
+    mockFetchForPage(mockContacts)
+    render(<EmergencyPage />)
+
+    await waitFor(() => {
+      expect(screen.getByText('Priya Sharma')).toBeInTheDocument()
+    })
+    expect(screen.queryByTestId('emergency-access-audit')).not.toBeInTheDocument()
   })
 
   it('submits add form with POST request', async () => {

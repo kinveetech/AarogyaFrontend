@@ -75,7 +75,7 @@ describe('useNotificationPrefs', () => {
     expect(result.current.data).toEqual(mockPrefs)
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/notification-preferences')
+    expect(calledUrl).toContain('/v1/notifications/preferences')
   })
 
   it('returns error state on failure', async () => {

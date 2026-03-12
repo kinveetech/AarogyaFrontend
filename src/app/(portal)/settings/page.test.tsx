@@ -85,7 +85,7 @@ function setupFetchMock(overrides?: {
   const notifications = overrides?.notifications ?? mockNotificationPrefs
   mockFetch.mockImplementation((url: string) => {
     if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(consents))
-    if (url.includes('/v1/notification-preferences')) return Promise.resolve(jsonResponse(notifications))
+    if (url.includes('/v1/notifications/preferences')) return Promise.resolve(jsonResponse(notifications))
     return Promise.resolve(jsonResponse(profile))
   })
 }
@@ -255,7 +255,7 @@ describe('SettingsPage', () => {
 
     mockFetch.mockImplementation((url: string) => {
       if (url.includes('/v1/consents')) return Promise.resolve(jsonResponse(mockConsents))
-      if (url.includes('/v1/notification-preferences')) return Promise.resolve(jsonResponse(mockNotificationPrefs))
+      if (url.includes('/v1/notifications/preferences')) return Promise.resolve(jsonResponse(mockNotificationPrefs))
       return Promise.resolve(jsonResponse({ ...mockProfile, firstName: 'Vikram' }))
     })
     await userEvent.click(screen.getByTestId('profile-save-button'))

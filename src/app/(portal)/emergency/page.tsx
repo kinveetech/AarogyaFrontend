@@ -8,6 +8,7 @@ import {
   useUpdateEmergencyContact,
   useDeleteEmergencyContact,
 } from '@/hooks/emergency'
+import { useAuth } from '@/hooks/use-auth'
 import { ContactCard, ContactModal, EmergencyAccessForm, EmergencyAccessAudit, MAX_CONTACTS } from '@/components/emergency'
 import { ConfirmDialog } from '@/components/ui/confirm-dialog'
 import { EmptyStateView } from '@/components/ui/empty-state'
@@ -15,6 +16,7 @@ import type { EmergencyContact } from '@/types/emergency'
 import type { EmergencyContact as EmergencyContactFormData } from '@/lib/schemas/emergencyContact'
 
 export default function EmergencyPage() {
+  const { user } = useAuth()
   const { data, isLoading } = useEmergencyContacts()
   const createContact = useCreateEmergencyContact()
   const updateContact = useUpdateEmergencyContact()
@@ -264,10 +266,12 @@ export default function EmergencyPage() {
         <EmergencyAccessForm />
       </Box>
 
-      {/* Access History */}
-      <Box mb="6">
-        <EmergencyAccessAudit />
-      </Box>
+      {/* Access History — admin only */}
+      {user?.role === 'admin' && (
+        <Box mb="6">
+          <EmergencyAccessAudit />
+        </Box>
+      )}
 
       {/* Add/Edit modal */}
       <ContactModal
