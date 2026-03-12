@@ -5,25 +5,31 @@ import type { ReportParameter } from '@/types/reports'
 
 const mockParameters: ReportParameter[] = [
   {
+    code: 'HGB',
     name: 'Hemoglobin',
-    value: '14.2',
+    numericValue: 14.2,
+    textValue: null,
     unit: 'g/dL',
     referenceRange: '13.0-17.0',
-    status: 'normal',
+    isAbnormal: false,
   },
   {
+    code: 'WBC',
     name: 'WBC Count',
-    value: '12500',
+    numericValue: 12500,
+    textValue: null,
     unit: 'cells/mcL',
     referenceRange: '4500-11000',
-    status: 'high',
+    isAbnormal: true,
   },
   {
+    code: 'PLT',
     name: 'Platelet Count',
-    value: '120000',
+    numericValue: 120000,
+    textValue: null,
     unit: 'cells/mcL',
     referenceRange: '150000-400000',
-    status: 'low',
+    isAbnormal: true,
   },
 ]
 
@@ -57,19 +63,14 @@ describe('ReportDetailParameters', () => {
     expect(screen.getAllByText('150000-400000').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('shows Normal badge for normal status', () => {
+  it('shows Normal badge for non-abnormal parameters', () => {
     render(<ReportDetailParameters parameters={mockParameters} />)
     expect(screen.getAllByText('Normal').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('shows High badge for high status', () => {
+  it('shows High badge for abnormal parameters', () => {
     render(<ReportDetailParameters parameters={mockParameters} />)
     expect(screen.getAllByText('High').length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('shows Low badge for low status', () => {
-    render(<ReportDetailParameters parameters={mockParameters} />)
-    expect(screen.getAllByText('Low').length).toBeGreaterThanOrEqual(1)
   })
 
   it('renders the parameters heading', () => {

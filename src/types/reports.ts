@@ -16,11 +16,25 @@ export type ReportStatus =
 export type ParameterStatus = 'normal' | 'high' | 'low'
 
 export interface ReportParameter {
+  code: string
   name: string
-  value: string
-  unit: string
-  referenceRange: string
-  status: ParameterStatus
+  numericValue: number | null
+  textValue: string | null
+  unit: string | null
+  referenceRange: string | null
+  isAbnormal: boolean | null
+}
+
+export function getParameterDisplayValue(param: ReportParameter): string {
+  if (param.numericValue !== null && param.numericValue !== undefined) {
+    return String(param.numericValue)
+  }
+  return param.textValue ?? '-'
+}
+
+export function getParameterStatus(param: ReportParameter): ParameterStatus {
+  if (param.isAbnormal === null || param.isAbnormal === undefined) return 'normal'
+  return param.isAbnormal ? 'high' : 'normal'
 }
 
 export interface Report {
@@ -33,11 +47,36 @@ export interface Report {
   createdAt: string
 }
 
-export interface ReportDetail extends Report {
-  parameters: ReportParameter[]
+export interface ReportDetailDownload {
   objectKey: string
-  fileType: string
-  fileSizeBytes: number
+  downloadUrl: string
+  expiresAt: string
+  provider: string
+}
+
+export interface ReportDetailExtraction {
+  reportId: string
+  status: string
+  extractionMethod: string | null
+  structuringModel: string | null
+  extractedParameterCount: number
+  overallConfidence: number | null
+  pageCount: number | null
+  extractedAt: string | null
+  errorMessage: string | null
+  attemptCount: number
+}
+
+export interface ReportDetail extends Report {
+  reportNumber: string
+  uploadedAt: string
+  labCode: string | null
+  collectedAt: string | null
+  reportedAt: string | null
+  notes: string | null
+  parameters: ReportParameter[]
+  download: ReportDetailDownload
+  extraction: ReportDetailExtraction | null
 }
 
 export interface ReportListResponse {

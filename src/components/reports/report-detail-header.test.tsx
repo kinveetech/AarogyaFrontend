@@ -11,10 +11,20 @@ const mockReport: ReportDetail = {
   labName: 'Thyrocare Labs',
   highlightParameter: null,
   createdAt: '2025-01-15T10:00:00Z',
+  reportNumber: 'RPT-001',
+  uploadedAt: '2025-01-15T10:00:00Z',
+  labCode: null,
+  collectedAt: null,
+  reportedAt: null,
+  notes: null,
   parameters: [],
-  objectKey: 'uploads/abc123.pdf',
-  fileType: 'application/pdf',
-  fileSizeBytes: 204800,
+  download: {
+    objectKey: 'uploads/abc123.pdf',
+    downloadUrl: 'https://example.com/download',
+    expiresAt: '2025-12-31T00:00:00Z',
+    provider: 's3',
+  },
+  extraction: null,
 }
 
 describe('ReportDetailHeader', () => {

@@ -165,7 +165,7 @@ export default function ReportDetailPage() {
         >
           <PDFViewer
             reportId={id}
-            fileType={report.fileType}
+            fileType="application/pdf"
             expanded={pdfExpanded}
             onToggleExpand={handleTogglePdfExpand}
           />
