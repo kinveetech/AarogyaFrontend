@@ -91,7 +91,7 @@ const mockReport: ReportDetail = {
       status: 'high',
     },
   ],
-  fileKey: 'uploads/abc123.pdf',
+  objectKey: 'uploads/abc123.pdf',
   fileType: 'application/pdf',
   fileSizeBytes: 204800,
 }

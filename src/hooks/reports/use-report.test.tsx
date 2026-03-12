@@ -44,7 +44,7 @@ describe('useReport', () => {
       notes: null,
       highlightParameter: 'Hemoglobin: 14.2 g/dL',
       parameters: [{ name: 'Hemoglobin', value: '14.2', unit: 'g/dL', referenceRange: '12-16', status: 'normal' }],
-      fileKey: 'abc123',
+      objectKey: 'abc123',
       fileType: 'application/pdf',
       fileSizeBytes: 102400,
       createdAt: '2025-01-15T10:00:00Z',

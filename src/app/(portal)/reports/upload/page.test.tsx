@@ -155,9 +155,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-    expect(screen.getByLabelText('Title')).toHaveValue('blood-report')
   })
 
   it('goes back to step 1 when Back clicked on step 2', async () => {
@@ -171,7 +170,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
@@ -186,18 +185,18 @@ describe('ReportUploadPage', () => {
       .mockResolvedValueOnce(
         jsonResponse({
           uploadUrl: 'https://s3.example.com/presigned',
-          fileKey: 'uploads/abc123.pdf',
+          objectKey: 'uploads/abc123.pdf',
           expiresAt: '2026-12-31T00:00:00Z',
         }),
       )
       .mockResolvedValueOnce(
         jsonResponse({
           id: 'report-1',
-          title: 'blood-report',
+          title: 'Report #1',
           reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
-          labName: null,
+          labName: 'City Medical Lab',
           doctorName: null,
           notes: null,
           highlightParameter: null,
@@ -216,7 +215,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
@@ -233,18 +232,18 @@ describe('ReportUploadPage', () => {
       .mockResolvedValueOnce(
         jsonResponse({
           uploadUrl: 'https://s3.example.com/presigned',
-          fileKey: 'uploads/abc123.pdf',
+          objectKey: 'uploads/abc123.pdf',
           expiresAt: '2026-12-31T00:00:00Z',
         }),
       )
       .mockResolvedValueOnce(
         jsonResponse({
           id: 'report-42',
-          title: 'blood-report',
+          title: 'Report #42',
           reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
-          labName: null,
+          labName: 'City Medical Lab',
           doctorName: null,
           notes: null,
           highlightParameter: null,
@@ -263,7 +262,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
@@ -289,7 +288,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
@@ -308,7 +307,7 @@ describe('ReportUploadPage', () => {
     mockFetch.mockResolvedValueOnce(
       jsonResponse({
         uploadUrl: 'https://s3.example.com/presigned',
-        fileKey: 'uploads/abc123.pdf',
+        objectKey: 'uploads/abc123.pdf',
         expiresAt: '2026-12-31T00:00:00Z',
       }),
     )
@@ -323,7 +322,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
@@ -355,7 +354,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Title')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
@@ -369,18 +368,18 @@ describe('ReportUploadPage', () => {
       .mockResolvedValueOnce(
         jsonResponse({
           uploadUrl: 'https://s3.example.com/presigned',
-          fileKey: 'uploads/abc123.pdf',
+          objectKey: 'uploads/abc123.pdf',
           expiresAt: '2026-12-31T00:00:00Z',
         }),
       )
       .mockResolvedValueOnce(
         jsonResponse({
           id: 'report-1',
-          title: 'blood-report',
+          title: 'Report #1',
           reportType: 'blood_test',
           status: 'pending',
           reportDate: '2026-02-22',
-          labName: null,
+          labName: 'City Medical Lab',
           doctorName: null,
           notes: null,
           highlightParameter: null,

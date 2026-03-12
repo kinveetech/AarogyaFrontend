@@ -13,9 +13,9 @@ function makeFile(
 
 const validData = {
   file: makeFile('report.pdf', 'application/pdf', 1024),
-  title: 'Blood Test Results',
   reportType: 'blood_test' as const,
-  reportDate: new Date('2024-01-15'),
+  labName: 'City Medical Lab',
+  collectedAt: new Date('2024-01-15'),
 }
 
 describe('reportUploadSchema', () => {
@@ -63,18 +63,18 @@ describe('reportUploadSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it('rejects empty title', () => {
+  it('rejects empty lab name', () => {
     const result = reportUploadSchema.safeParse({
       ...validData,
-      title: '',
+      labName: '',
     })
     expect(result.success).toBe(false)
   })
 
-  it('rejects title exceeding 200 characters', () => {
+  it('rejects lab name exceeding 200 characters', () => {
     const result = reportUploadSchema.safeParse({
       ...validData,
-      title: 'a'.repeat(201),
+      labName: 'a'.repeat(201),
     })
     expect(result.success).toBe(false)
   })

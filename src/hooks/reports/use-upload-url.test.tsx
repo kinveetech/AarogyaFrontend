@@ -35,7 +35,7 @@ describe('useUploadUrl', () => {
   it('posts fileName and contentType, returns presigned URL', async () => {
     const responseData = {
       uploadUrl: 'https://s3.amazonaws.com/bucket/key?signature=abc',
-      fileKey: 'uploads/abc123.pdf',
+      objectKey: 'uploads/abc123.pdf',
       expiresAt: '2025-01-15T11:00:00Z',
     }
     mockFetch.mockResolvedValue(jsonResponse(responseData))
