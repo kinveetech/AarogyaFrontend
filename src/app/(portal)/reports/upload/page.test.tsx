@@ -155,7 +155,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
   })
 
@@ -170,7 +170,7 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
@@ -215,10 +215,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-
-    await userEvent.type(screen.getByLabelText('Lab Name'), 'City Medical Lab')
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
 
@@ -264,10 +262,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-
-    await userEvent.type(screen.getByLabelText('Lab Name'), 'City Medical Lab')
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
 
@@ -292,10 +288,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-
-    await userEvent.type(screen.getByLabelText('Lab Name'), 'City Medical Lab')
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
 
@@ -328,10 +322,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-
-    await userEvent.type(screen.getByLabelText('Lab Name'), 'City Medical Lab')
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
 
@@ -362,10 +354,8 @@ describe('ReportUploadPage', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Next' }))
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Lab Name')).toBeInTheDocument()
+      expect(screen.getByLabelText('Report Type')).toBeInTheDocument()
     })
-
-    await userEvent.type(screen.getByLabelText('Lab Name'), 'City Medical Lab')
 
     await userEvent.click(screen.getByRole('button', { name: /Upload/i }))
 

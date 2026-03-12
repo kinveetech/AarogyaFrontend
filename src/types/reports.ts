@@ -65,7 +65,7 @@ export interface CreateReportParameterRequest {
 export interface CreateReportRequest {
   reportType: ReportType
   objectKey: string
-  labName: string
+  labName?: string
   labCode?: string
   collectedAt?: string
   reportedAt?: string

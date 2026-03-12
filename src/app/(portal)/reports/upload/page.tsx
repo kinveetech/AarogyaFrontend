@@ -13,11 +13,6 @@ type Step = 1 | 2 | 3
 
 const STEP_LABELS = ['Select File', 'Details', 'Upload']
 
-function toIsoDateTimeOffset(dateString: string): string {
-  const date = new Date(dateString)
-  return date.toISOString()
-}
-
 export default function ReportUploadPage() {
   const router = useRouter()
   const getUploadUrl = useUploadUrl()
@@ -68,9 +63,6 @@ export default function ReportUploadPage() {
         const report = await createReport.mutateAsync({
           reportType: meta.reportType,
           objectKey,
-          labName: meta.labName,
-          collectedAt: toIsoDateTimeOffset(meta.collectedAt),
-          notes: meta.notes || undefined,
           parameters: [],
         })
 
