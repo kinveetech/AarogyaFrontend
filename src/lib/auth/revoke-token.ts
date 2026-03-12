@@ -5,7 +5,7 @@ export async function revokeToken(refreshToken: string): Promise<void> {
   }
 
   try {
-    const response = await fetch(`${apiUrl}/api/auth/social/token/revoke`, {
+    const response = await fetch(`${apiUrl}/auth/social/token/revoke`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),
