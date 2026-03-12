@@ -16,14 +16,14 @@ afterEach(() => {
 })
 
 describe('revokeToken', () => {
-  it('calls POST /api/auth/social/token/revoke with refresh token', async () => {
+  it('calls POST /auth/social/token/revoke with refresh token', async () => {
     mockFetch.mockResolvedValue(new Response(null, { status: 200 }))
 
     const { revokeToken } = await import('./revoke-token')
     await revokeToken('rt-abc-123')
 
     expect(mockFetch).toHaveBeenCalledWith(
-      'https://api.example.com/api/auth/social/token/revoke',
+      'https://api.example.com/auth/social/token/revoke',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

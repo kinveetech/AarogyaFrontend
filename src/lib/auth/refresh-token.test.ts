@@ -33,7 +33,7 @@ describe('refreshAccessToken', () => {
     const result = await refreshAccessToken(baseToken)
 
     expect(fetch).toHaveBeenCalledWith(
-      'https://api.example.com/api/auth/social/token/refresh',
+      'https://api.example.com/auth/social/token/refresh',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -12,7 +12,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     throw new Error('Missing required environment variable: API_URL')
   }
 
-  const response = await fetch(`${apiUrl}/api/auth/social/token/refresh`, {
+  const response = await fetch(`${apiUrl}/auth/social/token/refresh`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ refreshToken: token.refreshToken }),
