@@ -11,7 +11,7 @@ export function useUpdateNotificationPrefs() {
 
   return useMutation({
     mutationFn: (request: UpdateNotificationPrefsRequest) =>
-      apiFetch<NotificationPreferences>('/v1/notification-preferences', {
+      apiFetch<NotificationPreferences>('/v1/notifications/preferences', {
         method: 'PUT',
         body: request,
       }),

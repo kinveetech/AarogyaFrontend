@@ -7,7 +7,7 @@ import type { NotificationPreferences } from '@/types/notification'
 export function useNotificationPrefs() {
   return useQuery({
     queryKey: queryKeys.notifications.prefs(),
-    queryFn: () => apiFetch<NotificationPreferences>('/v1/notification-preferences'),
+    queryFn: () => apiFetch<NotificationPreferences>('/v1/notifications/preferences'),
     staleTime: staleTimes.notifications,
   })
 }

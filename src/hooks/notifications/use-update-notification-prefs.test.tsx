@@ -82,7 +82,7 @@ describe('useUpdateNotificationPrefs', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/notification-preferences')
+    expect(calledUrl).toContain('/v1/notifications/preferences')
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('PUT')
