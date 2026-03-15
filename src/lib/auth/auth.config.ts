@@ -47,11 +47,12 @@ export const authConfig: NextAuthConfig = {
     session({ session, token }) {
       session.user.id = token.userId
       session.user.role = token.role
+      session.error = token.error
       return session
     },
 
     authorized({ auth, request: { nextUrl } }) {
-      const isAuthenticated = !!auth?.user
+      const isAuthenticated = !!auth?.user && auth.error !== 'RefreshTokenError'
       const pathname = nextUrl.pathname
 
       const isProtected = PROTECTED_ROUTES.some(

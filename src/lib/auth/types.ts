@@ -8,6 +8,7 @@ declare module 'next-auth' {
       id: string
       role: UserRole
     } & DefaultSession['user']
+    error?: 'RefreshTokenError'
   }
 
   interface User {
