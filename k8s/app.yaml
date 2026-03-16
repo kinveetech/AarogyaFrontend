@@ -48,7 +48,7 @@ spec:
             - name: COGNITO_DOMAIN
               value: "https://aarogya-dev.auth.ap-south-1.amazoncognito.com"
             - name: COGNITO_ISSUER
-              value: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_I827gkdF7"
+              value: "https://cognito-idp.ap-south-1.amazonaws.com/ap-south-1_U0X9i7PWh"
             - name: COGNITO_CLIENT_ID
               valueFrom:
                 secretKeyRef:
