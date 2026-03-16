@@ -152,11 +152,31 @@ describe('session callback', () => {
     expect(result).not.toHaveProperty('accessToken')
     expect(result).not.toHaveProperty('refreshToken')
   })
+
+  it('propagates RefreshTokenError to session', () => {
+    const session = {
+      user: { id: '', name: 'Test', email: 'test@example.com', role: 'patient' as const },
+      expires: new Date().toISOString(),
+    }
+    const token = {
+      userId: 'user-42',
+      role: 'patient' as const,
+      accessToken: 'expired-at',
+      refreshToken: 'expired-rt',
+      expiresAt: 0,
+      sub: 'user-42',
+      error: 'RefreshTokenError' as const,
+    } as JWT
+
+    const result = sessionCallback({ session, token })
+
+    expect(result.error).toBe('RefreshTokenError')
+  })
 })
 
 describe('authorized callback', () => {
   const authorizedCallback = authConfig.callbacks!.authorized! as (params: {
-    auth: { user: User } | null
+    auth: { user: User; error?: string } | null
     request: { nextUrl: URL }
   }) => boolean | Response
 
@@ -196,6 +216,26 @@ describe('authorized callback', () => {
     const result = authorizedCallback({
       auth: null,
       request: { nextUrl: new URL('https://app.test/about') },
+    })
+
+    expect(result).toBe(true)
+  })
+
+  it('treats RefreshTokenError as unauthenticated on protected routes', () => {
+    const result = authorizedCallback({
+      auth: { user: { id: 'user-1' }, error: 'RefreshTokenError' },
+      request: { nextUrl: new URL('https://app.test/reports') },
+    })
+
+    expect(result).toBeInstanceOf(Response)
+    const location = (result as Response).headers.get('location')
+    expect(location).toContain('/login')
+  })
+
+  it('allows RefreshTokenError session to reach /login without redirect', () => {
+    const result = authorizedCallback({
+      auth: { user: { id: 'user-1' }, error: 'RefreshTokenError' },
+      request: { nextUrl: new URL('https://app.test/login') },
     })
 
     expect(result).toBe(true)
