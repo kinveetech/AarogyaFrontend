@@ -16,7 +16,11 @@ async function proxyRequest(
     )
   }
 
-  const token = await getToken({ req: request, secret: process.env.AUTH_SECRET })
+  const token = await getToken({
+    req: request,
+    secret: process.env.AUTH_SECRET,
+    secureCookie: process.env.AUTH_URL?.startsWith('https://') ?? false,
+  })
 
   if (!token || token.error === 'RefreshTokenError') {
     return NextResponse.json(
