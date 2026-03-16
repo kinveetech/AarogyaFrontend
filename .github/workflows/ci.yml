@@ -12,8 +12,69 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ci:
+  secrets-scan:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Install Gitleaks
+        run: |
+          curl -sSfL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz \
+            | tar xz -C /usr/local/bin gitleaks
+
+      - name: Scan for secrets
+        run: gitleaks detect --source . --log-opts="origin/main..HEAD" --verbose
+
+  changes:
+    if: github.event_name != 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    outputs:
+      source: ${{ steps.filter.outputs.source }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Detect source file changes
+        id: filter
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          EVENT_BEFORE: ${{ github.event.before }}
+          EVENT_NAME: ${{ github.event_name }}
+        shell: bash
+        run: |
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            BASE="origin/$BASE_REF"
+          else
+            BASE="$EVENT_BEFORE"
+          fi
+
+          CHANGES=$(git diff --name-only "$BASE"...HEAD 2>/dev/null || git diff --name-only "$BASE" HEAD)
+
+          if echo "$CHANGES" | grep -qE '^(src/|public/|package\.json$|package-lock\.json$|tsconfig\.json$|next\.config\.|\.eslintrc|vitest\.|playwright\.|\.github/workflows/ci\.yml$)'; then
+            echo "source=true" >> "$GITHUB_OUTPUT"
+            echo "Detected source file changes."
+          else
+            echo "source=false" >> "$GITHUB_OUTPUT"
+            echo "No source file changes detected. Changed files:"
+            echo "$CHANGES"
+          fi
+
+  ci:
+    needs: changes
+    if: >-
+      always() &&
+      (github.event_name == 'workflow_dispatch' || needs.changes.outputs.source == 'true')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
 
     steps:
       - uses: actions/checkout@v6
@@ -89,3 +150,29 @@ jobs:
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  ci-status:
+    if: always()
+    needs: [secrets-scan, changes, ci]
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check required jobs
+        env:
+          SOURCE_CHANGED: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.source == 'true' }}
+          CI_RESULT: ${{ needs.ci.result }}
+          SECRETS_RESULT: ${{ needs.secrets-scan.result }}
+        run: |
+          if [[ "$SECRETS_RESULT" != "success" ]]; then
+            echo "Secrets scan failed — potential credentials in code."
+            exit 1
+          fi
+          if [[ "$SOURCE_CHANGED" != "true" ]]; then
+            echo "No source file changes — CI skipped."
+            exit 0
+          fi
+          if [[ "$CI_RESULT" != "success" ]]; then
+            echo "CI failed: $CI_RESULT"
+            exit 1
+          fi
+          echo "All checks passed."
