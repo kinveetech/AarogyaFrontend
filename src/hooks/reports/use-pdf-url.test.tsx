@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { renderHook, waitFor } from '@/test/render'
 import { usePdfUrl } from './use-pdf-url'
+import type { ReportDetailDownload } from '@/types/reports'
 
 const mockFetch = vi.fn()
 vi.stubGlobal('fetch', mockFetch)
@@ -17,6 +18,13 @@ const downloadData = {
   expiresAt: new Date(Date.now() + 300_000).toISOString(), // 5 min from now
 }
 
+const initialDownload: ReportDetailDownload = {
+  objectKey: 'uploads/r1.pdf',
+  downloadUrl: 'https://cdn.example.com/initial.pdf?token=init',
+  expiresAt: new Date(Date.now() + 300_000).toISOString(),
+  provider: 's3',
+}
+
 beforeEach(() => {
   mockFetch.mockReset()
   vi.useFakeTimers({ shouldAdvanceTime: true })
@@ -27,87 +35,39 @@ afterEach(() => {
 })
 
 describe('usePdfUrl', () => {
-  it('fetches signed URL on mount when enabled', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(downloadData))
+  it('uses initial download URL without fetching', async () => {
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload))
 
-    const { result } = renderHook(() => usePdfUrl('r1'))
-
-    await waitFor(() => {
-      expect(result.current.url).toBe(downloadData.downloadUrl)
-    })
+    expect(result.current.url).toBe(initialDownload.downloadUrl)
     expect(result.current.isLoading).toBe(false)
     expect(result.current.error).toBeNull()
+    // Should NOT have fetched since initial URL is provided
+    expect(mockFetch).not.toHaveBeenCalled()
+  })
+
+  it('fetches URL on mount when no initial download is provided but objectKey would be missing', () => {
+    const { result } = renderHook(() => usePdfUrl('r1', null))
+
+    // No initial URL and no objectKey means it can't fetch
+    expect(result.current.url).toBeNull()
+    expect(mockFetch).not.toHaveBeenCalled()
   })
 
   it('does not fetch when disabled', () => {
-    const { result } = renderHook(() => usePdfUrl('r1', false))
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload, false))
 
     expect(mockFetch).not.toHaveBeenCalled()
-    expect(result.current.url).toBeNull()
+    // Initial URL still set from state initialization
+    expect(result.current.url).toBe(initialDownload.downloadUrl)
     expect(result.current.isLoading).toBe(false)
   })
 
-  it('exposes error when fetch fails', async () => {
-    mockFetch.mockResolvedValue(jsonResponse({ message: 'Forbidden' }, 403))
-
-    const { result } = renderHook(() => usePdfUrl('r1'))
-
-    await waitFor(() => {
-      expect(result.current.error).not.toBeNull()
-    })
-    expect(result.current.url).toBeNull()
-  })
-
-  it('auto-refreshes URL before expiry', async () => {
-    // First response: expires in 2 minutes
-    const firstData = {
-      downloadUrl: 'https://cdn.example.com/first.pdf',
+  it('auto-refreshes URL before initial download expiry', async () => {
+    // Initial download expires in 2 minutes
+    const shortExpiry: ReportDetailDownload = {
+      ...initialDownload,
       expiresAt: new Date(Date.now() + 120_000).toISOString(),
     }
-    mockFetch.mockResolvedValueOnce(jsonResponse(firstData))
-
-    const { result } = renderHook(() => usePdfUrl('r1'))
-
-    await waitFor(() => {
-      expect(result.current.url).toBe(firstData.downloadUrl)
-    })
-
-    // Prepare second response
-    const secondData = {
-      downloadUrl: 'https://cdn.example.com/second.pdf',
-      expiresAt: new Date(Date.now() + 300_000).toISOString(),
-    }
-    mockFetch.mockResolvedValueOnce(jsonResponse(secondData))
-
-    // Advance time past the refresh point (120s - 60s buffer = 60s)
-    vi.advanceTimersByTime(61_000)
-
-    await waitFor(() => {
-      expect(result.current.url).toBe(secondData.downloadUrl)
-    })
-  })
-
-  it('cleans up timer on unmount', async () => {
-    mockFetch.mockResolvedValue(jsonResponse(downloadData))
-
-    const { result, unmount } = renderHook(() => usePdfUrl('r1'))
-
-    await waitFor(() => {
-      expect(result.current.url).toBe(downloadData.downloadUrl)
-    })
-
-    // Unmount should not throw or leave dangling timers
-    unmount()
-  })
-
-  it('provides refresh function to manually re-fetch', async () => {
-    mockFetch.mockResolvedValueOnce(jsonResponse(downloadData))
-
-    const { result } = renderHook(() => usePdfUrl('r1'))
-
-    await waitFor(() => {
-      expect(result.current.url).toBe(downloadData.downloadUrl)
-    })
 
     const refreshedData = {
       downloadUrl: 'https://cdn.example.com/refreshed.pdf',
@@ -115,10 +75,76 @@ describe('usePdfUrl', () => {
     }
     mockFetch.mockResolvedValueOnce(jsonResponse(refreshedData))
 
+    const { result } = renderHook(() => usePdfUrl('r1', shortExpiry))
+
+    // Should use initial URL immediately
+    expect(result.current.url).toBe(shortExpiry.downloadUrl)
+
+    // Advance time past the refresh point (120s - 60s buffer = 60s)
+    vi.advanceTimersByTime(61_000)
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(refreshedData.downloadUrl)
+    })
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+  })
+
+  it('cleans up timer on unmount', () => {
+    const { result, unmount } = renderHook(() => usePdfUrl('r1', initialDownload))
+
+    expect(result.current.url).toBe(initialDownload.downloadUrl)
+
+    // Unmount should not throw or leave dangling timers
+    unmount()
+  })
+
+  it('provides refresh function to manually re-fetch', async () => {
+    const refreshedData = {
+      downloadUrl: 'https://cdn.example.com/refreshed.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch.mockResolvedValueOnce(jsonResponse(refreshedData))
+
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload))
+
+    expect(result.current.url).toBe(initialDownload.downloadUrl)
+
     result.current.refresh()
 
     await waitFor(() => {
       expect(result.current.url).toBe(refreshedData.downloadUrl)
+    })
+  })
+
+  it('sends objectKey in refresh request body', async () => {
+    const refreshedData = {
+      downloadUrl: 'https://cdn.example.com/refreshed.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch.mockResolvedValueOnce(jsonResponse(refreshedData))
+
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload))
+
+    result.current.refresh()
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(refreshedData.downloadUrl)
+    })
+
+    const calledInit = mockFetch.mock.calls[0][1] as RequestInit
+    const body = JSON.parse(calledInit.body as string)
+    expect(body).toEqual({ reportId: 'r1', objectKey: 'uploads/r1.pdf' })
+  })
+
+  it('exposes error when refresh fetch fails', async () => {
+    mockFetch.mockResolvedValue(jsonResponse({ message: 'Forbidden' }, 403))
+
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload))
+
+    result.current.refresh()
+
+    await waitFor(() => {
+      expect(result.current.error).not.toBeNull()
     })
   })
 })

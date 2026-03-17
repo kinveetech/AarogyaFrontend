@@ -3,7 +3,6 @@ import { apiFetch, ApiError } from '@/lib/api/client'
 import type {
   VerifiedDownloadUrlRequest,
   VerifiedDownloadUrlResponse,
-  DownloadUrlRequest,
   DownloadUrlResponse,
 } from '@/types/reports'
 
@@ -36,12 +35,12 @@ async function fetchVerifiedDownloadUrl(
       throw error
     }
 
-    const fallbackRequest: DownloadUrlRequest = { reportId: request.reportId }
+    // Fallback to standard endpoint — may fail if objectKey is required
     const fallback = await apiFetch<DownloadUrlResponse>(
       '/v1/reports/download-url',
       {
         method: 'POST',
-        body: fallbackRequest,
+        body: { reportId: request.reportId },
       },
     )
     return {

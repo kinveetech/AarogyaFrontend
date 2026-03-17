@@ -126,6 +126,7 @@ export interface UploadUrlRequest {
 
 export interface DownloadUrlRequest {
   reportId: string
+  objectKey: string
 }
 
 export interface VerifiedDownloadUrlRequest {
