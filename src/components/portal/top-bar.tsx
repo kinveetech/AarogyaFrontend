@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { Box, Flex, IconButton } from '@chakra-ui/react'
 import { ColorModeToggle } from '@/components/ui/color-mode-toggle'
 import { BellIcon, MenuIcon, UserIcon } from './nav-items'
@@ -81,18 +82,22 @@ export function TopBar({ onMenuToggle }: TopBarProps) {
           <BellIcon />
         </IconButton>
 
-        <Box
-          borderRadius="full"
-          width="32px"
-          height="32px"
-          bg="bg.overlay"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          color="text.muted"
-        >
-          <UserIcon />
-        </Box>
+        <Link href="/settings" aria-label="Profile settings">
+          <Box
+            borderRadius="full"
+            width="32px"
+            height="32px"
+            bg="bg.overlay"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            color="text.muted"
+            cursor="pointer"
+            _hover={{ bg: 'bg.card' }}
+          >
+            <UserIcon />
+          </Box>
+        </Link>
 
         <ColorModeToggle />
       </Flex>
