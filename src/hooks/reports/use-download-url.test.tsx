@@ -44,7 +44,7 @@ describe('useDownloadUrl', () => {
     })
 
     await act(() =>
-      result.current.mutateAsync({ reportId: 'r1' }),
+      result.current.mutateAsync({ reportId: 'r1', objectKey: 'uploads/r1.pdf' }),
     )
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
@@ -55,7 +55,7 @@ describe('useDownloadUrl', () => {
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('POST')
-    expect(JSON.parse(calledInit.body as string)).toEqual({ reportId: 'r1' })
+    expect(JSON.parse(calledInit.body as string)).toEqual({ reportId: 'r1', objectKey: 'uploads/r1.pdf' })
   })
 
   it('returns error on failure', async () => {
@@ -69,7 +69,7 @@ describe('useDownloadUrl', () => {
 
     await act(async () => {
       try {
-        await result.current.mutateAsync({ reportId: 'nonexistent' })
+        await result.current.mutateAsync({ reportId: 'nonexistent', objectKey: 'uploads/x.pdf' })
       } catch {
         // expected
       }

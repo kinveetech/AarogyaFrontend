@@ -168,6 +168,7 @@ export default function ReportDetailPage() {
             fileType="application/pdf"
             expanded={pdfExpanded}
             onToggleExpand={handleTogglePdfExpand}
+            initialDownload={report.download}
           />
         </Box>
 

@@ -9,11 +9,14 @@ import { PDFPageRenderer } from './pdf-page-renderer'
 import { PDFToolbar, type FitMode } from './pdf-toolbar'
 import { EmptyStateView } from '@/components/ui/empty-state'
 
+import type { ReportDetailDownload } from '@/types/reports'
+
 export interface PDFViewerProps {
   reportId: string
   fileType: string
   expanded: boolean
   onToggleExpand: () => void
+  initialDownload?: ReportDetailDownload | null
 }
 
 function ErrorIcon() {
@@ -42,9 +45,10 @@ export function PDFViewer({
   fileType,
   expanded,
   onToggleExpand,
+  initialDownload = null,
 }: PDFViewerProps) {
   const isPdf = fileType === 'application/pdf'
-  const { url, isLoading: urlLoading, error: urlError, refresh } = usePdfUrl(reportId, isPdf)
+  const { url, isLoading: urlLoading, error: urlError, refresh } = usePdfUrl(reportId, initialDownload, isPdf)
 
   const [numPages, setNumPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(1)
