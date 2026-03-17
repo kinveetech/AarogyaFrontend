@@ -42,7 +42,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
       >
         <Field.Root invalid={!!errors.firstName} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-            First Name
+            First Name <Field.RequiredIndicator />
           </Field.Label>
           <Input
             {...register('firstName')}
@@ -58,7 +58,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
 
         <Field.Root invalid={!!errors.lastName} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-            Last Name
+            Last Name <Field.RequiredIndicator />
           </Field.Label>
           <Input
             {...register('lastName')}
@@ -74,7 +74,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
 
         <Field.Root invalid={!!errors.email} required>
           <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-            Email
+            Email <Field.RequiredIndicator />
           </Field.Label>
           <Input
             {...register('email')}
@@ -220,7 +220,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
           >
             <Field.Root invalid={!!errors.doctorData?.medicalLicenseNumber} required>
               <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-                Medical License Number
+                Medical License Number <Field.RequiredIndicator />
               </Field.Label>
               <Input
                 {...register('doctorData.medicalLicenseNumber')}
@@ -238,7 +238,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
 
             <Field.Root invalid={!!errors.doctorData?.specialization} required>
               <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-                Specialization
+                Specialization <Field.RequiredIndicator />
               </Field.Label>
               <NativeSelect.Root>
                 <NativeSelect.Field
@@ -315,7 +315,7 @@ export function ProfileStep({ role, register, errors }: ProfileStepProps) {
           >
             <Field.Root invalid={!!errors.labTechnicianData?.labName} required>
               <Field.Label color="text.secondary" fontSize="0.875rem" fontWeight="medium">
-                Lab Name
+                Lab Name <Field.RequiredIndicator />
               </Field.Label>
               <Input
                 {...register('labTechnicianData.labName')}
