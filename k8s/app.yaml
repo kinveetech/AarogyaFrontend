@@ -44,7 +44,7 @@ spec:
             - name: AUTH_URL
               value: "https://dev.kinvee.in"
             - name: API_URL
-              value: "http://aarogya-api.aarogya.svc.cluster.local"
+              value: "http://aarogya-api.aarogya.svc.cluster.local/api"
             - name: COGNITO_DOMAIN
               value: "https://aarogya-dev.auth.ap-south-1.amazoncognito.com"
             - name: COGNITO_ISSUER
