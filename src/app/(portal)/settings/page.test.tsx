@@ -36,10 +36,10 @@ const mockProfile: Profile = {
 }
 
 const mockConsents: ConsentListResponse = [
-  { purpose: 'analytics', isGranted: true, occurredAt: '2025-06-01T00:00:00Z', source: 'api' },
-  { purpose: 'marketing', isGranted: false, occurredAt: '2025-05-15T00:00:00Z', source: 'api' },
-  { purpose: 'data-sharing', isGranted: true, occurredAt: '2025-04-20T00:00:00Z', source: 'api' },
-  { purpose: 'research', isGranted: false, occurredAt: '2025-03-10T00:00:00Z', source: 'api' },
+  { purpose: 'profile_management', isGranted: true, occurredAt: '2025-06-01T00:00:00Z', source: 'api' },
+  { purpose: 'emergency_contact_management', isGranted: false, occurredAt: '2025-05-15T00:00:00Z', source: 'api' },
+  { purpose: 'medical_data_sharing', isGranted: true, occurredAt: '2025-04-20T00:00:00Z', source: 'api' },
+  { purpose: 'medical_records_processing', isGranted: false, occurredAt: '2025-03-10T00:00:00Z', source: 'api' },
 ]
 
 const mockNotificationPrefs: NotificationPreferences = {
@@ -180,12 +180,12 @@ describe('SettingsPage', () => {
     render(<SettingsPage />)
 
     await waitFor(() => {
-      expect(screen.getByText('Data Processing (Analytics)')).toBeInTheDocument()
+      expect(screen.getByText('Profile Management')).toBeInTheDocument()
     })
     expect(screen.getByRole('heading', { name: 'Data Consents' })).toBeInTheDocument()
-    expect(screen.getByText('Marketing Communications')).toBeInTheDocument()
-    expect(screen.getByText('Third-party Data Sharing')).toBeInTheDocument()
-    expect(screen.getByText('Research Participation')).toBeInTheDocument()
+    expect(screen.getByText('Emergency Contact Management')).toBeInTheDocument()
+    expect(screen.getByText('Medical Data Sharing')).toBeInTheDocument()
+    expect(screen.getByText('Medical Records Processing')).toBeInTheDocument()
   })
 
   it('renders notifications section with channel toggles', async () => {

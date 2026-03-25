@@ -16,25 +16,25 @@ function jsonResponse(data: unknown, status = 200) {
 
 const mockConsents: ConsentListResponse = [
   {
-    purpose: 'analytics',
+    purpose: 'profile_management',
     isGranted: true,
     occurredAt: '2025-06-01T00:00:00Z',
     source: 'api',
   },
   {
-    purpose: 'marketing',
+    purpose: 'emergency_contact_management',
     isGranted: false,
     occurredAt: '2025-05-15T00:00:00Z',
     source: 'api',
   },
   {
-    purpose: 'data-sharing',
+    purpose: 'medical_data_sharing',
     isGranted: true,
     occurredAt: '2025-04-20T00:00:00Z',
     source: 'api',
   },
   {
-    purpose: 'research',
+    purpose: 'medical_records_processing',
     isGranted: false,
     occurredAt: '2025-03-10T00:00:00Z',
     source: 'api',
@@ -57,11 +57,11 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByText('Data Processing (Analytics)')).toBeInTheDocument()
+      expect(screen.getByText('Profile Management')).toBeInTheDocument()
     })
-    expect(screen.getByText('Marketing Communications')).toBeInTheDocument()
-    expect(screen.getByText('Third-party Data Sharing')).toBeInTheDocument()
-    expect(screen.getByText('Research Participation')).toBeInTheDocument()
+    expect(screen.getByText('Emergency Contact Management')).toBeInTheDocument()
+    expect(screen.getByText('Medical Data Sharing')).toBeInTheDocument()
+    expect(screen.getByText('Medical Records Processing')).toBeInTheDocument()
   })
 
   it('shows correct granted/revoked status', async () => {
@@ -69,11 +69,11 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-status-analytics')).toHaveTextContent('Granted')
+      expect(screen.getByTestId('consent-status-profile_management')).toHaveTextContent('Granted')
     })
-    expect(screen.getByTestId('consent-status-marketing')).toHaveTextContent('Revoked')
-    expect(screen.getByTestId('consent-status-data-sharing')).toHaveTextContent('Granted')
-    expect(screen.getByTestId('consent-status-research')).toHaveTextContent('Revoked')
+    expect(screen.getByTestId('consent-status-emergency_contact_management')).toHaveTextContent('Revoked')
+    expect(screen.getByTestId('consent-status-medical_data_sharing')).toHaveTextContent('Granted')
+    expect(screen.getByTestId('consent-status-medical_records_processing')).toHaveTextContent('Revoked')
   })
 
   it('displays formatted dates', async () => {
@@ -81,7 +81,7 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-row-analytics')).toBeInTheDocument()
+      expect(screen.getByTestId('consent-row-profile_management')).toBeInTheDocument()
     })
     const rows = screen.getAllByText(/^Updated\s/)
     expect(rows).toHaveLength(4)
@@ -92,21 +92,21 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-switch-marketing')).toBeInTheDocument()
+      expect(screen.getByTestId('consent-switch-emergency_contact_management')).toBeInTheDocument()
     })
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ purpose: 'marketing', isGranted: true, occurredAt: new Date().toISOString(), source: 'api' }),
+      jsonResponse({ purpose: 'emergency_contact_management', isGranted: true, occurredAt: new Date().toISOString(), source: 'api' }),
     )
 
-    await userEvent.click(screen.getByTestId('consent-switch-marketing'))
+    await userEvent.click(screen.getByTestId('consent-switch-emergency_contact_management'))
 
     await waitFor(() => {
       const calls = mockFetch.mock.calls
       const putCall = calls.find((call) => {
         const url = call[0] as string
         const opts = call[1] as RequestInit | undefined
-        return url.includes('/v1/consents/marketing') && opts?.method === 'PUT'
+        return url.includes('/v1/consents/emergency_contact_management') && opts?.method === 'PUT'
       })
       expect(putCall).toBeTruthy()
       const body = JSON.parse((putCall![1] as RequestInit).body as string)
@@ -119,16 +119,16 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-switch-analytics')).toBeInTheDocument()
+      expect(screen.getByTestId('consent-switch-profile_management')).toBeInTheDocument()
     })
 
-    await userEvent.click(screen.getByTestId('consent-switch-analytics'))
+    await userEvent.click(screen.getByTestId('consent-switch-profile_management'))
 
     await waitFor(() => {
       expect(screen.getByText('Revoke Consent')).toBeInTheDocument()
     })
     expect(
-      screen.getByText(/Are you sure you want to revoke "Data Processing \(Analytics\)"/),
+      screen.getByText(/Are you sure you want to revoke "Profile Management"/),
     ).toBeInTheDocument()
   })
 
@@ -137,17 +137,17 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-switch-analytics')).toBeInTheDocument()
+      expect(screen.getByTestId('consent-switch-profile_management')).toBeInTheDocument()
     })
 
-    await userEvent.click(screen.getByTestId('consent-switch-analytics'))
+    await userEvent.click(screen.getByTestId('consent-switch-profile_management'))
 
     await waitFor(() => {
       expect(screen.getByText('Revoke Consent')).toBeInTheDocument()
     })
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ purpose: 'analytics', isGranted: false, occurredAt: new Date().toISOString(), source: 'api' }),
+      jsonResponse({ purpose: 'profile_management', isGranted: false, occurredAt: new Date().toISOString(), source: 'api' }),
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }))
@@ -157,7 +157,7 @@ describe('ConsentsSection', () => {
       const putCall = calls.find((call) => {
         const url = call[0] as string
         const opts = call[1] as RequestInit | undefined
-        return url.includes('/v1/consents/analytics') && opts?.method === 'PUT'
+        return url.includes('/v1/consents/profile_management') && opts?.method === 'PUT'
       })
       expect(putCall).toBeTruthy()
       const body = JSON.parse((putCall![1] as RequestInit).body as string)
@@ -170,12 +170,12 @@ describe('ConsentsSection', () => {
     render(<ConsentsSection />)
 
     await waitFor(() => {
-      expect(screen.getByTestId('consent-switch-analytics')).toBeInTheDocument()
+      expect(screen.getByTestId('consent-switch-profile_management')).toBeInTheDocument()
     })
 
     const fetchCallCountBefore = mockFetch.mock.calls.length
 
-    await userEvent.click(screen.getByTestId('consent-switch-analytics'))
+    await userEvent.click(screen.getByTestId('consent-switch-profile_management'))
 
     await waitFor(() => {
       expect(screen.getByText('Revoke Consent')).toBeInTheDocument()

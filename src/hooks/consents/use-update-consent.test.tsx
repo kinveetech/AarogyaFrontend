@@ -41,7 +41,7 @@ beforeEach(() => {
 describe('useUpdateConsent', () => {
   it('sends PUT request with correct URL and body', async () => {
     const updated = {
-      purpose: 'analytics',
+      purpose: 'profile_management',
       isGranted: false,
       occurredAt: '2025-06-15T10:00:00Z',
       source: 'api',
@@ -54,7 +54,7 @@ describe('useUpdateConsent', () => {
 
     await act(() =>
       result.current.mutateAsync({
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: false,
       }),
     )
@@ -62,7 +62,7 @@ describe('useUpdateConsent', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
 
     const calledUrl = mockFetch.mock.calls[0][0] as string
-    expect(calledUrl).toContain('/v1/consents/analytics')
+    expect(calledUrl).toContain('/v1/consents/profile_management')
 
     const calledInit = mockFetch.mock.calls[0][1] as RequestInit
     expect(calledInit.method).toBe('PUT')
@@ -76,13 +76,13 @@ describe('useUpdateConsent', () => {
 
     const initialData: ConsentListResponse = [
       {
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: true,
         occurredAt: '2025-06-01T00:00:00Z',
         source: 'api',
       },
       {
-        purpose: 'marketing',
+        purpose: 'emergency_contact_management',
         isGranted: false,
         occurredAt: '2025-05-15T00:00:00Z',
         source: 'api',
@@ -97,7 +97,7 @@ describe('useUpdateConsent', () => {
         resolveUpdate = () =>
           resolve(
             jsonResponse({
-              purpose: 'analytics',
+              purpose: 'profile_management',
               isGranted: false,
               occurredAt: '2025-06-15T10:00:00Z',
               source: 'api',
@@ -110,7 +110,7 @@ describe('useUpdateConsent', () => {
 
     await act(async () => {
       result.current.mutate({
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: false,
       })
     })
@@ -132,7 +132,7 @@ describe('useUpdateConsent', () => {
 
     const initialData: ConsentListResponse = [
       {
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: true,
         occurredAt: '2025-06-01T00:00:00Z',
         source: 'api',
@@ -149,7 +149,7 @@ describe('useUpdateConsent', () => {
 
     await act(async () => {
       result.current.mutate({
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: false,
       })
     })

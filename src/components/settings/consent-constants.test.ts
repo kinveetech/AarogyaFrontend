@@ -8,7 +8,12 @@ describe('CONSENT_ITEMS', () => {
 
   it('contains the correct purposes', () => {
     const purposes = CONSENT_ITEMS.map((item) => item.purpose)
-    expect(purposes).toEqual(['analytics', 'marketing', 'data-sharing', 'research'])
+    expect(purposes).toEqual([
+      'profile_management',
+      'emergency_contact_management',
+      'medical_data_sharing',
+      'medical_records_processing',
+    ])
   })
 
   it('has all required fields for each item', () => {
