@@ -4,7 +4,7 @@ import { consentSchema } from './consent'
 
 const validData = {
   purpose: 'analytics' as const,
-  granted: true,
+  isGranted: true,
 }
 
 describe('consentSchema', () => {
@@ -12,10 +12,10 @@ describe('consentSchema', () => {
     expect(consentSchema.safeParse(validData).success).toBe(true)
   })
 
-  it('accepts granted as false', () => {
+  it('accepts isGranted as false', () => {
     const result = consentSchema.safeParse({
       ...validData,
-      granted: false,
+      isGranted: false,
     })
     expect(result.success).toBe(true)
   })
@@ -36,10 +36,10 @@ describe('consentSchema', () => {
     expect(result.success).toBe(false)
   })
 
-  it('rejects non-boolean granted', () => {
+  it('rejects non-boolean isGranted', () => {
     const result = consentSchema.safeParse({
       ...validData,
-      granted: 'yes',
+      isGranted: 'yes',
     })
     expect(result.success).toBe(false)
   })
