@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { consentSchema } from './consent'
 
 const validData = {
-  purpose: 'analytics' as const,
+  purpose: 'profile_management' as const,
   isGranted: true,
 }
 
@@ -20,7 +20,12 @@ describe('consentSchema', () => {
     expect(result.success).toBe(true)
   })
 
-  it.each(['analytics', 'marketing', 'data-sharing', 'research'] as const)(
+  it.each([
+    'profile_management',
+    'emergency_contact_management',
+    'medical_data_sharing',
+    'medical_records_processing',
+  ] as const)(
     'accepts purpose: %s',
     (purpose) => {
       const result = consentSchema.safeParse({ ...validData, purpose })

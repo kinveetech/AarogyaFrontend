@@ -35,13 +35,13 @@ describe('useConsents', () => {
   it('fetches consents successfully', async () => {
     const data = [
       {
-        purpose: 'analytics',
+        purpose: 'profile_management',
         isGranted: true,
         occurredAt: '2025-06-01T00:00:00Z',
         source: 'api',
       },
       {
-        purpose: 'marketing',
+        purpose: 'emergency_contact_management',
         isGranted: false,
         occurredAt: '2025-05-15T00:00:00Z',
         source: 'api',

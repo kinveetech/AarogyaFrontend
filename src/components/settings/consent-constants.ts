@@ -9,27 +9,27 @@ export interface ConsentMeta {
 
 export const CONSENT_ITEMS: ConsentMeta[] = [
   {
-    purpose: 'analytics',
-    label: 'Data Processing (Analytics)',
-    description: 'Allow usage data collection to improve the app experience',
-    tooltip: 'We collect anonymous usage patterns to improve performance and identify issues. No personal health data is included.',
+    purpose: 'profile_management',
+    label: 'Profile Management',
+    description: 'Allow processing of your personal data to manage your profile',
+    tooltip: 'Required for storing and updating your name, contact details, and preferences. This is essential for your account to function.',
   },
   {
-    purpose: 'marketing',
-    label: 'Marketing Communications',
-    description: 'Receive product updates and health tips via email',
-    tooltip: 'You will receive occasional emails about new features, health tips, and promotions. You can unsubscribe at any time.',
+    purpose: 'emergency_contact_management',
+    label: 'Emergency Contact Management',
+    description: 'Allow processing of emergency contact information',
+    tooltip: 'Enables storing emergency contacts who can be notified and granted access to your records in critical situations.',
   },
   {
-    purpose: 'data-sharing',
-    label: 'Third-party Data Sharing',
-    description: 'Allow data sharing with partner healthcare services',
-    tooltip: 'Your anonymized data may be shared with verified healthcare partners to enhance service quality. Identifiable data is never shared.',
+    purpose: 'medical_data_sharing',
+    label: 'Medical Data Sharing',
+    description: 'Allow sharing medical records with your authorized doctors',
+    tooltip: 'Enables doctors you grant access to view your medical reports and health data. You control who has access and can revoke it anytime.',
   },
   {
-    purpose: 'research',
-    label: 'Research Participation',
-    description: 'Allow anonymized data for medical research studies',
-    tooltip: 'Your anonymized health data may be used in approved medical research studies. Your identity is never disclosed to researchers.',
+    purpose: 'medical_records_processing',
+    label: 'Medical Records Processing',
+    description: 'Allow processing and storage of your medical reports',
+    tooltip: 'Required for uploading, storing, and analyzing your medical reports. Reports are encrypted and only accessible to you and authorized doctors.',
   },
 ]
