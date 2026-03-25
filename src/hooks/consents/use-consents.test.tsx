@@ -33,22 +33,20 @@ beforeEach(() => {
 
 describe('useConsents', () => {
   it('fetches consents successfully', async () => {
-    const data = {
-      items: [
-        {
-          id: 'c1',
-          purpose: 'analytics',
-          granted: true,
-          updatedAt: '2025-06-01T00:00:00Z',
-        },
-        {
-          id: 'c2',
-          purpose: 'marketing',
-          granted: false,
-          updatedAt: '2025-05-15T00:00:00Z',
-        },
-      ],
-    }
+    const data = [
+      {
+        purpose: 'analytics',
+        isGranted: true,
+        occurredAt: '2025-06-01T00:00:00Z',
+        source: 'api',
+      },
+      {
+        purpose: 'marketing',
+        isGranted: false,
+        occurredAt: '2025-05-15T00:00:00Z',
+        source: 'api',
+      },
+    ]
     mockFetch.mockResolvedValue(jsonResponse(data))
 
     const { result } = renderHook(() => useConsents(), {

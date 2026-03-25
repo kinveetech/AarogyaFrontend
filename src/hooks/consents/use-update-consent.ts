@@ -17,7 +17,7 @@ export function useUpdateConsent() {
         method: 'PUT',
         body: request,
       }),
-    onMutate: async ({ purpose, granted }) => {
+    onMutate: async ({ purpose, isGranted }) => {
       await queryClient.cancelQueries({ queryKey: queryKeys.consents.all })
 
       const previousLists = queryClient.getQueriesData<ConsentListResponse>(
@@ -27,15 +27,12 @@ export function useUpdateConsent() {
       queryClient.setQueriesData<ConsentListResponse>(
         { queryKey: queryKeys.consents.all },
         (old) => {
-          if (!old?.items) return old
-          return {
-            ...old,
-            items: old.items.map((c) =>
-              c.purpose === purpose
-                ? { ...c, granted, updatedAt: new Date().toISOString() }
-                : c,
-            ),
-          }
+          if (!old) return old
+          return old.map((c) =>
+            c.purpose === purpose
+              ? { ...c, isGranted, occurredAt: new Date().toISOString() }
+              : c,
+          )
         },
       )
 

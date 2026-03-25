@@ -41,10 +41,10 @@ beforeEach(() => {
 describe('useUpdateConsent', () => {
   it('sends PUT request with correct URL and body', async () => {
     const updated = {
-      id: 'c1',
       purpose: 'analytics',
-      granted: false,
-      updatedAt: '2025-06-15T10:00:00Z',
+      isGranted: false,
+      occurredAt: '2025-06-15T10:00:00Z',
+      source: 'api',
     }
     mockFetch.mockResolvedValue(jsonResponse(updated))
 
@@ -55,7 +55,7 @@ describe('useUpdateConsent', () => {
     await act(() =>
       result.current.mutateAsync({
         purpose: 'analytics',
-        granted: false,
+        isGranted: false,
       }),
     )
 
@@ -68,28 +68,26 @@ describe('useUpdateConsent', () => {
     expect(calledInit.method).toBe('PUT')
 
     const body = JSON.parse(calledInit.body as string)
-    expect(body).toEqual({ granted: false })
+    expect(body).toEqual({ isGranted: false })
   })
 
   it('optimistically updates consent in cache', async () => {
     const wrapper = createWrapper(Infinity)
 
-    const initialData: ConsentListResponse = {
-      items: [
-        {
-          id: 'c1',
-          purpose: 'analytics',
-          granted: true,
-          updatedAt: '2025-06-01T00:00:00Z',
-        },
-        {
-          id: 'c2',
-          purpose: 'marketing',
-          granted: false,
-          updatedAt: '2025-05-15T00:00:00Z',
-        },
-      ],
-    }
+    const initialData: ConsentListResponse = [
+      {
+        purpose: 'analytics',
+        isGranted: true,
+        occurredAt: '2025-06-01T00:00:00Z',
+        source: 'api',
+      },
+      {
+        purpose: 'marketing',
+        isGranted: false,
+        occurredAt: '2025-05-15T00:00:00Z',
+        source: 'api',
+      },
+    ]
 
     queryClient.setQueryData(queryKeys.consents.list(), initialData)
 
@@ -99,10 +97,10 @@ describe('useUpdateConsent', () => {
         resolveUpdate = () =>
           resolve(
             jsonResponse({
-              id: 'c1',
               purpose: 'analytics',
-              granted: false,
-              updatedAt: '2025-06-15T10:00:00Z',
+              isGranted: false,
+              occurredAt: '2025-06-15T10:00:00Z',
+              source: 'api',
             }),
           )
       }),
@@ -113,7 +111,7 @@ describe('useUpdateConsent', () => {
     await act(async () => {
       result.current.mutate({
         purpose: 'analytics',
-        granted: false,
+        isGranted: false,
       })
     })
 
@@ -121,7 +119,7 @@ describe('useUpdateConsent', () => {
       const cached = queryClient.getQueryData<ConsentListResponse>(
         queryKeys.consents.list(),
       )
-      expect(cached?.items[0].granted).toBe(false)
+      expect(cached?.[0].isGranted).toBe(false)
     })
 
     await act(async () => {
@@ -132,16 +130,14 @@ describe('useUpdateConsent', () => {
   it('rolls back cache on error', async () => {
     const wrapper = createWrapper(Infinity)
 
-    const initialData: ConsentListResponse = {
-      items: [
-        {
-          id: 'c1',
-          purpose: 'analytics',
-          granted: true,
-          updatedAt: '2025-06-01T00:00:00Z',
-        },
-      ],
-    }
+    const initialData: ConsentListResponse = [
+      {
+        purpose: 'analytics',
+        isGranted: true,
+        occurredAt: '2025-06-01T00:00:00Z',
+        source: 'api',
+      },
+    ]
 
     queryClient.setQueryData(queryKeys.consents.list(), initialData)
 
@@ -154,7 +150,7 @@ describe('useUpdateConsent', () => {
     await act(async () => {
       result.current.mutate({
         purpose: 'analytics',
-        granted: false,
+        isGranted: false,
       })
     })
 
@@ -164,7 +160,7 @@ describe('useUpdateConsent', () => {
       const cached = queryClient.getQueryData<ConsentListResponse>(
         queryKeys.consents.list(),
       )
-      expect(cached?.items[0].granted).toBe(true)
+      expect(cached?.[0].isGranted).toBe(true)
     })
   })
 })

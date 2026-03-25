@@ -35,14 +35,12 @@ const mockProfile: Profile = {
   roles: ['patient'],
 }
 
-const mockConsents: ConsentListResponse = {
-  items: [
-    { id: 'c1', purpose: 'analytics', granted: true, updatedAt: '2025-06-01T00:00:00Z' },
-    { id: 'c2', purpose: 'marketing', granted: false, updatedAt: '2025-05-15T00:00:00Z' },
-    { id: 'c3', purpose: 'data-sharing', granted: true, updatedAt: '2025-04-20T00:00:00Z' },
-    { id: 'c4', purpose: 'research', granted: false, updatedAt: '2025-03-10T00:00:00Z' },
-  ],
-}
+const mockConsents: ConsentListResponse = [
+  { purpose: 'analytics', isGranted: true, occurredAt: '2025-06-01T00:00:00Z', source: 'api' },
+  { purpose: 'marketing', isGranted: false, occurredAt: '2025-05-15T00:00:00Z', source: 'api' },
+  { purpose: 'data-sharing', isGranted: true, occurredAt: '2025-04-20T00:00:00Z', source: 'api' },
+  { purpose: 'research', isGranted: false, occurredAt: '2025-03-10T00:00:00Z', source: 'api' },
+]
 
 const mockNotificationPrefs: NotificationPreferences = {
   reportUploaded: {

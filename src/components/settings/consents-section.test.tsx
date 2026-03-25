@@ -14,34 +14,32 @@ function jsonResponse(data: unknown, status = 200) {
   })
 }
 
-const mockConsents: ConsentListResponse = {
-  items: [
-    {
-      id: 'c1',
-      purpose: 'analytics',
-      granted: true,
-      updatedAt: '2025-06-01T00:00:00Z',
-    },
-    {
-      id: 'c2',
-      purpose: 'marketing',
-      granted: false,
-      updatedAt: '2025-05-15T00:00:00Z',
-    },
-    {
-      id: 'c3',
-      purpose: 'data-sharing',
-      granted: true,
-      updatedAt: '2025-04-20T00:00:00Z',
-    },
-    {
-      id: 'c4',
-      purpose: 'research',
-      granted: false,
-      updatedAt: '2025-03-10T00:00:00Z',
-    },
-  ],
-}
+const mockConsents: ConsentListResponse = [
+  {
+    purpose: 'analytics',
+    isGranted: true,
+    occurredAt: '2025-06-01T00:00:00Z',
+    source: 'api',
+  },
+  {
+    purpose: 'marketing',
+    isGranted: false,
+    occurredAt: '2025-05-15T00:00:00Z',
+    source: 'api',
+  },
+  {
+    purpose: 'data-sharing',
+    isGranted: true,
+    occurredAt: '2025-04-20T00:00:00Z',
+    source: 'api',
+  },
+  {
+    purpose: 'research',
+    isGranted: false,
+    occurredAt: '2025-03-10T00:00:00Z',
+    source: 'api',
+  },
+]
 
 beforeEach(() => {
   mockFetch.mockReset()
@@ -98,7 +96,7 @@ describe('ConsentsSection', () => {
     })
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ id: 'c2', purpose: 'marketing', granted: true, updatedAt: new Date().toISOString() }),
+      jsonResponse({ purpose: 'marketing', isGranted: true, occurredAt: new Date().toISOString(), source: 'api' }),
     )
 
     await userEvent.click(screen.getByTestId('consent-switch-marketing'))
@@ -112,7 +110,7 @@ describe('ConsentsSection', () => {
       })
       expect(putCall).toBeTruthy()
       const body = JSON.parse((putCall![1] as RequestInit).body as string)
-      expect(body.granted).toBe(true)
+      expect(body.isGranted).toBe(true)
     })
   })
 
@@ -149,7 +147,7 @@ describe('ConsentsSection', () => {
     })
 
     mockFetch.mockResolvedValue(
-      jsonResponse({ id: 'c1', purpose: 'analytics', granted: false, updatedAt: new Date().toISOString() }),
+      jsonResponse({ purpose: 'analytics', isGranted: false, occurredAt: new Date().toISOString(), source: 'api' }),
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Revoke' }))
@@ -163,7 +161,7 @@ describe('ConsentsSection', () => {
       })
       expect(putCall).toBeTruthy()
       const body = JSON.parse((putCall![1] as RequestInit).body as string)
-      expect(body.granted).toBe(false)
+      expect(body.isGranted).toBe(false)
     })
   })
 

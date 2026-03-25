@@ -15,16 +15,16 @@ export function ConsentsSection() {
   const [revokePurpose, setRevokePurpose] = useState<ConsentPurpose | null>(null)
 
   const consentMap = useMemo(() => {
-    if (!data?.items) return new Map<ConsentPurpose, { granted: boolean; updatedAt: string }>()
+    if (!data) return new Map<ConsentPurpose, { isGranted: boolean; occurredAt: string }>()
     return new Map(
-      data.items.map((c) => [c.purpose, { granted: c.granted, updatedAt: c.updatedAt }]),
+      data.map((c) => [c.purpose, { isGranted: c.isGranted, occurredAt: c.occurredAt }]),
     )
   }, [data])
 
   const handleToggle = useCallback(
     (purpose: ConsentPurpose, granted: boolean) => {
       if (granted) {
-        updateConsent.mutate({ purpose, granted: true })
+        updateConsent.mutate({ purpose, isGranted: true })
       } else {
         setRevokePurpose(purpose)
       }
@@ -34,7 +34,7 @@ export function ConsentsSection() {
 
   const handleConfirmRevoke = useCallback(() => {
     if (revokePurpose) {
-      updateConsent.mutate({ purpose: revokePurpose, granted: false })
+      updateConsent.mutate({ purpose: revokePurpose, isGranted: false })
       setRevokePurpose(null)
     }
   }, [revokePurpose, updateConsent])
@@ -76,8 +76,8 @@ export function ConsentsSection() {
             <ConsentToggleRow
               key={meta.purpose}
               meta={meta}
-              granted={consent?.granted ?? false}
-              updatedAt={consent?.updatedAt ?? new Date().toISOString()}
+              granted={consent?.isGranted ?? false}
+              updatedAt={consent?.occurredAt ?? new Date().toISOString()}
               showBorder={i > 0}
               onToggle={(granted) => handleToggle(meta.purpose, granted)}
             />
