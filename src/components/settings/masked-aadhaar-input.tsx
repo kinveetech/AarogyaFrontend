@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef, useEffect } from 'react'
+import { useCallback, useRef } from 'react'
 import { Input } from '@chakra-ui/react'
 
 export interface MaskedAadhaarInputProps {
@@ -46,12 +46,10 @@ export function MaskedAadhaarInput({
   name,
   'data-testid': testId,
 }: MaskedAadhaarInputProps) {
-  const [rawDigits, setRawDigits] = useState(value)
+  // Fully controlled: the raw digit string is derived from the `value` prop
+  // (the parent — an RHF Controller — echoes onChange back into `value`).
+  const rawDigits = value.replace(/\D/g, '').slice(0, 12)
   const inputRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    setRawDigits(value)
-  }, [value])
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -73,9 +71,7 @@ export function MaskedAadhaarInput({
       if (e.key === 'Backspace' || e.key === 'Delete') {
         e.preventDefault()
         if (rawDigits.length > 0) {
-          const newRaw = rawDigits.slice(0, -1)
-          setRawDigits(newRaw)
-          onChange(newRaw)
+          onChange(rawDigits.slice(0, -1))
         }
         return
       }
@@ -93,9 +89,7 @@ export function MaskedAadhaarInput({
       }
 
       e.preventDefault()
-      const newRaw = rawDigits + e.key
-      setRawDigits(newRaw)
-      onChange(newRaw)
+      onChange(rawDigits + e.key)
     },
     [rawDigits, onChange],
   )

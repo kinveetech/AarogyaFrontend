@@ -20,11 +20,23 @@ export function usePdfUrl(
   enabled = true,
 ): UsePdfUrlResult {
   const downloadUrl = useDownloadUrl()
-  const [url, setUrl] = useState<string | null>(initialDownload?.downloadUrl ?? null)
+  const initialUrl = initialDownload?.downloadUrl ?? null
+  const [refreshedUrl, setRefreshedUrl] = useState<string | null>(null)
   const [error, setError] = useState<Error | null>(null)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const mountedRef = useRef(true)
   const objectKeyRef = useRef(initialDownload?.objectKey ?? '')
+
+  // Adopt a new initial URL when the prop changes (React-recommended pattern
+  // for adjusting state when props change — avoids setState inside an effect)
+  const [prevInitialUrl, setPrevInitialUrl] = useState(initialUrl)
+  if (initialUrl !== prevInitialUrl) {
+    setPrevInitialUrl(initialUrl)
+    if (initialUrl) setRefreshedUrl(null)
+  }
+
+  // The current URL: a refreshed one wins over the (older) initial one
+  const url = refreshedUrl ?? initialUrl
 
   // Update objectKey when initialDownload changes
   useEffect(() => {
@@ -34,42 +46,46 @@ export function usePdfUrl(
   }, [initialDownload?.objectKey])
 
   const fetchUrl = useCallback(() => {
-    if (!objectKeyRef.current) return
+    const run = () => {
+      if (!objectKeyRef.current) return
 
-    downloadUrl.mutate(
-      { reportId, objectKey: objectKeyRef.current },
-      {
-        onSuccess: (res) => {
-          if (!mountedRef.current) return
-          setUrl(res.downloadUrl)
-          setError(null)
+      downloadUrl.mutate(
+        { reportId, objectKey: objectKeyRef.current },
+        {
+          onSuccess: (res) => {
+            if (!mountedRef.current) return
+            setRefreshedUrl(res.downloadUrl)
+            setError(null)
 
-          // Schedule auto-refresh before expiry
-          const expiresAt = new Date(res.expiresAt).getTime()
-          const now = Date.now()
-          const refreshIn = Math.max(expiresAt - now - EXPIRY_BUFFER_MS, 0)
+            // Schedule auto-refresh before expiry
+            const expiresAt = new Date(res.expiresAt).getTime()
+            const now = Date.now()
+            const refreshIn = Math.max(expiresAt - now - EXPIRY_BUFFER_MS, 0)
 
-          if (timerRef.current) clearTimeout(timerRef.current)
-          timerRef.current = setTimeout(() => {
-            if (mountedRef.current) fetchUrl()
-          }, refreshIn)
+            if (timerRef.current) clearTimeout(timerRef.current)
+            timerRef.current = setTimeout(() => {
+              if (mountedRef.current) run()
+            }, refreshIn)
+          },
+          onError: (err) => {
+            if (!mountedRef.current) return
+            setError(err)
+          },
         },
-        onError: (err) => {
-          if (!mountedRef.current) return
-          setError(err)
-        },
-      },
-    )
+      )
+    }
+
+    run()
   }, [downloadUrl, reportId])
 
-  // Use initial download URL and schedule refresh based on its expiry
+  // Schedule a refresh based on the initial URL's expiry, or fetch immediately
+  // when no initial URL was provided
   useEffect(() => {
     mountedRef.current = true
 
     if (!enabled) return
 
     if (initialDownload?.downloadUrl && initialDownload.expiresAt) {
-      setUrl(initialDownload.downloadUrl)
       // Schedule refresh before the initial URL expires
       const expiresAt = new Date(initialDownload.expiresAt).getTime()
       const now = Date.now()
