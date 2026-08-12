@@ -23,7 +23,7 @@ describe('TopBar', () => {
 
   it('renders the color mode toggle', () => {
     render(<TopBar onMenuToggle={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /switch to dark mode/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /toggle color mode/i })).toBeInTheDocument()
   })
 
   it('renders the mobile menu toggle button', () => {

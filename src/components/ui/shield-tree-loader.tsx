@@ -3,7 +3,6 @@
 import { useId } from 'react'
 import { Box, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
-import { useTheme } from 'next-themes'
 
 export interface ShieldTreeLoaderProps {
   size?: 'sm' | 'md' | 'lg'
@@ -14,14 +13,55 @@ export interface ShieldTreeLoaderProps {
 
 const SIZE_MAP = { sm: 80, md: 160, lg: 240 } as const
 
+/*
+ * Theming is CSS-variable driven (light values with `_dark` overrides) instead of
+ * branching on next-themes' resolvedTheme: the server always renders light while a
+ * dark-mode client resolves dark on its first render, and any markup difference
+ * between the two breaks hydration (React #418). Framer-motion animation targets
+ * stay theme-independent; the themed factor lives in group opacities and fill alphas.
+ */
+const themeVars = {
+  '--stl-shield-start': '#0E6B66',
+  '--stl-shield-end': '#0A4D4A',
+  '--stl-shield-stroke': '#0E6B66',
+  '--stl-canopy-start': '#A8D5AE',
+  '--stl-canopy-mid': '#7FB285',
+  '--stl-canopy-end': '#0E6B66',
+  '--stl-stroke': '#FFF8F0',
+  '--stl-root-opacity': '0.3',
+  '--stl-branch-opacity': '0.35',
+  '--stl-canopy2-fill': 'rgba(127,178,133,0.4)',
+  '--stl-canopy3-fill': 'rgba(168,213,174,0.35)',
+  '--stl-canopy4-fill': 'rgba(255,255,255,0.3)',
+  _dark: {
+    '--stl-shield-start': '#1A9E97',
+    '--stl-shield-end': '#0E6B66',
+    '--stl-shield-stroke': '#1A9E97',
+    '--stl-canopy-start': 'rgba(168,213,174,0.5)',
+    '--stl-canopy-mid': 'rgba(131,186,161,0.4)',
+    '--stl-canopy-end': 'rgba(26,158,151,0.3)',
+    '--stl-stroke': 'rgba(255,255,255,0.4)',
+    '--stl-root-opacity': '0.15',
+    '--stl-branch-opacity': '0.2',
+    '--stl-canopy2-fill': 'rgba(168,213,174,0.2)',
+    '--stl-canopy3-fill': 'rgba(168,213,174,0.15)',
+    '--stl-canopy4-fill': 'rgba(255,255,255,0.08)',
+  },
+} as const
+
+const RIPPLE_COLORS = [
+  null,
+  { base: '#0E6B66', _dark: '#1A9E97' },
+  { base: '#7FB285', _dark: '#A8D5AE' },
+  { base: '#FFB347', _dark: '#FFD693' },
+] as const
+
 export function ShieldTreeLoader({
   size = 'md',
   variant = 'inline',
   showProgress,
   showBrandText,
 }: ShieldTreeLoaderProps) {
-  const { resolvedTheme } = useTheme()
-  const isDark = resolvedTheme === 'dark'
   const px = SIZE_MAP[size]
 
   const shouldShowProgress = showProgress ?? variant === 'fullPage'
@@ -31,19 +71,6 @@ export function ShieldTreeLoader({
   // breaking hydration); strip its delimiters, which are invalid inside url(#...)
   const id = `stl-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
-  const shieldGradient = isDark
-    ? { start: '#1A9E97', end: '#0E6B66' }
-    : { start: '#0E6B66', end: '#0A4D4A' }
-
-  const canopyGradient = isDark
-    ? { start: 'rgba(168,213,174,0.5)', end: 'rgba(26,158,151,0.3)' }
-    : { start: '#A8D5AE', mid: '#7FB285', end: '#0E6B66' }
-
-  const strokeColor = isDark ? 'rgba(255,255,255,0.4)' : '#FFF8F0'
-  const rootOpacity = isDark ? 0.15 : 0.3
-  const branchOpacity = isDark ? 0.2 : 0.35
-  const shieldStroke = isDark ? '#1A9E97' : '#0E6B66'
-
   const content = (
     <Box
       display="flex"
@@ -52,6 +79,7 @@ export function ShieldTreeLoader({
       justifyContent="center"
       role="status"
       aria-label="Loading"
+      css={themeVars}
     >
       {/* Tree animation container */}
       <Box position="relative" width={`${px}px`} height={`${px}px`}>
@@ -67,11 +95,7 @@ export function ShieldTreeLoader({
             borderRadius="full"
             borderStyle="solid"
             borderWidth="1.5px"
-            borderColor={
-              isDark
-                ? ['', '#1A9E97', '#A8D5AE', '#FFD693'][i]
-                : ['', '#0E6B66', '#7FB285', '#FFB347'][i]
-            }
+            borderColor={RIPPLE_COLORS[i] ?? undefined}
             opacity={0}
             pointerEvents="none"
             css={{
@@ -103,8 +127,8 @@ export function ShieldTreeLoader({
               y2="76"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset="0%" stopColor={shieldGradient.start} />
-              <stop offset="100%" stopColor={shieldGradient.end} />
+              <stop offset="0%" style={{ stopColor: 'var(--stl-shield-start)' }} />
+              <stop offset="100%" style={{ stopColor: 'var(--stl-shield-end)' }} />
             </linearGradient>
             <linearGradient
               id={`${id}-canopy`}
@@ -114,11 +138,9 @@ export function ShieldTreeLoader({
               y2="48"
               gradientUnits="userSpaceOnUse"
             >
-              <stop offset="0%" stopColor={canopyGradient.start} />
-              {'mid' in canopyGradient && (
-                <stop offset="50%" stopColor={canopyGradient.mid} />
-              )}
-              <stop offset="100%" stopColor={canopyGradient.end} />
+              <stop offset="0%" style={{ stopColor: 'var(--stl-canopy-start)' }} />
+              <stop offset="50%" style={{ stopColor: 'var(--stl-canopy-mid)' }} />
+              <stop offset="100%" style={{ stopColor: 'var(--stl-canopy-end)' }} />
             </linearGradient>
           </defs>
 
@@ -126,7 +148,7 @@ export function ShieldTreeLoader({
           <motion.path
             d="M40 4 C22 4 10 10 10 10 L10 36 C10 56 24 70 40 76 C56 70 70 56 70 36 L70 10 C70 10 58 4 40 4Z"
             fill={`url(#${id}-shield)`}
-            stroke={shieldStroke}
+            style={{ stroke: 'var(--stl-shield-stroke)' }}
             strokeWidth={1}
             initial={{ strokeDasharray: 300, strokeDashoffset: 300, fillOpacity: 0 }}
             animate={{ strokeDashoffset: 0, fillOpacity: 0.9 }}
@@ -158,7 +180,7 @@ export function ShieldTreeLoader({
           {/* Trunk */}
           <motion.path
             d="M40 66 L40 44"
-            stroke={strokeColor}
+            style={{ stroke: 'var(--stl-stroke)' }}
             strokeWidth={3}
             strokeLinecap="round"
             initial={{ strokeDasharray: 40, strokeDashoffset: 40, opacity: 0 }}
@@ -166,8 +188,8 @@ export function ShieldTreeLoader({
             transition={{ delay: 1.8, duration: 1.0, ease: 'easeOut' }}
           />
 
-          {/* Roots */}
-          <g data-testid="roots">
+          {/* Roots — the group carries the themed opacity; paths animate to fixed targets */}
+          <g data-testid="roots" style={{ opacity: 'var(--stl-root-opacity)' }}>
             {[
               'M40 66 C36 68 30 69 28 68',
               'M40 66 C44 68 50 69 52 68',
@@ -177,18 +199,18 @@ export function ShieldTreeLoader({
               <motion.path
                 key={d}
                 d={d}
-                stroke={strokeColor}
+                style={{ stroke: 'var(--stl-stroke)' }}
                 strokeWidth={i < 2 ? 1.2 : 1}
                 strokeLinecap="round"
                 initial={{ strokeDasharray: 30, strokeDashoffset: 30, opacity: 0 }}
-                animate={{ strokeDashoffset: 0, opacity: rootOpacity }}
+                animate={{ strokeDashoffset: 0, opacity: i < 2 ? 1 : 0.8 }}
                 transition={{ delay: 2.0 + i * 0.1, duration: 0.8, ease: 'easeOut' }}
               />
             ))}
           </g>
 
           {/* Branches */}
-          <g data-testid="branches">
+          <g data-testid="branches" style={{ opacity: 'var(--stl-branch-opacity)' }}>
             {[
               'M40 48 C34 44 28 42 24 42',
               'M40 48 C46 44 52 42 56 42',
@@ -198,11 +220,11 @@ export function ShieldTreeLoader({
               <motion.path
                 key={d}
                 d={d}
-                stroke={strokeColor}
+                style={{ stroke: 'var(--stl-stroke)' }}
                 strokeWidth={i < 2 ? 1.5 : 1.2}
                 strokeLinecap="round"
                 initial={{ strokeDasharray: 30, strokeDashoffset: 30, opacity: 0 }}
-                animate={{ strokeDashoffset: 0, opacity: branchOpacity }}
+                animate={{ strokeDashoffset: 0, opacity: i < 2 ? 1 : 0.85 }}
                 transition={{ delay: 2.4 + i * 0.1, duration: 0.7, ease: 'easeOut' }}
               />
             ))}
@@ -211,10 +233,10 @@ export function ShieldTreeLoader({
           {/* Canopy */}
           <g data-testid="canopy">
             {[
-              { cx: 40, cy: 36, rx: 22, ry: 16, fill: `url(#${id}-canopy)`, opacity: isDark ? 0.5 : 0.45 },
-              { cx: 40, cy: 32, rx: 17, ry: 13, fill: isDark ? 'rgba(168,213,174,0.2)' : '#7FB285', opacity: isDark ? 1 : 0.4 },
-              { cx: 40, cy: 27, rx: 12, ry: 10, fill: isDark ? 'rgba(168,213,174,0.15)' : '#A8D5AE', opacity: isDark ? 1 : 0.35 },
-              { cx: 40, cy: 22, rx: 7, ry: 6, fill: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.3)', opacity: 1 },
+              { cx: 40, cy: 36, rx: 22, ry: 16, fill: `url(#${id}-canopy)`, target: 0.5 },
+              { cx: 40, cy: 32, rx: 17, ry: 13, fillVar: '--stl-canopy2-fill', target: 1 },
+              { cx: 40, cy: 27, rx: 12, ry: 10, fillVar: '--stl-canopy3-fill', target: 1 },
+              { cx: 40, cy: 22, rx: 7, ry: 6, fillVar: '--stl-canopy4-fill', target: 1 },
             ].map((e, i) => (
               <motion.ellipse
                 key={i}
@@ -223,8 +245,9 @@ export function ShieldTreeLoader({
                 rx={e.rx}
                 ry={e.ry}
                 fill={e.fill}
+                style={e.fillVar ? { fill: `var(${e.fillVar})` } : undefined}
                 initial={{ opacity: 0, scale: 0.2 }}
-                animate={{ opacity: e.opacity, scale: 1 }}
+                animate={{ opacity: e.target, scale: 1 }}
                 transition={{
                   delay: 2.8 + i * 0.2,
                   duration: 0.8,
@@ -292,7 +315,7 @@ export function ShieldTreeLoader({
             height="3px"
             borderRadius="full"
             overflow="hidden"
-            bg={isDark ? 'rgba(255,255,255,0.08)' : 'rgba(10,77,74,0.1)'}
+            bg={{ base: 'rgba(10,77,74,0.1)', _dark: 'rgba(255,255,255,0.08)' }}
           >
             <Box
               height="100%"
