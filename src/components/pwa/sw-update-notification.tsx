@@ -4,12 +4,17 @@ import { Box, Button, Text } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useSwRegistration } from './use-sw-registration'
 
-export function SwUpdateNotification() {
+export interface SwUpdateNotificationProps {
+  /** Suppress the toast while keeping service-worker update tracking mounted */
+  hidden?: boolean
+}
+
+export function SwUpdateNotification({ hidden = false }: SwUpdateNotificationProps) {
   const { isUpdateAvailable, applyUpdate } = useSwRegistration()
 
   return (
     <AnimatePresence>
-      {isUpdateAvailable && (
+      {isUpdateAvailable && !hidden && (
         <motion.div
           initial={{ y: -60, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}

@@ -209,6 +209,36 @@ describe('AadhaarVerifyDialog', () => {
     })
   })
 
+  it('keeps the success view when the profile object identity changes', async () => {
+    mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
+
+    const { rerender } = render(<AadhaarVerifyDialog {...defaultProps} />)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-first-name-input')).toHaveValue('Arjun')
+    })
+
+    const aadhaarInput = screen.getByTestId('aadhaar-number-input')
+    typeAadhaarDigits(aadhaarInput, '234567890123')
+
+    await userEvent.click(screen.getByTestId('aadhaar-verify-submit'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('aadhaar-verify-success')).toBeInTheDocument()
+    })
+
+    // Simulate the profile cache update that follows a successful verify —
+    // the success view must survive it (regression: it used to reset the mutation)
+    rerender(
+      <AadhaarVerifyDialog
+        {...defaultProps}
+        profile={{ ...mockProfile, aadhaarVerified: true }}
+      />,
+    )
+
+    expect(screen.getByTestId('aadhaar-verify-success')).toBeInTheDocument()
+  })
+
   it('calls onClose when Done is clicked in success view', async () => {
     mockFetch.mockResolvedValue(jsonResponse(mockVerificationResponse))
     const onClose = vi.fn()

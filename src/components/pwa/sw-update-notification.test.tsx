@@ -56,6 +56,12 @@ describe('SwUpdateNotification', () => {
     expect(screen.getByRole('button', { name: 'Update' })).toBeInTheDocument()
   })
 
+  it('hides the toast when hidden even if an update is available', () => {
+    mockHookReturn.isUpdateAvailable = true
+    const { container } = render(<SwUpdateNotification hidden />)
+    expect(container.textContent).toBe('')
+  })
+
   it('calls applyUpdate when Update button is clicked', async () => {
     mockHookReturn.isUpdateAvailable = true
     mockHookReturn.applyUpdate = vi.fn()

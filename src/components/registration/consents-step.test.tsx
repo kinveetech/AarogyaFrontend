@@ -134,9 +134,47 @@ describe('ConsentsStep', () => {
     expect(medicalConsent.isGranted).toBe(true)
   })
 
-  it('renders 4 clickable buttons', () => {
+  it('renders 4 checkboxes with accessible names', () => {
     render(<ConsentsStep consents={defaultConsents} onChange={vi.fn()} />)
-    const buttons = screen.getAllByRole('button')
-    expect(buttons).toHaveLength(4)
+    const checkboxes = screen.getAllByRole('checkbox')
+    expect(checkboxes).toHaveLength(4)
+    expect(
+      screen.getByRole('checkbox', { name: 'Profile Management' }),
+    ).toBeInTheDocument()
+    expect(
+      screen.getByRole('checkbox', { name: 'Emergency Contact Management' }),
+    ).toBeInTheDocument()
+  })
+
+  it('exposes checked state via aria-checked', () => {
+    render(<ConsentsStep consents={defaultConsents} onChange={vi.fn()} />)
+    expect(
+      screen.getByRole('checkbox', { name: 'Profile Management' }),
+    ).toHaveAttribute('aria-checked', 'true')
+    expect(
+      screen.getByRole('checkbox', { name: 'Medical Data Sharing' }),
+    ).toHaveAttribute('aria-checked', 'false')
+  })
+
+  it('marks the required consent as aria-disabled', () => {
+    render(<ConsentsStep consents={defaultConsents} onChange={vi.fn()} />)
+    expect(
+      screen.getByRole('checkbox', { name: 'Profile Management' }),
+    ).toHaveAttribute('aria-disabled', 'true')
+    expect(
+      screen.getByRole('checkbox', { name: 'Medical Data Sharing' }),
+    ).toHaveAttribute('aria-disabled', 'false')
+  })
+
+  it('links each checkbox to its description via aria-describedby', () => {
+    render(<ConsentsStep consents={defaultConsents} onChange={vi.fn()} />)
+    const checkbox = screen.getByRole('checkbox', { name: 'Medical Data Sharing' })
+    expect(checkbox).toHaveAttribute(
+      'aria-describedby',
+      'consent-desc-medical_data_sharing',
+    )
+    expect(
+      document.getElementById('consent-desc-medical_data_sharing'),
+    ).toHaveTextContent(/Allow sharing your medical records/)
   })
 })
