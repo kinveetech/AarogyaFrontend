@@ -43,7 +43,6 @@ const mockPrefs: NotificationPreferences = {
     email: true,
     sms: true,
   },
-  updatedAt: '2025-06-01T00:00:00Z',
 }
 
 beforeEach(() => {

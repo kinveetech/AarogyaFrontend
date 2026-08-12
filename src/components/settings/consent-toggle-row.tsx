@@ -27,7 +27,7 @@ function InfoIcon() {
 export interface ConsentToggleRowProps {
   meta: ConsentMeta
   granted: boolean
-  updatedAt: string
+  updatedAt: string | null
   showBorder: boolean
   onToggle: (granted: boolean) => void
 }
@@ -99,9 +99,11 @@ export function ConsentToggleRow({
           >
             {granted ? 'Granted' : 'Revoked'}
           </Box>
-          <Text fontSize="0.75rem" color="text.muted" fontFamily="mono">
-            Updated {formatDate(updatedAt)}
-          </Text>
+          {updatedAt && (
+            <Text fontSize="0.75rem" color="text.muted" fontFamily="mono">
+              Updated {formatDate(updatedAt)}
+            </Text>
+          )}
         </Flex>
       </Box>
       <Switch.Root

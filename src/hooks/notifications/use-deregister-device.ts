@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api/client'
 import { queryKeys } from '@/lib/api/query-keys'
+import { toaster } from '@/components/ui/toaster'
 import type { RegisteredDevice } from '@/types/notification'
 
 export function useDeregisterDevice() {
@@ -29,6 +30,11 @@ export function useDeregisterDevice() {
       if (context?.previous) {
         queryClient.setQueryData(queryKeys.notifications.devices(), context.previous)
       }
+      toaster.create({
+        type: 'error',
+        title: 'Could not remove device',
+        description: 'Something went wrong while removing the device. Please try again.',
+      })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications.devices() })

@@ -77,7 +77,7 @@ export function ConsentsSection() {
               key={meta.purpose}
               meta={meta}
               granted={consent?.isGranted ?? false}
-              updatedAt={consent?.occurredAt ?? new Date().toISOString()}
+              updatedAt={consent?.occurredAt ?? null}
               showBorder={i > 0}
               onToggle={(granted) => handleToggle(meta.purpose, granted)}
             />

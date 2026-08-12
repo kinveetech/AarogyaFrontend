@@ -146,4 +146,60 @@ describe('useUpdateProfile', () => {
     const cached = queryClient.getQueryData<Profile>(queryKeys.profile.me())
     expect(cached?.lastName).toBe('Kumar')
   })
+
+  it('shows a success toast after saving', async () => {
+    const { toaster } = await import('@/components/ui/toaster')
+    const createSpy = vi.spyOn(toaster, 'create')
+    const wrapper = createWrapper(Infinity)
+
+    mockFetch.mockResolvedValue(jsonResponse(mockProfile))
+
+    const { result } = renderHook(() => useUpdateProfile(), { wrapper })
+
+    await act(async () => {
+      result.current.mutate({
+        firstName: 'Arjun',
+        lastName: 'Kumar',
+        email: 'arjun@example.com',
+        phone: '9876543210',
+        dateOfBirth: '1990-03-15',
+        bloodGroup: 'B+',
+        address: 'Bengaluru',
+      })
+    })
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true))
+
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'success', title: 'Profile updated' }),
+    )
+  })
+
+  it('shows an error toast when saving fails', async () => {
+    const { toaster } = await import('@/components/ui/toaster')
+    const createSpy = vi.spyOn(toaster, 'create')
+    const wrapper = createWrapper(Infinity)
+
+    mockFetch.mockResolvedValue(jsonResponse({ message: 'Server Error' }, 500))
+
+    const { result } = renderHook(() => useUpdateProfile(), { wrapper })
+
+    await act(async () => {
+      result.current.mutate({
+        firstName: 'Arjun',
+        lastName: 'Patel',
+        email: 'arjun@example.com',
+        phone: '9876543210',
+        dateOfBirth: '1990-03-15',
+        bloodGroup: 'B+',
+        address: 'Bengaluru',
+      })
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'error', title: 'Could not save profile' }),
+    )
+  })
 })

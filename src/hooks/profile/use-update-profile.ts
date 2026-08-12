@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api/client'
 import { queryKeys } from '@/lib/api/query-keys'
+import { toaster } from '@/components/ui/toaster'
 import type { Profile, UpdateProfileRequest } from '@/types/profile'
 
 export function useUpdateProfile() {
@@ -29,10 +30,21 @@ export function useUpdateProfile() {
 
       return { previousProfile }
     },
+    onSuccess: () => {
+      toaster.create({
+        type: 'success',
+        title: 'Profile updated',
+      })
+    },
     onError: (_err, _request, context) => {
       if (context?.previousProfile) {
         queryClient.setQueryData(queryKeys.profile.me(), context.previousProfile)
       }
+      toaster.create({
+        type: 'error',
+        title: 'Could not save profile',
+        description: 'Something went wrong while saving your profile. Please try again.',
+      })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.profile.all })
