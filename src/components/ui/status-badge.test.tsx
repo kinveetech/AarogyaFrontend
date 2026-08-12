@@ -63,7 +63,7 @@ describe('StatusBadge', () => {
   })
 
   it('falls back to pending style for unknown variant', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     render(<StatusBadge variant={'unknown_status' as any}>Unknown</StatusBadge>)
     expect(screen.getByText('Unknown')).toBeInTheDocument()
   })

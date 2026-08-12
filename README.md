@@ -11,15 +11,15 @@ A patient and doctor portal for managing health records, built with Next.js and 
 
 | Layer | Technology |
 |-------|-----------|
-| Framework | Next.js 14 (App Router, React Server Components) |
+| Framework | Next.js 16 (App Router, React Server Components) |
 | Language | TypeScript (strict mode) |
-| UI | Chakra UI v2 with custom Serene Bloom theme |
+| UI | Chakra UI v3 with custom Serene Bloom theme |
 | Auth | NextAuth.js v5 + AWS Cognito (PKCE) |
 | Server State | TanStack Query v5 |
 | Forms | React Hook Form + Zod |
-| Charts | Recharts v2 |
+| Charts | Recharts v3 |
 | PDF | react-pdf |
-| PWA | next-pwa |
+| PWA | Serwist (@serwist/next) |
 | Backend | ASP.NET Core 9.0 ([AarogyaBackend](https://github.com/kinveetech/AarogyaBackend)) |
 
 ## Getting Started

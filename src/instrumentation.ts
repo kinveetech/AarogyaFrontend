@@ -4,12 +4,12 @@ export async function register() {
     // causing Node.js built-in fetch (undici) to hang on AAAA records.
 
     // Must use require() — ES module imports expose read-only getters.
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
+     
     const dns = require('dns')
     dns.setDefaultResultOrder('ipv4first')
 
     const origLookup = dns.lookup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     dns.lookup = (...args: any[]) => {
       const [hostname, optionsOrCb, maybeCallback] = args
       if (typeof optionsOrCb === 'function') {

@@ -147,4 +147,107 @@ describe('usePdfUrl', () => {
       expect(result.current.error).not.toBeNull()
     })
   })
+
+  it('adopts a newly provided initial URL over a previously refreshed one', async () => {
+    const refreshedData = {
+      downloadUrl: 'https://cdn.example.com/refreshed.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch.mockResolvedValueOnce(jsonResponse(refreshedData))
+
+    const { result, rerender } = renderHook(
+      ({ download }: { download: ReportDetailDownload }) =>
+        usePdfUrl('r1', download),
+      { initialProps: { download: initialDownload } },
+    )
+
+    result.current.refresh()
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(refreshedData.downloadUrl)
+    })
+
+    // A new report detail arrives with a rotated download URL — it wins
+    const nextDownload: ReportDetailDownload = {
+      ...initialDownload,
+      downloadUrl: 'https://cdn.example.com/rotated.pdf?token=next',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    rerender({ download: nextDownload })
+
+    expect(result.current.url).toBe(nextDownload.downloadUrl)
+  })
+
+  it('chains auto-refresh after a refreshed URL expires', async () => {
+    const first = {
+      downloadUrl: 'https://cdn.example.com/refresh-1.pdf',
+      expiresAt: new Date(Date.now() + 120_000).toISOString(),
+    }
+    const second = {
+      downloadUrl: 'https://cdn.example.com/refresh-2.pdf',
+      expiresAt: new Date(Date.now() + 600_000).toISOString(),
+    }
+    mockFetch
+      .mockResolvedValueOnce(jsonResponse(first))
+      .mockResolvedValueOnce(jsonResponse(second))
+
+    const { result } = renderHook(() => usePdfUrl('r1', initialDownload))
+
+    result.current.refresh()
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(first.downloadUrl)
+    })
+
+    // First refresh scheduled the next one for 120s - 60s buffer = 60s out
+    vi.advanceTimersByTime(61_000)
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(second.downloadUrl)
+    })
+    expect(mockFetch).toHaveBeenCalledTimes(2)
+  })
+
+  it('keeps the refreshed URL when the download prop loses its URL', async () => {
+    const refreshedData = {
+      downloadUrl: 'https://cdn.example.com/refreshed.pdf',
+      expiresAt: new Date(Date.now() + 300_000).toISOString(),
+    }
+    mockFetch.mockResolvedValueOnce(jsonResponse(refreshedData))
+
+    const { result, rerender } = renderHook(
+      ({ download }: { download: ReportDetailDownload }) =>
+        usePdfUrl('r1', download),
+      { initialProps: { download: initialDownload } },
+    )
+
+    result.current.refresh()
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(refreshedData.downloadUrl)
+    })
+
+    rerender({
+      download: { ...initialDownload, downloadUrl: '', expiresAt: '' },
+    })
+
+    expect(result.current.url).toBe(refreshedData.downloadUrl)
+  })
+
+  it('fetches on mount when an objectKey exists but no initial URL', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse(downloadData))
+
+    const keyOnly: ReportDetailDownload = {
+      objectKey: 'uploads/r1.pdf',
+      downloadUrl: '',
+      expiresAt: '',
+      provider: 's3',
+    }
+    const { result } = renderHook(() => usePdfUrl('r1', keyOnly))
+
+    await waitFor(() => {
+      expect(result.current.url).toBe(downloadData.downloadUrl)
+    })
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+  })
 })

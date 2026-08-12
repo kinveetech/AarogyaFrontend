@@ -12,7 +12,7 @@ A public-facing patient & doctor portal consuming the Aarogya REST API.
 ```
 ┌──────────────────────────────┐
 │   Patient / Doctor Portal    │
-│   Next.js 14 + Chakra UI     │
+│   Next.js 16 + Chakra UI     │
 │                              │
 │ • Report management & PDF    │
 │ • Doctor access grants       │  REST/JWT
@@ -49,15 +49,15 @@ A public-facing patient & doctor portal consuming the Aarogya REST API.
 
 | Technology | Version |
 |---|---|
-| Next.js | 14 App Router |
+| Next.js | 16 App Router |
 | TypeScript | strict mode |
-| Chakra UI | v2 |
+| Chakra UI | v3 |
 | NextAuth.js | v5 + Cognito |
 | TanStack Query | v5 |
 | React Hook Form | + Zod |
-| Recharts | v2 |
+| Recharts | v3 |
 | react-pdf | PDF viewer |
-| next-pwa | service worker |
+| Serwist | service worker |
 
 ---
 

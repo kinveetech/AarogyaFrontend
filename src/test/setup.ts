@@ -11,6 +11,7 @@ globalThis.URL.revokeObjectURL = vi.fn()
 globalThis.IntersectionObserver = class IntersectionObserver {
   readonly root: Element | null = null
   readonly rootMargin: string = ''
+  readonly scrollMargin: string = ''
   readonly thresholds: ReadonlyArray<number> = []
   private callback: IntersectionObserverCallback
 

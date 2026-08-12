@@ -171,7 +171,11 @@ describe('LoginPage', () => {
     // This test exercises the ShieldTreeLogo with showWordmark=false indirectly
     // by testing that the logo is present on the login page
     render(<LoginPage />)
-    const svgs = document.querySelectorAll('svg[viewBox="0 0 80 80"]')
+    // jsdom's selector engine does not match camelCase SVG attribute selectors
+    // (e.g. svg[viewBox=...]), so filter via getAttribute instead
+    const svgs = Array.from(document.querySelectorAll('svg')).filter(
+      (svg) => svg.getAttribute('viewBox') === '0 0 80 80',
+    )
     expect(svgs.length).toBeGreaterThanOrEqual(1)
   })
 })

@@ -45,9 +45,9 @@ npm run lint
 - **NextAuth.js v5** with custom Cognito PKCE provider
 - **TanStack Query v5** — all server state; no global state library (Redux/Zustand/etc.)
 - **React Hook Form + Zod** — all forms; schemas in `src/lib/schemas/`
-- **Recharts v2** — vitals/parameter trend charts
+- **Recharts v3** — vitals/parameter trend charts
 - **react-pdf** — embedded PDF viewer
-- **next-pwa** — service worker + offline support
+- **Serwist** (`@serwist/next`) — service worker + offline support
 
 ## Architecture Decisions
 

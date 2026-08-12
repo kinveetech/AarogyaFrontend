@@ -63,8 +63,11 @@ describe('ShieldTreeLoader', () => {
 
   it('renders SVG with expected viewBox', () => {
     const { container } = render(<ShieldTreeLoader />)
-    const svg = container.querySelector('svg[viewBox="0 0 80 80"]')
+    // jsdom's selector engine does not match camelCase SVG attribute selectors
+    // (e.g. svg[viewBox=...]), so assert via getAttribute instead
+    const svg = container.querySelector('svg')
     expect(svg).toBeInTheDocument()
+    expect(svg).toHaveAttribute('viewBox', '0 0 80 80')
   })
 
   it('renders sm size container', () => {
