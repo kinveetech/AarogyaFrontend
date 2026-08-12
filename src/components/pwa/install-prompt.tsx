@@ -4,11 +4,16 @@ import { Box, Button, Text, IconButton } from '@chakra-ui/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useInstallPrompt } from './use-install-prompt'
 
-export function InstallPrompt() {
+export interface InstallPromptProps {
+  /** Suppress the banner while keeping the beforeinstallprompt listener mounted */
+  hidden?: boolean
+}
+
+export function InstallPrompt({ hidden = false }: InstallPromptProps) {
   const { isInstallable, isStandalone, isIOS, isDismissed, promptInstall, dismiss } =
     useInstallPrompt()
 
-  const visible = (isInstallable || isIOS) && !isStandalone && !isDismissed
+  const visible = !hidden && (isInstallable || isIOS) && !isStandalone && !isDismissed
 
   return (
     <AnimatePresence>

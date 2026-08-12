@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useRef } from 'react'
 import {
   Box,
   Button,
@@ -67,18 +67,22 @@ export function AadhaarVerifyDialog({
     resolver: zodResolver(aadhaarVerificationSchema),
   })
 
+  // Reset only when the dialog transitions to open — a successful verify updates
+  // the profile cache, and resetting on that change would wipe the success state
+  const wasOpenRef = useRef(false)
   useEffect(() => {
-    if (open) {
-      reset({
-        aadhaarNumber: '',
-        firstName: profile.firstName,
-        lastName: profile.lastName,
-        dateOfBirth: profile.dateOfBirth
-          ? formatDateForInput(profile.dateOfBirth)
-          : '',
-      })
-      resetMutation()
-    }
+    const justOpened = open && !wasOpenRef.current
+    wasOpenRef.current = open
+    if (!justOpened) return
+    reset({
+      aadhaarNumber: '',
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      dateOfBirth: profile.dateOfBirth
+        ? formatDateForInput(profile.dateOfBirth)
+        : '',
+    })
+    resetMutation()
   }, [open, profile, reset, resetMutation])
 
   const handleClose = useCallback(() => {

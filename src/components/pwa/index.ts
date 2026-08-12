@@ -1,4 +1,5 @@
 export { InstallPrompt } from './install-prompt'
+export { PwaChrome } from './pwa-chrome'
 export { SwUpdateNotification } from './sw-update-notification'
 export { useInstallPrompt } from './use-install-prompt'
 export { useSwRegistration } from './use-sw-registration'

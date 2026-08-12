@@ -1,5 +1,6 @@
 'use client'
 
+import { useId } from 'react'
 import { Box, Text } from '@chakra-ui/react'
 import { motion } from 'framer-motion'
 import { useTheme } from 'next-themes'
@@ -12,9 +13,6 @@ export interface ShieldTreeLoaderProps {
 }
 
 const SIZE_MAP = { sm: 80, md: 160, lg: 240 } as const
-
-/** Unique IDs per instance to avoid SVG gradient conflicts when multiple loaders render */
-let instanceCounter = 0
 
 export function ShieldTreeLoader({
   size = 'md',
@@ -29,7 +27,9 @@ export function ShieldTreeLoader({
   const shouldShowProgress = showProgress ?? variant === 'fullPage'
   const shouldShowBrandText = showBrandText ?? variant === 'fullPage'
 
-  const id = `stl-${++instanceCounter}`
+  // useId is hydration-safe (a module counter diverges between server and client,
+  // breaking hydration); strip its delimiters, which are invalid inside url(#...)
+  const id = `stl-${useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
 
   const shieldGradient = isDark
     ? { start: '#1A9E97', end: '#0E6B66' }

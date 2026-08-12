@@ -114,4 +114,10 @@ describe('InstallPrompt', () => {
     const { container } = render(<InstallPrompt />)
     expect(container.textContent).toBe('')
   })
+
+  it('hides the banner when hidden even if installable', () => {
+    mockHookReturn.isInstallable = true
+    const { container } = render(<InstallPrompt hidden />)
+    expect(container.textContent).toBe('')
+  })
 })

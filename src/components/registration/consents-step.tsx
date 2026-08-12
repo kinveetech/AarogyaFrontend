@@ -51,6 +51,11 @@ export function ConsentsStep({ consents, onChange }: ConsentsStepProps) {
             <button
               key={item.purpose}
               type="button"
+              role="checkbox"
+              aria-checked={isGranted}
+              aria-disabled={item.required}
+              aria-label={item.label}
+              aria-describedby={`consent-desc-${item.purpose}`}
               onClick={() => toggleConsent(item.purpose)}
               style={{
                 all: 'unset',
@@ -104,7 +109,13 @@ export function ConsentsStep({ consents, onChange }: ConsentsStepProps) {
                         </Text>
                       )}
                     </Flex>
-                    <Text fontSize="xs" color="text.muted" mt="1" lineHeight="tall">
+                    <Text
+                      id={`consent-desc-${item.purpose}`}
+                      fontSize="xs"
+                      color="text.muted"
+                      mt="1"
+                      lineHeight="tall"
+                    >
                       {item.description}
                     </Text>
                   </Box>

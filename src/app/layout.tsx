@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { DM_Serif_Display, Outfit, DM_Mono } from 'next/font/google'
 import { Providers } from './providers'
 import { AmbientOrbs } from './ambient-orbs'
-import { InstallPrompt, SwUpdateNotification } from '@/components/pwa'
+import { PwaChrome } from '@/components/pwa'
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: '400',
@@ -52,8 +52,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body suppressHydrationWarning>
         <Providers>
           <AmbientOrbs />
-          <InstallPrompt />
-          <SwUpdateNotification />
+          <PwaChrome />
           {children}
         </Providers>
       </body>
