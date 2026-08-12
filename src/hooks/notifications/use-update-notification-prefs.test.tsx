@@ -58,7 +58,7 @@ beforeEach(() => {
 
 describe('useUpdateNotificationPrefs', () => {
   it('sends PUT request with correct URL and body', async () => {
-    const updated: NotificationPreferences = { ...allEnabled, updatedAt: '2025-06-15T10:00:00Z' }
+    const updated: NotificationPreferences = { ...allEnabled }
     mockFetch.mockResolvedValue(jsonResponse(updated))
 
     const { result } = renderHook(() => useUpdateNotificationPrefs(), {
@@ -99,7 +99,6 @@ describe('useUpdateNotificationPrefs', () => {
         email: false,
         sms: false,
       },
-      updatedAt: '2025-06-01T00:00:00Z',
     }
 
     queryClient.setQueryData(queryKeys.notifications.prefs(), initialData)
@@ -108,7 +107,7 @@ describe('useUpdateNotificationPrefs', () => {
     mockFetch.mockReturnValue(
       new Promise<Response>((resolve) => {
         resolveUpdate = () =>
-          resolve(jsonResponse({ ...allEnabled, updatedAt: '2025-06-15T10:00:00Z' }))
+          resolve(jsonResponse({ ...allEnabled }))
       }),
     )
 
@@ -149,7 +148,6 @@ describe('useUpdateNotificationPrefs', () => {
         email: true,
         sms: false,
       },
-      updatedAt: '2025-06-01T00:00:00Z',
     }
 
     queryClient.setQueryData(queryKeys.notifications.prefs(), initialData)

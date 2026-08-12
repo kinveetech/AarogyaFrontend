@@ -163,4 +163,24 @@ describe('useUpdateConsent', () => {
       expect(cached?.[0].isGranted).toBe(true)
     })
   })
+
+  it('shows an error toast when the update fails', async () => {
+    const { toaster } = await import('@/components/ui/toaster')
+    const createSpy = vi.spyOn(toaster, 'create')
+    const wrapper = createWrapper(Infinity)
+
+    mockFetch.mockResolvedValue(jsonResponse({ message: 'Server error' }, 500))
+
+    const { result } = renderHook(() => useUpdateConsent(), { wrapper })
+
+    await act(async () => {
+      result.current.mutate({ purpose: 'medical_data_sharing', isGranted: false })
+    })
+
+    await waitFor(() => expect(result.current.isError).toBe(true))
+
+    expect(createSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'error', title: 'Could not revoke consent' }),
+    )
+  })
 })

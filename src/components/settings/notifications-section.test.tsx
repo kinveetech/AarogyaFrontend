@@ -35,7 +35,6 @@ const mockPrefs: NotificationPreferences = {
     email: true,
     sms: false,
   },
-  updatedAt: '2025-06-01T00:00:00Z',
 }
 
 let originalNotification: typeof globalThis.Notification
@@ -188,7 +187,6 @@ describe('NotificationsSection', () => {
       reportUploaded: { push: false, email: true, sms: false },
       accessGranted: { push: false, email: true, sms: false },
       emergencyAccess: { push: false, email: true, sms: false },
-      updatedAt: '2025-06-01T00:00:00Z',
     }
     mockFetch.mockResolvedValue(jsonResponse(prefsWithEmailOn))
     render(<NotificationsSection />)

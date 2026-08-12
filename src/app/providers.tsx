@@ -8,6 +8,7 @@ import { ThemeProvider } from 'next-themes'
 import { system } from '@/theme'
 import { createAppQueryClient } from '@/lib/api/query-client'
 import { AuthProvider } from '@/components/auth/auth-provider'
+import { Toaster } from '@/components/ui/toaster'
 
 export function Providers({ children }: Readonly<{ children: React.ReactNode }>) {
   const [queryClient] = useState(() => createAppQueryClient())
@@ -18,6 +19,7 @@ export function Providers({ children }: Readonly<{ children: React.ReactNode }>)
         <ChakraProvider value={system}>
           <ThemeProvider attribute="class" disableTransitionOnChange>
             {children}
+            <Toaster />
           </ThemeProvider>
         </ChakraProvider>
         <ReactQueryDevtools initialIsOpen={false} />

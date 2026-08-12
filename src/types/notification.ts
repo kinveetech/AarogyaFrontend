@@ -11,7 +11,6 @@ export interface NotificationPreferences {
   reportUploaded: EventChannelPreferences
   accessGranted: EventChannelPreferences
   emergencyAccess: EventChannelPreferences
-  updatedAt: string
 }
 
 export interface UpdateNotificationPrefsRequest {

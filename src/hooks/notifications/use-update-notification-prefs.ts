@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '@/lib/api/client'
 import { queryKeys } from '@/lib/api/query-keys'
+import { toaster } from '@/components/ui/toaster'
 import type {
   NotificationPreferences,
   UpdateNotificationPrefsRequest,
@@ -31,7 +32,6 @@ export function useUpdateNotificationPrefs() {
             reportUploaded: request.reportUploaded,
             accessGranted: request.accessGranted,
             emergencyAccess: request.emergencyAccess,
-            updatedAt: new Date().toISOString(),
           }
         },
       )
@@ -42,6 +42,11 @@ export function useUpdateNotificationPrefs() {
       if (context?.previous) {
         queryClient.setQueryData(queryKeys.notifications.prefs(), context.previous)
       }
+      toaster.create({
+        type: 'error',
+        title: 'Could not update notification preferences',
+        description: 'Something went wrong while saving your preferences. Please try again.',
+      })
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.notifications.all })

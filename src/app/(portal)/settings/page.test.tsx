@@ -58,7 +58,6 @@ const mockNotificationPrefs: NotificationPreferences = {
     email: true,
     sms: false,
   },
-  updatedAt: '2025-06-01T00:00:00Z',
 }
 
 function setupFetchMock(overrides?: {
