@@ -19,9 +19,14 @@ describe('ColorModeToggle', () => {
     mockResolvedTheme = 'light'
   })
 
-  it('renders with "switch to dark mode" label in light mode', () => {
+  it('renders with a theme-independent label', () => {
     render(<ColorModeToggle />)
-    expect(screen.getByRole('button', { name: /switch to dark mode/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /toggle color mode/i })).toBeInTheDocument()
+  })
+
+  it('renders both icons so CSS can select one without markup changes', () => {
+    const { container } = render(<ColorModeToggle />)
+    expect(container.querySelectorAll('svg')).toHaveLength(2)
   })
 
   it('toggles to dark mode on click in light mode', async () => {
@@ -30,12 +35,6 @@ describe('ColorModeToggle', () => {
 
     await user.click(screen.getByRole('button'))
     expect(mockSetTheme).toHaveBeenCalledWith('dark')
-  })
-
-  it('renders with "switch to light mode" label in dark mode', () => {
-    mockResolvedTheme = 'dark'
-    render(<ColorModeToggle />)
-    expect(screen.getByRole('button', { name: /switch to light mode/i })).toBeInTheDocument()
   })
 
   it('toggles to light mode on click in dark mode', async () => {

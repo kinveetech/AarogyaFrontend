@@ -1,6 +1,6 @@
 'use client'
 
-import { IconButton } from '@chakra-ui/react'
+import { Box, IconButton } from '@chakra-ui/react'
 import { useTheme } from 'next-themes'
 
 function SunIcon() {
@@ -51,19 +51,25 @@ function MoonIcon() {
 
 export function ColorModeToggle() {
   const { resolvedTheme, setTheme } = useTheme()
-  const isDark = resolvedTheme === 'dark'
 
+  // Render both icons and let CSS pick one — branching the markup on resolvedTheme
+  // breaks hydration for dark-mode users (server renders light, client resolves dark)
   return (
     <IconButton
-      aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-      onClick={() => setTheme(isDark ? 'light' : 'dark')}
+      aria-label="Toggle color mode"
+      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
       variant="ghost"
       borderRadius="full"
       size="sm"
       color="text.secondary"
       _hover={{ bg: 'bg.overlay' }}
     >
-      {isDark ? <SunIcon /> : <MoonIcon />}
+      <Box display={{ base: 'inline-flex', _dark: 'none' }} aria-hidden="true">
+        <MoonIcon />
+      </Box>
+      <Box display={{ base: 'none', _dark: 'inline-flex' }} aria-hidden="true">
+        <SunIcon />
+      </Box>
     </IconButton>
   )
 }
